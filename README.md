@@ -1,10 +1,32 @@
-# Viv [![npm version](https://badge.fury.io/js/%40hms-dbmi%2Fviv.svg)](https://badge.fury.io/js/%40hms-dbmi%2Fviv) [![package documenation](https://img.shields.io/badge/package-documentation-blue)](http://viv.gehlenborglab.org)
+# viv-ambcat
 
-A WebGL-powered toolkit for interactive visualization of high-resolution, multiplexed bioimaging datasets.
+**A fork of [Viv](https://github.com/hms-dbmi/viv), customized for the [AMBCAT project](https://oscars-project.eu/projects/ambcat-digital-amber-catalogue)**
 
-<p align="center">
-<img src="https://github.com/hms-dbmi/viv/raw/main/sites/docs/src/3d-slicing.gif" alt="Interactive volumetric view in web browser; sliders control visible planes." width="400"/> <img src="https://github.com/hms-dbmi/viv/raw/main/sites/docs/src/glomerular-lens.png" alt="Multi-channel rendering of high-resolution microscopy dataset" width="400"/>
-</p>
+---
+
+## About This Fork
+
+This repository is maintained by the [Helmholtz-Zentrum Hereon](https://www.hereon.de) within the context of the **AMBCAT** initiative:  [AMBCAT – Digital Amber Catalogue (oscars-project.eu)](https://oscars-project.eu/projects/ambcat-digital-amber-catalogue)
+
+**AMBCAT (Amber Catalogue for Tomographic Fossil Data)** is an Open Science collaboration aiming to centralize and provide access to high-resolution 3D scan data of fossil inclusions in amber. These unique specimens preserve extinct organisms with remarkable anatomical detail, enabling multidisciplinary research across life sciences, paleontology, and imaging science.
+
+### Purpose of This Fork
+
+This fork of Viv explores efficient, web-based solutions for **visualizing large-scale tomographic and volumetric datasets**, especially high-resolution fossil scans stored in formats such as OME-TIFF and Zarr. Existing tools, including Avivator, provide a powerful foundation but are tailored to multiplexed bioimaging. Our goal is to **adapt and extend these tools to meet the visualization needs of the paleontological community**.
+
+---
+
+## AMBCAT Explorer
+
+We are building the **AMBCAT Explorer**, a customized image viewer based on **[Avivator](https://github.com/hms-dbmi/viv/tree/main/sites/avivator)** — Viv’s React-based reference viewer. AMBCAT Explorer will be:
+
+- Branded and themed for fossil and amber data
+- Configured to support multiscale tomographic datasets
+
+
+
+
+
 
 ## About
 

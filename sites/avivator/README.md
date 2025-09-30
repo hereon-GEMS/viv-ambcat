@@ -9,9 +9,10 @@ Please checkout our [video tutorial](https://www.youtube.com/watch?v=_GES8BTzyWc
 
 Avivator has been tested with the following dependency versions:
 
-- Operating system: macOS 10.15.5
-- NodeJS 14.0.0
+- Operating system: Red Hat Enterprise Linux 9.6
+- [Node.js](https://nodejs.org/) (v18+ recommended)
 - NPM 6.14.4
+- [`pnpm`](https://pnpm.io) (Install via `npm install -g pnpm`)
 - Zsh 5.7.1
 - one of:
   - Firefox Developer Edition 84.0b8
@@ -19,15 +20,26 @@ Avivator has been tested with the following dependency versions:
   - Safari 13.1.1 (and later)
   - Google Chrome 87.0.4280.88
 
-## Development guide
+## Development Guide
 
-Avivator is developed alongside the Viv codebase. To develop Avivator, clone
-the Viv repository and run the following commands in a `zsh` or `bash` shell:
+Avivator is developed as part of the [Viv](https://github.com/hms-dbmi/viv) monorepo.
 
-```sh
-git clone https://github.com/hms-dbmi/viv.git && cd viv
-npm install # installs dependencies for both viv and avivator
-npm start
+To develop or run Avivator locally from this fork (`viv-ambcat`), follow these steps using [`pnpm`](https://pnpm.io):
+
+---
+
+### Setup and Run
+
+```bash
+# Clone the viv-ambcat repository
+git clone git@github.com:hereon-GEMS/viv-ambcat.git
+cd viv-ambcat
+
+# Install all dependencies across the monorepo using pnpm
+pnpm install
+
+# Start the development server
+pnpm dev
 ```
 
 This command starts a live development server. Navigate to `http://localhost:3000`
