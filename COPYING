@@ -1,0 +1,21 @@
+# Licensing Information
+
+The repository `viv-ambcat` is a fork of the project [hms-dbmi/viv](https://github.com/hms-dbmi/viv), which is originally licensed under the MIT License. See the `LICENSE` file for the original license text.
+
+## License Notice
+
+- All code up to commit `b59f58a88080102d3cb81b7ba8acde0033c973f8` is licensed under the MIT License.
+- All new contributions that **at any point appear merged into the upstream repository** (`hms-dbmi/viv`), whether via pull requests or copy-pasting, are licensed under the MIT License.
+- All other new contributions—i.e., those which **do not appear in the upstream repository**—are licensed under the GNU General Public License v3.0 (GPLv3).
+- The combined work in this repository, including MIT-licensed and GPLv3-licensed parts, is **sublicensed in its entirety under the GPLv3**.
+
+## Practical Summary
+
+- You may use the original upstream code under the MIT License.
+- You may use this entire repository under the GPLv3.
+- Individual contributions from this repository may be available under MIT **only if they are incorporated into the upstream project**.
+
+## License Files
+
+- `LICENSE` — MIT License (applies to original work)
+- `LICENSE_GPL3.0` — GNU GPLv3 License (applies to new contributions and combined work)
