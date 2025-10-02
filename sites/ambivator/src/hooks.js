@@ -39,6 +39,17 @@ export const useImage = source => {
   // biome-ignore lint/correctness/useExhaustiveDependencies: Carried over from eslint, without explanation.
   useEffect(() => {
     async function changeLoader() {
+      if (!source || !source.urlOrFile) {
+        // No source or URL — clear loading states and exit early
+        useViewerStore.setState({ 
+          isChannelLoading: [false], 
+          isViewerLoading: false,
+          metadata: null
+        });
+        //useChannelsStore.setState({ loader: null });
+        return;
+      }
+
       // Placeholder
       useViewerStore.setState({ isChannelLoading: [true] });
       useViewerStore.setState({ isViewerLoading: true });
@@ -88,7 +99,7 @@ export const useImage = source => {
     if (source) changeLoader();
 
     // FIXME: biome warns that source shouldn't be a dep because it changes every render,
-    // but it's necessary to trigger the effect (and make avivator functional).
+    // but it's necessary to trigger the effect (and make ambivator functional).
     //
     // The overall implementation of this "hook" is very strange. It is all async side effects
     // that eventually update global state and is very tricky to reason about. There is probably

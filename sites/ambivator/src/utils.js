@@ -258,7 +258,7 @@ export async function createLoader(
 }
 
 // Get the last part of a url (minus query parameters) to be used
-// as a display name for avivator.
+// as a display name for ambivator.
 export function getNameFromUrl(url) {
   return url.split('?')[0].split('/').slice(-1)[0];
 }

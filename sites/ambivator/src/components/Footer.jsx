@@ -46,7 +46,7 @@ export default function Footer() {
     >
       <Paper className={classes.paper}>
         <Typography className={classes.typography}>
-          {formatResolutionStatus(resolution + 1, loader.length, level.shape)}
+Amber Fossil Viewer          {formatResolutionStatus(resolution + 1, loader.length, level.shape)}
         </Typography>
       </Paper>
     </Box>

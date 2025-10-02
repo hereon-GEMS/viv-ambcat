@@ -8,7 +8,7 @@ import {
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import Avivator from './Avivator';
+import Ambivator from './Ambivator';
 import sources from './source-info';
 import { getNameFromUrl } from './utils';
 
@@ -35,10 +35,12 @@ function resolveSource(url) {
     };
   }
   // Pick a random source if none is specified.
+  /*
   return {
     ...sources[Math.floor(Math.random() * sources.length)],
     isDemoImage: true
-  };
+  };*/
+  return {urlOrFile: null, description: "No image specified", isDemoImage: false};
 }
 
 function App() {
@@ -48,7 +50,7 @@ function App() {
     <StyledEngineProvider injectFirst>
       (
       <ThemeProvider theme={theme}>
-        <Avivator source={source} isDemoImage={source.isDemoImage} />
+        <Ambivator source={source} isDemoImage={source.isDemoImage} />
       </ThemeProvider>
       )
     </StyledEngineProvider>

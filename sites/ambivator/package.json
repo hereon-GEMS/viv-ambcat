@@ -1,5 +1,5 @@
 {
-  "name": "avivator",
+  "name": "ambivator",
   "private": true,
   "type": "module",
   "scripts": {
@@ -28,5 +28,5 @@
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5"
   },
-  "version": null
+  "version": "0.0.2"
 }

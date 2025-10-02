@@ -25,12 +25,12 @@ function MenuTitle() {
     >
       <Grid style={{ marginRight: 'auto' }} item>
         <Typography variant="body1">
-          <strong>AVIVATOR</strong>
+          <strong>AMBCAT explorer</strong>
         </Typography>
       </Grid>
       <Grid item>
         <IconButton
-          href="https://github.com/hms-dbmi/viv"
+          href="https://github.com/hereon-GEMS/viv-ambcat"
           aria-label="GitHub Repository"
           disableRipple
           size="large"

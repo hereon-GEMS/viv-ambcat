@@ -17,7 +17,7 @@ import './index.css';
  * @param {Object} props.history A React router history object to create new urls (optional).
  * @param {Object} args.sources A list of sources for a dropdown menu, like [{ url, description }]
  * */
-export default function Avivator(props) {
+export default function Ambivator(props) {
   const { source: initSource, isDemoImage } = props;
   const isViewerLoading = useViewerStore(store => store.isViewerLoading);
   const source = useViewerStore(store => store.source);
@@ -27,7 +27,9 @@ export default function Avivator(props) {
   useEffect(() => {
     useViewerStore.setState({
       source: initSource,
-      isNoImageUrlSnackbarOn: isDemoImage
+      isVolumeRenderingWarningOn: false,  // Disable volume rendering warning for ambivator
+      //isNoImageUrlSnackbarOn: isDemoImage,
+      isNoImageUrlSnackbarOn: false  // Disable no image url snackbar for ambivator
     });
   }, []);
   useImage(source);

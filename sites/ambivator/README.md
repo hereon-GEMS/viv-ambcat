@@ -1,13 +1,12 @@
-# Avivator
+# Ambivator
 
-Avivator is a lightweight "batteries-included" WebGL viewer for remote imaging data, built around Viv.
-A hosted instance of Avivator can be accessed at [avivator.gehlenborglab.org](avivator.gehlenborglab.org).
+Ambivator is a lightweight "batteries-included" WebGL viewer for remote imaging data, built around Viv.
 
 Please checkout our [video tutorial](https://www.youtube.com/watch?v=_GES8BTzyWc) to get started.
 
 ## Development system requirements
 
-Avivator has been tested with the following dependency versions:
+Ambivator has been tested with the following dependency versions:
 
 - Operating system: Red Hat Enterprise Linux 9.6
 - [Node.js](https://nodejs.org/) (v18+ recommended)
@@ -22,9 +21,9 @@ Avivator has been tested with the following dependency versions:
 
 ## Development Guide
 
-Avivator is developed as part of the [Viv](https://github.com/hms-dbmi/viv) monorepo.
+Ambivator is developed as part of the [Viv](https://github.com/hms-dbmi/viv) monorepo.
 
-To develop or run Avivator locally from this fork (`viv-ambcat`), follow these steps using [`pnpm`](https://pnpm.io):
+To develop or run Ambivator locally from this fork (`viv-ambcat`), follow these steps using [`pnpm`](https://pnpm.io):
 
 ---
 
@@ -44,21 +43,21 @@ pnpm dev
 
 This command starts a live development server. Navigate to `http://localhost:3000`
 in your web browser to view the site. You may edit the contents of `src/` (Viv codebase)
-or `avivator/`, and the changes should be applied automatically.
+or `ambivator/`, and the changes should be applied automatically.
 
 ## Production build
 
-You may build a static production build of Avivator with the following:
+You may build a static production build of Ambivator with the following:
 
 ```sh
-npm run build:avivator
+npm run build:ambivator
 ```
 
-which outputs the final build in `avivator/dist`. This directory can be deployed as
+which outputs the final build in `ambivator/dist`. This directory can be deployed as
 static site in production.
 
 ## Instructions for use
 
-To use Avivator to visualize your own imaging data, use the URL input in the web application to provide a URL to an OME-TIFF/Bioformats-Zarr.
+To use Ambivator to visualize your own imaging data, use the URL input in the web application to provide a URL to an OME-TIFF/Bioformats-Zarr.
 
 To learn more about working with OME-TIFF files or Bioformats-Zarr stores, please visit the [tutorial](../tutorial/README.md).

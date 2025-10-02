@@ -5,7 +5,7 @@ import Link from '@mui/material/Link';
 export function OffsetsWarning() {
   return (
     <>
-      Avivator could not find an IFD index for the requested OME-TIFF, and
+      Ambivator could not find an IFD index for the requested OME-TIFF, and
       therefore longer latencies are expected. Please read our documentation on
       &quot;Indexed TIFF&quot; to generate an IFD index for your OME-TIFF and
       improve initial load times.
@@ -53,7 +53,7 @@ export function NoImageUrlInfo() {
       >
         docs
       </Link>{' '}
-      for details on how to prepare your images for viewing with Avivator.
+      for details on how to prepare your images for viewing with Ambivator.
     </>
   );
 }

@@ -209,7 +209,7 @@ function Menu({ children, ...props }) {
         onClick={toggleIsControllerOn}
         aria-label="show-menu"
       >
-        AVIVATOR
+        AMBIVATOR
       </Button>
     </Box>
   );
