@@ -1,44 +1,44 @@
-import { COORDINATE_SYSTEM, CompositeLayer } from '@deck.gl/core';
-import { PolygonLayer } from '@deck.gl/layers';
-import { Matrix4 } from '@math.gl/core';
-import { ColorPaletteExtension } from '@vivjs/extensions';
-import { getImageSize } from '@vivjs/loaders';
+import { COORDINATE_SYSTEM, CompositeLayer } from "@deck.gl/core";
+import { PolygonLayer } from "@deck.gl/layers";
+import { Matrix4 } from "@math.gl/core";
+import { ColorPaletteExtension } from "@vivjs/extensions";
+import { getImageSize } from "@vivjs/loaders";
 
-import ImageLayer from './image-layer';
+import ImageLayer from "./image-layer";
 
 const defaultProps = {
-  pickable: { type: 'boolean', value: true, compare: true },
+  pickable: { type: "boolean", value: true, compare: true },
   loader: {
-    type: 'object',
+    type: "object",
     value: {
       getRaster: async () => ({ data: [], height: 0, width: 0 }),
       getRasterSize: () => ({ height: 0, width: 0 }),
-      dtype: '<u2'
+      dtype: "<u2",
     },
-    compare: true
+    compare: true,
   },
-  id: { type: 'string', value: '', compare: true },
+  id: { type: "string", value: "", compare: true },
   boundingBox: {
-    type: 'array',
+    type: "array",
     value: [
       [0, 0],
       [0, 1],
       [1, 1],
-      [1, 0]
+      [1, 0],
     ],
-    compare: true
+    compare: true,
   },
-  boundingBoxColor: { type: 'array', value: [255, 0, 0], compare: true },
-  boundingBoxOutlineWidth: { type: 'number', value: 1, compare: true },
-  viewportOutlineColor: { type: 'array', value: [255, 190, 0], compare: true },
-  viewportOutlineWidth: { type: 'number', value: 2, compare: true },
-  overviewScale: { type: 'number', value: 1, compare: true },
-  zoom: { type: 'number', value: 1, compare: true },
+  boundingBoxColor: { type: "array", value: [255, 0, 0], compare: true },
+  boundingBoxOutlineWidth: { type: "number", value: 1, compare: true },
+  viewportOutlineColor: { type: "array", value: [255, 190, 0], compare: true },
+  viewportOutlineWidth: { type: "number", value: 2, compare: true },
+  overviewScale: { type: "number", value: 1, compare: true },
+  zoom: { type: "number", value: 1, compare: true },
   extensions: {
-    type: 'array',
+    type: "array",
     value: [new ColorPaletteExtension()],
-    compare: true
-  }
+    compare: true,
+  },
 };
 
 /**
@@ -71,7 +71,7 @@ const OverviewLayer = class extends CompositeLayer {
       boundingBoxOutlineWidth,
       viewportOutlineColor,
       viewportOutlineWidth,
-      overviewScale
+      overviewScale,
     } = this.props;
 
     const { width, height } = getImageSize(loader[0]);
@@ -81,17 +81,17 @@ const OverviewLayer = class extends CompositeLayer {
     const overview = new ImageLayer(this.props, {
       id: `viewport-${id}`,
       modelMatrix: new Matrix4().scale(2 ** z * overviewScale),
-      loader: lowestResolution
+      loader: lowestResolution,
     });
     const boundingBoxOutline = new PolygonLayer({
       id: `bounding-box-overview-${id}`,
       coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
       data: [boundingBox],
-      getPolygon: f => f,
+      getPolygon: (f) => f,
       filled: false,
       stroked: true,
       getLineColor: boundingBoxColor,
-      getLineWidth: boundingBoxOutlineWidth * 2 ** zoom
+      getLineWidth: boundingBoxOutlineWidth * 2 ** zoom,
     });
     const viewportOutline = new PolygonLayer({
       id: `viewport-outline-${id}`,
@@ -101,20 +101,20 @@ const OverviewLayer = class extends CompositeLayer {
           [0, 0],
           [width * overviewScale, 0],
           [width * overviewScale, height * overviewScale],
-          [0, height * overviewScale]
-        ]
+          [0, height * overviewScale],
+        ],
       ],
-      getPolygon: f => f,
+      getPolygon: (f) => f,
       filled: false,
       stroked: true,
       getLineColor: viewportOutlineColor,
-      getLineWidth: viewportOutlineWidth * 2 ** zoom
+      getLineWidth: viewportOutlineWidth * 2 ** zoom,
     });
     const layers = [overview, boundingBoxOutline, viewportOutline];
     return layers;
   }
 };
 
-OverviewLayer.layerName = 'OverviewLayer';
+OverviewLayer.layerName = "OverviewLayer";
 OverviewLayer.defaultProps = defaultProps;
 export default OverviewLayer;

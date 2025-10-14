@@ -1,6 +1,6 @@
-import { Matrix4 } from '@math.gl/core';
-import { fromBlob, fromUrl } from 'geotiff';
-import { useEffect, useState } from 'react';
+import { Matrix4 } from "@math.gl/core";
+import { fromBlob, fromUrl } from "geotiff";
+import { useEffect, useState } from "react";
 
 import {
   AdditiveColormap3DExtensions,
@@ -10,10 +10,10 @@ import {
   loadBioformatsZarr,
   loadMultiTiff,
   loadOmeTiff,
-  loadOmeZarr
-} from '@hms-dbmi/viv';
+  loadOmeZarr,
+} from "@hms-dbmi/viv";
 
-import { GLOBAL_SLIDER_DIMENSION_FIELDS } from './constants';
+import { GLOBAL_SLIDER_DIMENSION_FIELDS } from "./constants";
 
 const MAX_CHANNELS_FOR_SNACKBAR_WARNING = 40;
 
@@ -23,11 +23,11 @@ const MAX_CHANNELS_FOR_SNACKBAR_WARNING = 40;
  */
 function isOmeTiff(urlOrFile) {
   if (Array.isArray(urlOrFile)) return false; // local Zarr is array of File Objects
-  const name = typeof urlOrFile === 'string' ? urlOrFile : urlOrFile.name;
+  const name = typeof urlOrFile === "string" ? urlOrFile : urlOrFile.name;
   return (
-    name.includes('ome.tiff') ||
-    name.includes('ome.tif') ||
-    name.includes('.companion.ome')
+    name.includes("ome.tiff") ||
+    name.includes("ome.tif") ||
+    name.includes(".companion.ome")
   );
 }
 
@@ -37,12 +37,12 @@ function isOmeTiff(urlOrFile) {
  */
 function getMultiTiffFilenames(urlOrFiles) {
   if (Array.isArray(urlOrFiles)) {
-    return urlOrFiles.map(f => f.name);
+    return urlOrFiles.map((f) => f.name);
   }
   if (urlOrFiles instanceof File) {
     return [urlOrFiles.name];
   }
-  return urlOrFiles.split(',');
+  return urlOrFiles.split(",");
 }
 
 /**
@@ -53,7 +53,7 @@ function isMultiTiff(urlOrFiles) {
   const filenames = getMultiTiffFilenames(urlOrFiles);
   for (const filename of filenames) {
     const lowerCaseName = filename.toLowerCase();
-    if (!(lowerCaseName.includes('.tiff') || lowerCaseName.includes('.tif')))
+    if (!(lowerCaseName.includes(".tiff") || lowerCaseName.includes(".tif")))
       return false;
   }
   return true;
@@ -70,7 +70,7 @@ async function generateMultiTiffFileArray(urlOrFiles) {
   if (urlOrFiles instanceof File) {
     return [urlOrFiles];
   }
-  return urlOrFiles.split(',');
+  return urlOrFiles.split(",");
 }
 
 /**
@@ -78,7 +78,7 @@ async function generateMultiTiffFileArray(urlOrFiles) {
  * @param {string | File} src
  */
 async function getTiffImageCount(src) {
-  const from = typeof src === 'string' ? fromUrl : fromBlob;
+  const from = typeof src === "string" ? fromUrl : fromBlob;
   const tiff = await from(src);
   return tiff.getImageCount();
 }
@@ -106,7 +106,7 @@ async function generateMultiTiffSources(urlOrFiles) {
 class UnsupportedBrowserError extends Error {
   constructor(message) {
     super(message);
-    this.name = 'UnsupportedBrowserError';
+    this.name = "UnsupportedBrowserError";
   }
 }
 
@@ -116,7 +116,7 @@ async function getTotalImageCount(sources) {
   const representativeGeoTiffImage = await firstPixelSource._indexer({
     c: 0,
     z: 0,
-    t: 0
+    t: 0,
   });
   const hasSubIFDs = Boolean(
     representativeGeoTiffImage?.fileDirectory?.SubIFDs
@@ -144,16 +144,16 @@ async function getTotalImageCount(sources) {
  * @returns {e is Error & { issues: unknown }}
  */
 function isZodError(e) {
-  return e instanceof Error && 'issues' in e;
+  return e instanceof Error && "issues" in e;
 }
 
 /** @param {string} url */
 async function fetchSingleFileOmeTiffOffsets(url) {
   // No offsets for multifile OME-TIFFs
-  if (url.includes('companion.ome')) {
+  if (url.includes("companion.ome")) {
     return undefined;
   }
-  const offsetsUrl = url.replace(/ome\.tif(f?)/gi, 'offsets.json');
+  const offsetsUrl = url.replace(/ome\.tif(f?)/gi, "offsets.json");
   const res = await fetch(offsetsUrl);
   return res.status === 200 ? await res.json() : undefined;
 }
@@ -178,8 +178,8 @@ export async function createLoader(
       if (urlOrFile instanceof File) {
         // TODO(2021-05-09): temporarily disable `pool` until inline worker module is fixed.
         const source = await loadOmeTiff(urlOrFile, {
-          images: 'all',
-          pool: false
+          images: "all",
+          pool: false,
         });
         return source;
       }
@@ -189,8 +189,8 @@ export async function createLoader(
       // TODO(2021-05-06): temporarily disable `pool` until inline worker module is fixed.
       const source = await loadOmeTiff(urlOrFile, {
         offsets: maybeOffsets,
-        images: 'all',
-        pool: false
+        images: "all",
+        pool: false,
       });
 
       // Show a warning if the total number of channels/images exceeds a fixed amount.
@@ -206,10 +206,10 @@ export async function createLoader(
 
     if (
       Array.isArray(urlOrFile) &&
-      typeof urlOrFile[0].arrayBuffer !== 'function'
+      typeof urlOrFile[0].arrayBuffer !== "function"
     ) {
       throw new UnsupportedBrowserError(
-        'Cannot upload a local Zarr or flat TIFF files with this browser. Try using Chrome, Firefox, or Microsoft Edge.'
+        "Cannot upload a local Zarr or flat TIFF files with this browser. Try using Chrome, Firefox, or Microsoft Edge."
       );
     }
 
@@ -217,8 +217,8 @@ export async function createLoader(
     if (isMultiTiff(urlOrFile)) {
       const mutiTiffSources = await generateMultiTiffSources(urlOrFile);
       const source = await loadMultiTiff(mutiTiffSources, {
-        images: 'all',
-        pool: false
+        images: "all",
+        pool: false,
       });
       return source;
     }
@@ -235,13 +235,16 @@ export async function createLoader(
       }
 
       // try ome-zarr
-      const res = await loadOmeZarr(urlOrFile, { type: 'multiscales' });
-      const channels = res.metadata?.omero?.channels ?? [{ label: 'image' }];
+      const res = await loadOmeZarr(urlOrFile, { type: "multiscales" });
+      const channels = res.metadata?.omero?.channels ?? [{ label: "image" }];
       // extract metadata into OME-XML-like form
       const metadata = {
         Pixels: {
-          Channels: channels.map(c => ({ Name: c.label, SamplesPerPixel: 1 }))
-        }
+          Channels: channels.map((c) => ({
+            Name: c.label,
+            SamplesPerPixel: 1,
+          })),
+        },
       };
       source = { data: res.data, metadata };
     }
@@ -260,7 +263,7 @@ export async function createLoader(
 // Get the last part of a url (minus query parameters) to be used
 // as a display name for ambivator.
 export function getNameFromUrl(url) {
-  return url.split('?')[0].split('/').slice(-1)[0];
+  return url.split("?")[0].split("/").slice(-1)[0];
 }
 
 /**
@@ -270,7 +273,7 @@ export function getNameFromUrl(url) {
  * @returns {{ [Key in typeof GLOBAL_SLIDER_DIMENSION_FIELDS[number]]?: number }
  */
 function getDefaultGlobalSelection(dimensions) {
-  const globalSelectableDimensions = dimensions.filter(d =>
+  const globalSelectableDimensions = dimensions.filter((d) =>
     GLOBAL_SLIDER_DIMENSION_FIELDS.includes(d.name.toLowerCase())
   );
 
@@ -288,8 +291,8 @@ function isGlobalOrXYDimension(name) {
   // biome-ignore lint/style/noParameterAssign: Simple normalization, this is fine.
   name = name.toLowerCase();
   return (
-    name === 'x' ||
-    name === 'y' ||
+    name === "x" ||
+    name === "y" ||
     GLOBAL_SLIDER_DIMENSION_FIELDS.includes(name)
   );
 }
@@ -311,7 +314,7 @@ export function isInterleaved(shape) {
  */
 function zip(a, b) {
   if (a.length !== b.length) {
-    throw new Error('Array lengths must be equal');
+    throw new Error("Array lengths must be equal");
   }
   return a.map((val, i) => [val, b[i]]);
 }
@@ -331,7 +334,7 @@ export function buildDefaultSelection({ labels, shape }) {
 
   // First non-global dimension with some sort of selectable values.
   const firstNonGlobalSelectableDimension = dimensions.find(
-    dim => !isGlobalOrXYDimension(dim.name)
+    (dim) => !isGlobalOrXYDimension(dim.name)
   );
 
   // If there are no additional selectable dimensions, return the global selection.
@@ -346,7 +349,7 @@ export function buildDefaultSelection({ labels, shape }) {
   ) {
     selection.push({
       [firstNonGlobalSelectableDimension.name]: i,
-      ...globalSelection
+      ...globalSelection,
     });
   }
 
@@ -360,7 +363,7 @@ export function buildDefaultSelection({ labels, shape }) {
 export function hexToRgb(hex) {
   // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result.map(d => Number.parseInt(d, 16)).slice(1);
+  return result.map((d) => Number.parseInt(d, 16)).slice(1);
 }
 
 export function range(length) {
@@ -371,7 +374,7 @@ export function useWindowSize(scaleWidth = 1, scaleHeight = 1) {
   function getSize() {
     return {
       width: window.innerWidth * scaleWidth,
-      height: window.innerHeight * scaleHeight
+      height: window.innerHeight * scaleHeight,
     };
   }
   const [windowSize, setWindowSize] = useState(getSize());
@@ -379,9 +382,9 @@ export function useWindowSize(scaleWidth = 1, scaleHeight = 1) {
     const handleResize = () => {
       setWindowSize(getSize());
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   });
   return windowSize;
@@ -403,15 +406,15 @@ export async function getSingleSelectionStats2D({ loader, selection }) {
 export async function getSingleSelectionStats3D({ loader, selection }) {
   const lowResSource = loader[loader.length - 1];
   const { shape, labels } = lowResSource;
-  const sizeZ = shape[labels.indexOf('z')];
+  const sizeZ = shape[labels.indexOf("z")];
   const raster0 = await lowResSource.getRaster({
-    selection: { ...selection, z: 0 }
+    selection: { ...selection, z: 0 },
   });
   const rasterMid = await lowResSource.getRaster({
-    selection: { ...selection, z: Math.floor(sizeZ / 2) }
+    selection: { ...selection, z: Math.floor(sizeZ / 2) },
   });
   const rasterTop = await lowResSource.getRaster({
-    selection: { ...selection, z: Math.max(0, sizeZ - 1) }
+    selection: { ...selection, z: Math.max(0, sizeZ - 1) },
   });
   const stats0 = getChannelStats(raster0.data);
   const statsMid = getChannelStats(rasterMid.data);
@@ -419,7 +422,7 @@ export async function getSingleSelectionStats3D({ loader, selection }) {
   return {
     domain: [
       Math.min(stats0.domain[0], statsMid.domain[0], statsTop.domain[0]),
-      Math.max(stats0.domain[1], statsMid.domain[1], statsTop.domain[1])
+      Math.max(stats0.domain[1], statsMid.domain[1], statsTop.domain[1]),
     ],
     contrastLimits: [
       Math.min(
@@ -431,8 +434,8 @@ export async function getSingleSelectionStats3D({ loader, selection }) {
         stats0.contrastLimits[1],
         statsMid.contrastLimits[1],
         statsTop.contrastLimits[1]
-      )
-    ]
+      ),
+    ],
   };
 }
 
@@ -445,19 +448,19 @@ export const getSingleSelectionStats = async ({ loader, selection, use3d }) => {
 
 export const getMultiSelectionStats = async ({ loader, selections, use3d }) => {
   const stats = await Promise.all(
-    selections.map(selection =>
+    selections.map((selection) =>
       getSingleSelectionStats({ loader, selection, use3d })
     )
   );
-  const domains = stats.map(stat => stat.domain);
-  const contrastLimits = stats.map(stat => stat.contrastLimits);
+  const domains = stats.map((stat) => stat.domain);
+  const contrastLimits = stats.map((stat) => stat.contrastLimits);
   return { domains, contrastLimits };
 };
 
 // https://stackoverflow.com/a/11381730
 export function isMobileOrTablet() {
   let check = false;
-  (a => {
+  ((a) => {
     if (
       /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(
         a
@@ -478,17 +481,17 @@ export function guessRgb({ Pixels }) {
   const numChannels = Pixels.Channels.length;
   const { SamplesPerPixel } = Pixels.Channels[0];
 
-  const is3Channel8Bit = numChannels === 3 && Pixels.Type === 'uint8';
+  const is3Channel8Bit = numChannels === 3 && Pixels.Type === "uint8";
   const interleavedRgb =
     Pixels.SizeC === 3 && numChannels === 1 && Pixels.Interleaved;
 
   return SamplesPerPixel === 3 || is3Channel8Bit || interleavedRgb;
 }
 export function truncateDecimalNumber(value, maxLength) {
-  if (!value && value !== 0) return '';
+  if (!value && value !== 0) return "";
   const stringValue = value.toString();
   return stringValue.length > maxLength
-    ? stringValue.substring(0, maxLength).replace(/\.$/, '')
+    ? stringValue.substring(0, maxLength).replace(/\.$/, "")
     : stringValue;
 }
 
@@ -510,11 +513,11 @@ export function getBoundingCube(loader) {
   const source = Array.isArray(loader) ? loader[0] : loader;
   const { shape, labels } = source;
   const physicalSizeScalingMatrix = getPhysicalSizeScalingMatrix(source);
-  const xSlice = [0, physicalSizeScalingMatrix[0] * shape[labels.indexOf('x')]];
-  const ySlice = [0, physicalSizeScalingMatrix[5] * shape[labels.indexOf('y')]];
+  const xSlice = [0, physicalSizeScalingMatrix[0] * shape[labels.indexOf("x")]];
+  const ySlice = [0, physicalSizeScalingMatrix[5] * shape[labels.indexOf("y")]];
   const zSlice = [
     0,
-    physicalSizeScalingMatrix[10] * shape[labels.indexOf('z')]
+    physicalSizeScalingMatrix[10] * shape[labels.indexOf("z")],
   ];
   return [xSlice, ySlice, zSlice];
 }

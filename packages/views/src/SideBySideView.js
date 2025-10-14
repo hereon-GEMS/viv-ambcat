@@ -1,9 +1,9 @@
-import { COORDINATE_SYSTEM } from '@deck.gl/core';
-import { PolygonLayer } from '@deck.gl/layers';
-import { ScaleBarLayer, makeBoundingBox } from '@vivjs/layers';
+import { COORDINATE_SYSTEM } from "@deck.gl/core";
+import { PolygonLayer } from "@deck.gl/layers";
+import { ScaleBarLayer, makeBoundingBox } from "@vivjs/layers";
 
-import VivView from './VivView';
-import { getImageLayer, getVivId } from './utils';
+import VivView from "./VivView";
+import { getImageLayer, getVivId } from "./utils";
 /**
  * This class generates a MultiscaleImageLayer and a view for use in the SideBySideViewer.
  * It is linked with its other views as controlled by `linkedIds`, `zoomLock`, and `panLock` parameters.
@@ -34,7 +34,7 @@ export default class SideBySideView extends VivView {
     zoomLock = true,
     viewportOutlineColor = [255, 255, 255],
     viewportOutlineWidth = 10,
-    snapScaleBar = false
+    snapScaleBar = false,
   }) {
     super({ id, x, y, height, width });
     this.linkedIds = linkedIds;
@@ -57,7 +57,7 @@ export default class SideBySideView extends VivView {
         height: currentViewState.height,
         width: currentViewState.width,
         target: [],
-        zoom: null
+        zoom: null,
       };
       const [currentX, currentY] = currentViewState.target;
       if (zoomLock) {
@@ -82,7 +82,7 @@ export default class SideBySideView extends VivView {
         target: thisViewState.target,
         zoom: thisViewState.zoom,
         height: thisViewState.height,
-        width: thisViewState.width
+        width: thisViewState.width,
       };
     }
     return viewState.id === id
@@ -91,14 +91,14 @@ export default class SideBySideView extends VivView {
           target: viewState.target,
           zoom: viewState.zoom,
           height: viewState.height,
-          width: viewState.width
+          width: viewState.width,
         }
       : {
           id,
           target: currentViewState.target,
           zoom: currentViewState.zoom,
           height: currentViewState.height,
-          width: currentViewState.width
+          width: currentViewState.width,
         };
   }
 
@@ -114,11 +114,11 @@ export default class SideBySideView extends VivView {
       id: `viewport-outline-${getVivId(id)}`,
       coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
       data: [boundingBox],
-      getPolygon: f => f,
+      getPolygon: (f) => f,
       filled: false,
       stroked: true,
       getLineColor: viewportOutlineColor,
-      getLineWidth: viewportOutlineWidth * 2 ** -layerViewState.zoom
+      getLineWidth: viewportOutlineWidth * 2 ** -layerViewState.zoom,
     });
     layers.push(border);
 
@@ -131,7 +131,7 @@ export default class SideBySideView extends VivView {
           unit,
           size,
           snap: this.snapScaleBar,
-          viewState: { ...layerViewState, height, width }
+          viewState: { ...layerViewState, height, width },
         })
       );
     }

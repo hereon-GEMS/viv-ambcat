@@ -1,17 +1,17 @@
-import { RENDERING_MODES } from '@hms-dbmi/viv';
-import { create } from 'zustand';
-import { useShallow } from 'zustand/shallow';
+import { RENDERING_MODES } from "@hms-dbmi/viv";
+import { create } from "zustand";
+import { useShallow } from "zustand/shallow";
 
-const captialize = string => string.charAt(0).toUpperCase() + string.slice(1);
+const captialize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
 const generateToggles = (defaults, set) => {
   const toggles = {};
   Object.entries(defaults).forEach(([k, v]) => {
-    if (typeof v === 'boolean') {
+    if (typeof v === "boolean") {
       toggles[`toggle${captialize(k)}`] = () =>
-        set(state => ({
+        set((state) => ({
           ...state,
-          [k]: !state[k]
+          [k]: !state[k],
         }));
     }
   });
@@ -26,7 +26,7 @@ const DEFAUlT_CHANNEL_STATE = {
   selections: [],
   ids: [],
   loader: [{ labels: [], shape: [] }],
-  image: 0
+  image: 0,
 };
 
 const DEFAUlT_CHANNEL_VALUES = {
@@ -35,20 +35,20 @@ const DEFAUlT_CHANNEL_VALUES = {
   colors: [255, 255, 255],
   domains: [0, 65535],
   selections: { z: 0, c: 0, t: 0 },
-  ids: ''
+  ids: "",
 };
 
-export const useChannelsStore = create(set => ({
+export const useChannelsStore = create((set) => ({
   ...DEFAUlT_CHANNEL_STATE,
   ...generateToggles(DEFAUlT_CHANNEL_VALUES, set),
-  toggleIsOn: index =>
-    set(state => {
+  toggleIsOn: (index) =>
+    set((state) => {
       const channelsVisible = [...state.channelsVisible];
       channelsVisible[index] = !channelsVisible[index];
       return { ...state, channelsVisible };
     }),
   setPropertiesForChannel: (channel, newProperties) =>
-    set(state => {
+    set((state) => {
       const entries = Object.entries(newProperties);
       const newState = {};
       entries.forEach(([property, value]) => {
@@ -57,19 +57,19 @@ export const useChannelsStore = create(set => ({
       });
       return { ...state, ...newState };
     }),
-  removeChannel: channel =>
-    set(state => {
+  removeChannel: (channel) =>
+    set((state) => {
       const newState = {};
       const channelKeys = Object.keys(DEFAUlT_CHANNEL_VALUES);
-      Object.keys(state).forEach(key => {
+      Object.keys(state).forEach((key) => {
         if (channelKeys.includes(key)) {
           newState[key] = state[key].filter((_, j) => j !== channel);
         }
       });
       return { ...state, ...newState };
     }),
-  addChannel: newProperties =>
-    set(state => {
+  addChannel: (newProperties) =>
+    set((state) => {
       const entries = Object.entries(newProperties);
       const newState = { ...state };
       entries.forEach(([property, value]) => {
@@ -81,12 +81,12 @@ export const useChannelsStore = create(set => ({
         }
       });
       return newState;
-    })
+    }),
 }));
 
 const DEFAULT_IMAGE_STATE = {
   lensSelection: 0,
-  colormap: '',
+  colormap: "",
   renderingMode: RENDERING_MODES.MAX_INTENSITY_PROJECTION,
   resolution: 0,
   lensEnabled: false,
@@ -97,12 +97,12 @@ const DEFAULT_IMAGE_STATE = {
   xSlice: null,
   ySlice: null,
   zSlice: null,
-  onViewportLoad: () => {}
+  onViewportLoad: () => {},
 };
 
-export const useImageSettingsStore = create(set => ({
+export const useImageSettingsStore = create((set) => ({
   ...DEFAULT_IMAGE_STATE,
-  ...generateToggles(DEFAULT_IMAGE_STATE, set)
+  ...generateToggles(DEFAULT_IMAGE_STATE, set),
 }));
 
 const DEFAULT_VIEWER_STATE = {
@@ -112,7 +112,7 @@ const DEFAULT_VIEWER_STATE = {
   isOffsetsSnackbarOn: false,
   loaderErrorSnackbar: {
     on: false,
-    message: null
+    message: null,
   },
   isNoImageUrlSnackbarOn: false,
   isVolumeRenderingWarningOn: false,
@@ -125,41 +125,41 @@ const DEFAULT_VIEWER_STATE = {
   channelOptions: [],
   metadata: null,
   viewState: null,
-  source: '',
-  pyramidResolution: 0
+  source: "",
+  pyramidResolution: 0,
 };
 
-export const useViewerStore = create(set => ({
+export const useViewerStore = create((set) => ({
   ...DEFAULT_VIEWER_STATE,
   ...generateToggles(DEFAULT_VIEWER_STATE, set),
   setIsChannelLoading: (index, val) =>
-    set(state => {
+    set((state) => {
       const newIsChannelLoading = [...state.isChannelLoading];
       newIsChannelLoading[index] = val;
       return { ...state, isChannelLoading: newIsChannelLoading };
     }),
-  addIsChannelLoading: val =>
-    set(state => {
+  addIsChannelLoading: (val) =>
+    set((state) => {
       const newIsChannelLoading = [...state.isChannelLoading, val];
       return { ...state, isChannelLoading: newIsChannelLoading };
     }),
-  removeIsChannelLoading: index =>
-    set(state => {
+  removeIsChannelLoading: (index) =>
+    set((state) => {
       const newIsChannelLoading = [...state.isChannelLoading];
       newIsChannelLoading.splice(index, 1);
       return { ...state, isChannelLoading: newIsChannelLoading };
-    })
+    }),
 }));
 
 export const useLoader = () => {
   const [fullLoader, image] = useChannelsStore(
-    useShallow(store => [store.loader, store.image])
+    useShallow((store) => [store.loader, store.image])
   );
   return Array.isArray(fullLoader[0]) ? fullLoader[image] : fullLoader;
 };
 
 export const useMetadata = () => {
-  const image = useChannelsStore(store => store.image);
-  const metadata = useViewerStore(store => store.metadata);
+  const image = useChannelsStore((store) => store.image);
+  const metadata = useViewerStore((store) => store.metadata);
   return Array.isArray(metadata) ? metadata[image] : metadata;
 };

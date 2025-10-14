@@ -1,40 +1,40 @@
-import { COORDINATE_SYSTEM, CompositeLayer } from '@deck.gl/core';
-import { GL } from '@luma.gl/constants';
+import { COORDINATE_SYSTEM, CompositeLayer } from "@deck.gl/core";
+import { GL } from "@luma.gl/constants";
 
-import { ColorPaletteExtension } from '@vivjs/extensions';
-import { SIGNAL_ABORTED, isInterleaved } from '@vivjs/loaders';
-import BitmapLayer from './bitmap-layer';
-import XRLayer from './xr-layer/xr-layer';
+import { ColorPaletteExtension } from "@vivjs/extensions";
+import { SIGNAL_ABORTED, isInterleaved } from "@vivjs/loaders";
+import BitmapLayer from "./bitmap-layer";
+import XRLayer from "./xr-layer/xr-layer";
 
 const defaultProps = {
-  pickable: { type: 'boolean', value: true, compare: true },
+  pickable: { type: "boolean", value: true, compare: true },
   coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
-  contrastLimits: { type: 'array', value: [], compare: true },
-  channelsVisible: { type: 'array', value: [], compare: true },
-  selections: { type: 'array', value: [], compare: true },
-  domain: { type: 'array', value: [], compare: true },
-  viewportId: { type: 'string', value: '', compare: true },
+  contrastLimits: { type: "array", value: [], compare: true },
+  channelsVisible: { type: "array", value: [], compare: true },
+  selections: { type: "array", value: [], compare: true },
+  domain: { type: "array", value: [], compare: true },
+  viewportId: { type: "string", value: "", compare: true },
   loader: {
-    type: 'object',
+    type: "object",
     value: {
       getRaster: async () => ({ data: [], height: 0, width: 0 }),
-      dtype: 'Uint16',
-      shape: []
+      dtype: "Uint16",
+      shape: [],
     },
-    compare: true
+    compare: true,
   },
-  onClick: { type: 'function', value: null, compare: true },
-  onViewportLoad: { type: 'function', value: null, compare: true },
+  onClick: { type: "function", value: null, compare: true },
+  onViewportLoad: { type: "function", value: null, compare: true },
   interpolation: {
-    type: 'number',
-    value: 'nearest',
-    compare: true
+    type: "number",
+    value: "nearest",
+    compare: true,
   },
   extensions: {
-    type: 'array',
+    type: "array",
     value: [new ColorPaletteExtension()],
-    compare: true
-  }
+    compare: true,
+  },
 };
 
 /**
@@ -73,15 +73,15 @@ const ImageLayer = class extends CompositeLayer {
       const abortController = new AbortController();
       this.setState({ abortController });
       const { signal } = abortController;
-      const getRaster = selection => loader.getRaster({ selection, signal });
+      const getRaster = (selection) => loader.getRaster({ selection, signal });
       const dataPromises = selections.map(getRaster);
 
       Promise.all(dataPromises)
-        .then(rasters => {
+        .then((rasters) => {
           const raster = {
-            data: rasters.map(d => d.data),
+            data: rasters.map((d) => d.data),
             width: rasters[0]?.width,
-            height: rasters[0]?.height
+            height: rasters[0]?.height,
           };
 
           if (isInterleaved(loader.shape)) {
@@ -89,7 +89,7 @@ const ImageLayer = class extends CompositeLayer {
             raster.data = raster.data[0];
             if (raster.data.length === raster.width * raster.height * 3) {
               // Previously there was a rgb format, but now we only convert to rgba in BitmapLater
-              raster.format = 'rgba8unorm';
+              raster.format = "rgba8unorm";
             }
           }
 
@@ -98,7 +98,7 @@ const ImageLayer = class extends CompositeLayer {
           }
           this.setState({ ...raster });
         })
-        .catch(e => {
+        .catch((e) => {
           if (e !== SIGNAL_ABORTED) {
             throw e; // re-throws error if not our signal
           }
@@ -127,7 +127,7 @@ const ImageLayer = class extends CompositeLayer {
         // Shared props with XRLayer:
         bounds,
         id: `image-sub-layer-${bounds}-${id}`,
-        extensions: []
+        extensions: [],
       });
     }
     return new XRLayer(this.props, {
@@ -135,11 +135,11 @@ const ImageLayer = class extends CompositeLayer {
       // Shared props with BitmapLayer:
       bounds,
       id: `image-sub-layer-${bounds}-${id}`,
-      dtype
+      dtype,
     });
   }
 };
 
-ImageLayer.layerName = 'ImageLayer';
+ImageLayer.layerName = "ImageLayer";
 ImageLayer.defaultProps = defaultProps;
 export default ImageLayer;

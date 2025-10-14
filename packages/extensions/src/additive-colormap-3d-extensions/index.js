@@ -1,7 +1,7 @@
-import AdditiveBlendExtension from './additive-blend-extension';
-import BaseExtension from './base-extension';
-import MaximumIntensityProjectionExtension from './maximum-intensity-projection-extension';
-import MinimumIntensityProjectionExtension from './minimum-intensity-projection-extension';
+import AdditiveBlendExtension from "./additive-blend-extension";
+import BaseExtension from "./base-extension";
+import MaximumIntensityProjectionExtension from "./maximum-intensity-projection-extension";
+import MinimumIntensityProjectionExtension from "./minimum-intensity-projection-extension";
 
 /**
  * This object contains the BaseExtension, which can be extended for other additive colormap-style (i.e viridis, jet etc.) rendering, as well
@@ -17,7 +17,7 @@ const AdditiveColormap3DExtensions = {
   BaseExtension,
   AdditiveBlendExtension,
   MaximumIntensityProjectionExtension,
-  MinimumIntensityProjectionExtension
+  MinimumIntensityProjectionExtension,
 };
 
 export default AdditiveColormap3DExtensions;

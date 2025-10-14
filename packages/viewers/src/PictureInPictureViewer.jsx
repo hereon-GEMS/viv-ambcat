@@ -1,13 +1,13 @@
-import { ColorPaletteExtension } from '@vivjs/extensions';
+import { ColorPaletteExtension } from "@vivjs/extensions";
 import {
   DETAIL_VIEW_ID,
   DetailView,
   OVERVIEW_VIEW_ID,
   OverviewView,
-  getDefaultInitialViewState
-} from '@vivjs/views';
-import * as React from 'react';
-import VivViewer from './VivViewer';
+  getDefaultInitialViewState,
+} from "@vivjs/views";
+import * as React from "react";
+import VivViewer from "./VivViewer";
 
 /**
  * This component provides a component for an overview-detail VivViewer of an image (i.e picture-in-picture).
@@ -47,7 +47,7 @@ import VivViewer from './VivViewer';
  * @param {Object} [props.deckProps] Additional options used when creating the DeckGL component.  See [the deck.gl docs.](https://deck.gl/docs/api-reference/core/deck#initialization-settings).  `layerFilter`, `layers`, `onViewStateChange`, `views`, `viewState`, `useDevicePixels`, and `getCursor` are already set.
  */
 
-const PictureInPictureViewer = props => {
+const PictureInPictureViewer = (props) => {
   const {
     loader,
     contrastLimits,
@@ -73,9 +73,9 @@ const PictureInPictureViewer = props => {
     onHover,
     onViewportLoad,
     extensions = [new ColorPaletteExtension()],
-    deckProps
+    deckProps,
   } = props;
-  const detailViewState = viewStatesProp?.find(v => v.id === DETAIL_VIEW_ID);
+  const detailViewState = viewStatesProp?.find((v) => v.id === DETAIL_VIEW_ID);
   // biome-ignore lint/correctness/useExhaustiveDependencies: Carried over from eslint, without explanation.
   const baseViewState = React.useMemo(() => {
     return (
@@ -88,7 +88,7 @@ const PictureInPictureViewer = props => {
     id: DETAIL_VIEW_ID,
     height,
     width,
-    snapScaleBar
+    snapScaleBar,
   });
   const layerConfig = {
     loader,
@@ -104,7 +104,7 @@ const PictureInPictureViewer = props => {
     lensBorderColor,
     lensBorderRadius,
     extensions,
-    transparentColor
+    transparentColor,
   };
   const views = [detailView];
   const layerProps = [layerConfig];
@@ -112,7 +112,7 @@ const PictureInPictureViewer = props => {
   if (overviewOn && loader) {
     // It's unclear why this is needed because OverviewView.filterViewState sets "zoom" and "target".
     const overviewViewState = viewStatesProp?.find(
-      v => v.id === OVERVIEW_VIEW_ID
+      (v) => v.id === OVERVIEW_VIEW_ID
     ) || { ...baseViewState, id: OVERVIEW_VIEW_ID };
     const overviewView = new OverviewView({
       id: OVERVIEW_VIEW_ID,
@@ -120,7 +120,7 @@ const PictureInPictureViewer = props => {
       detailHeight: height,
       detailWidth: width,
       clickCenter,
-      ...overview
+      ...overview,
     });
     views.push(overviewView);
     layerProps.push({ ...layerConfig, lensEnabled: false });

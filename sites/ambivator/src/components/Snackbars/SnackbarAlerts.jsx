@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import Link from '@mui/material/Link';
+import Link from "@mui/material/Link";
 
 export function OffsetsWarning() {
   return (
@@ -15,7 +15,7 @@ export function OffsetsWarning() {
         href="http://viv.gehlenborglab.org/#data-preparation"
       >
         in this section of our documentation
-      </Link>{' '}
+      </Link>{" "}
       and then place the offsets.json adjacent to the OME-TIFF wherever hosted.
     </>
   );
@@ -26,15 +26,15 @@ export function LoaderError({ message }) {
     <>
       {message
         ? `The following error was thrown: "${message}". `
-        : 'Something has gone wrong loading your image. '}
-      Please refer to the{' '}
+        : "Something has gone wrong loading your image. "}
+      Please refer to the{" "}
       <Link
         target="_blank"
         rel="noopener noreferrer"
         href="http://viv.gehlenborglab.org"
       >
         docs
-      </Link>{' '}
+      </Link>{" "}
       for information about supported file formats.
     </>
   );
@@ -45,14 +45,14 @@ export function NoImageUrlInfo() {
     <>
       You are seeing a random demo image because no image URL was provided. To
       view your own images, enter a URL into the &quot;OME-TIFF/Bioformats-Zarr
-      URL&quot; field. See the{' '}
+      URL&quot; field. See the{" "}
       <Link
         target="_blank"
         rel="noopener noreferrer"
         href="http://viv.gehlenborglab.org"
       >
         docs
-      </Link>{' '}
+      </Link>{" "}
       for details on how to prepare your images for viewing with Ambivator.
     </>
   );

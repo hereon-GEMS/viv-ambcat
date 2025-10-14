@@ -1,15 +1,15 @@
-import { openGroup } from 'zarr';
-import type { ZarrArray } from 'zarr';
-import type { OmeXml } from '../../omexml';
-import { getLabels, isInterleaved, prevPowerOf2 } from '../../utils';
+import { openGroup } from "zarr";
+import type { ZarrArray } from "zarr";
+import type { OmeXml } from "../../omexml";
+import { getLabels, isInterleaved, prevPowerOf2 } from "../../utils";
 
-import type { Labels } from '@vivjs/types';
-import type { Axis, RootAttrs } from '../ome-zarr';
+import type { Labels } from "@vivjs/types";
+import type { Axis, RootAttrs } from "../ome-zarr";
 
 /*
  * Returns true if data shape is that expected for OME-Zarr.
  */
-function isOmeZarr(dataShape: number[], Pixels: OmeXml[0]['Pixels']) {
+function isOmeZarr(dataShape: number[], Pixels: OmeXml[0]["Pixels"]) {
   const { SizeT, SizeC, SizeZ, SizeY, SizeX } = Pixels;
   // OME-Zarr dim order is always ['t', 'c', 'z', 'y', 'x']
   const omeZarrShape = [SizeT, SizeC, SizeZ, SizeY, SizeX];
@@ -31,7 +31,7 @@ export function guessBioformatsLabels(
 ) {
   if (isOmeZarr(shape, Pixels)) {
     // It's an OME-Zarr Image,
-    return getLabels('XYZCT');
+    return getLabels("XYZCT");
   }
 
   // Guess labels derived from OME-XML
@@ -44,7 +44,7 @@ export function guessBioformatsLabels(
       throw Error(`Dimension ${label} is invalid for OME-XML.`);
     }
     if (shape[i] !== xmlSize) {
-      throw Error('Dimension mismatch between zarr source and OME-XML.');
+      throw Error("Dimension mismatch between zarr source and OME-XML.");
     }
   });
 
@@ -63,46 +63,46 @@ export function guessBioformatsLabels(
  * > getRootPrefix(files, 'data.zarr') === '/some/long/path/to/data.zarr'
  */
 export function getRootPrefix(files: { path: string }[], rootName: string) {
-  const first = files.find(f => f.path.indexOf(rootName) > 0);
+  const first = files.find((f) => f.path.indexOf(rootName) > 0);
   if (!first) {
-    throw Error('Could not find root in store.');
+    throw Error("Could not find root in store.");
   }
   const prefixLength = first.path.indexOf(rootName) + rootName.length;
   return first.path.slice(0, prefixLength);
 }
 
 function isAxis(axisOrLabel: string[] | Axis[]): axisOrLabel is Axis[] {
-  return typeof axisOrLabel[0] !== 'string';
+  return typeof axisOrLabel[0] !== "string";
 }
 
 function castLabels(dimnames: string[]) {
   return dimnames as Labels<string[]>;
 }
 
-export async function loadMultiscales(store: ZarrArray['store'], path = '') {
+export async function loadMultiscales(store: ZarrArray["store"], path = "") {
   const grp = await openGroup(store, path);
   const rootAttrs = (await grp.attrs.asObject()) as RootAttrs;
 
-  let paths = ['0'];
+  let paths = ["0"];
   // Default axes used for v0.1 and v0.2.
-  let labels = castLabels(['t', 'c', 'z', 'y', 'x']);
-  if ('multiscales' in rootAttrs) {
+  let labels = castLabels(["t", "c", "z", "y", "x"]);
+  if ("multiscales" in rootAttrs) {
     const { datasets, axes } = rootAttrs.multiscales[0];
-    paths = datasets.map(d => d.path);
+    paths = datasets.map((d) => d.path);
     if (axes) {
       if (isAxis(axes)) {
-        labels = castLabels(axes.map(axis => axis.name));
+        labels = castLabels(axes.map((axis) => axis.name));
       } else {
         labels = castLabels(axes);
       }
     }
   }
 
-  const data = paths.map(path => grp.getItem(path));
+  const data = paths.map((path) => grp.getItem(path));
   return {
     data: (await Promise.all(data)) as ZarrArray[],
     rootAttrs,
-    labels
+    labels,
   };
 }
 

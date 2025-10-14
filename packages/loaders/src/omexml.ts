@@ -1,5 +1,5 @@
-import * as z from 'zod';
-import { intToRgba, parseXML } from './utils';
+import * as z from "zod";
+import { intToRgba, parseXML } from "./utils";
 
 export type OmeXml = ReturnType<typeof fromString>;
 
@@ -10,7 +10,7 @@ type Prettify<T> = {
 function flattenAttributes<T extends { attr: Record<string, unknown> }>({
   attr,
   ...rest
-}: T): Prettify<Pick<T, Exclude<keyof T, 'attr'>> & T['attr']> {
+}: T): Prettify<Pick<T, Exclude<keyof T, "attr">> & T["attr"]> {
   // @ts-expect-error - TS doesn't like the prettify type
   return { ...attr, ...rest };
 }
@@ -21,64 +21,64 @@ function ensureArray<T>(x: T | T[]) {
 
 export type DimensionOrder = z.infer<typeof DimensionOrderSchema>;
 const DimensionOrderSchema = z.enum([
-  'XYZCT',
-  'XYZTC',
-  'XYCTZ',
-  'XYCZT',
-  'XYTCZ',
-  'XYTZC'
+  "XYZCT",
+  "XYZTC",
+  "XYCTZ",
+  "XYCZT",
+  "XYTCZ",
+  "XYTZC",
 ]);
 
 const PixelTypeSchema = z.enum([
-  'int8',
-  'int16',
-  'int32',
-  'uint8',
-  'uint16',
-  'uint32',
-  'float',
-  'bit',
-  'double',
-  'complex',
-  'double-complex'
+  "int8",
+  "int16",
+  "int32",
+  "uint8",
+  "uint16",
+  "uint32",
+  "float",
+  "bit",
+  "double",
+  "complex",
+  "double-complex",
 ]);
 
 export type PhysicalUnit = z.infer<typeof PhysicalUnitSchema>;
 const PhysicalUnitSchema = z.enum([
-  'Ym',
-  'Zm',
-  'Em',
-  'Pm',
-  'Tm',
-  'Gm',
-  'Mm',
-  'km',
-  'hm',
-  'dam',
-  'm',
-  'dm',
-  'cm',
-  'mm',
-  'µm',
-  'nm',
-  'pm',
-  'fm',
-  'am',
-  'zm',
-  'ym',
-  'Å',
-  'thou',
-  'li',
-  'in',
-  'ft',
-  'yd',
-  'mi',
-  'ua',
-  'ly',
-  'pc',
-  'pt',
-  'pixel',
-  'reference frame'
+  "Ym",
+  "Zm",
+  "Em",
+  "Pm",
+  "Tm",
+  "Gm",
+  "Mm",
+  "km",
+  "hm",
+  "dam",
+  "m",
+  "dm",
+  "cm",
+  "mm",
+  "µm",
+  "nm",
+  "pm",
+  "fm",
+  "am",
+  "zm",
+  "ym",
+  "Å",
+  "thou",
+  "li",
+  "in",
+  "ft",
+  "yd",
+  "mi",
+  "ua",
+  "ly",
+  "pc",
+  "pt",
+  "pixel",
+  "reference frame",
 ]);
 
 const ChannelSchema = z
@@ -88,8 +88,8 @@ const ChannelSchema = z
       ID: z.string(),
       SamplesPerPixel: z.coerce.number().optional(),
       Name: z.string().optional(),
-      Color: z.coerce.number().transform(intToRgba).optional()
-    })
+      Color: z.coerce.number().transform(intToRgba).optional(),
+    }),
   })
   .transform(flattenAttributes);
 
@@ -97,8 +97,8 @@ const UuidSchema = z
   .object({})
   .extend({
     attr: z.object({
-      FileName: z.string()
-    })
+      FileName: z.string(),
+    }),
   })
   .transform(flattenAttributes);
 
@@ -110,15 +110,15 @@ const TiffDataSchema = z
       PlaneCount: z.coerce.number().default(1),
       FirstT: z.coerce.number().optional(),
       FirstC: z.coerce.number().optional(),
-      FirstZ: z.coerce.number().optional()
-    })
+      FirstZ: z.coerce.number().optional(),
+    }),
   })
   .transform(flattenAttributes);
 
 const PixelsSchema = z
   .object({
     Channel: z.preprocess(ensureArray, ChannelSchema.array()),
-    TiffData: z.preprocess(ensureArray, TiffDataSchema.array()).optional()
+    TiffData: z.preprocess(ensureArray, TiffDataSchema.array()).optional(),
   })
   .extend({
     attr: z.object({
@@ -134,18 +134,18 @@ const PixelsSchema = z
       PhysicalSizeY: z.coerce.number().optional(),
       PhysicalSizeZ: z.coerce.number().optional(),
       SignificantBits: z.coerce.number().optional(),
-      PhysicalSizeXUnit: PhysicalUnitSchema.optional().default('µm'),
-      PhysicalSizeYUnit: PhysicalUnitSchema.optional().default('µm'),
-      PhysicalSizeZUnit: PhysicalUnitSchema.optional().default('µm'),
+      PhysicalSizeXUnit: PhysicalUnitSchema.optional().default("µm"),
+      PhysicalSizeYUnit: PhysicalUnitSchema.optional().default("µm"),
+      PhysicalSizeZUnit: PhysicalUnitSchema.optional().default("µm"),
       BigEndian: z
         .string()
-        .transform(v => v.toLowerCase() === 'true')
+        .transform((v) => v.toLowerCase() === "true")
         .optional(),
       Interleaved: z
         .string()
-        .transform(v => v.toLowerCase() === 'true')
-        .optional()
-    })
+        .transform((v) => v.toLowerCase() === "true")
+        .optional(),
+    }),
   })
   .transform(flattenAttributes)
   // Rename the `Channel` key to `Channels` for backwards compatibility
@@ -153,20 +153,20 @@ const PixelsSchema = z
 
 const ImageSchema = z
   .object({
-    AquisitionDate: z.string().optional().default(''),
-    Description: z.unknown().optional().default(''),
-    Pixels: PixelsSchema
+    AquisitionDate: z.string().optional().default(""),
+    Description: z.unknown().optional().default(""),
+    Pixels: PixelsSchema,
   })
   .extend({
     attr: z.object({
       ID: z.string(),
-      Name: z.string().optional()
-    })
+      Name: z.string().optional(),
+    }),
   })
   .transform(flattenAttributes);
 
 const OmeSchema = z.object({
-  Image: z.preprocess(ensureArray, ImageSchema.array())
+  Image: z.preprocess(ensureArray, ImageSchema.array()),
 });
 // TODO: Verify that these attributes are always present
 // .extend({
@@ -181,27 +181,27 @@ const OmeSchema = z.object({
 export function fromString(str: string) {
   const raw = parseXML(str);
   const omeXml = OmeSchema.parse(raw);
-  return omeXml['Image'].map(img => {
+  return omeXml["Image"].map((img) => {
     return {
       ...img,
       format() {
-        const sizes = (['X', 'Y', 'Z'] as const)
-          .map(name => {
+        const sizes = (["X", "Y", "Z"] as const)
+          .map((name) => {
             const size = img.Pixels[`PhysicalSize${name}` as const];
             const unit = img.Pixels[`PhysicalSize${name}Unit` as const];
-            return size ? `${size} ${unit}` : '-';
+            return size ? `${size} ${unit}` : "-";
           })
-          .join(' x ');
+          .join(" x ");
 
         return {
-          'Acquisition Date': img.AquisitionDate,
-          'Dimensions (XY)': `${img.Pixels['SizeX']} x ${img.Pixels['SizeY']}`,
-          'Pixels Type': img.Pixels['Type'],
-          'Pixels Size (XYZ)': sizes,
-          'Z-sections/Timepoints': `${img.Pixels['SizeZ']} x ${img.Pixels['SizeT']}`,
-          Channels: img.Pixels['SizeC']
+          "Acquisition Date": img.AquisitionDate,
+          "Dimensions (XY)": `${img.Pixels["SizeX"]} x ${img.Pixels["SizeY"]}`,
+          "Pixels Type": img.Pixels["Type"],
+          "Pixels Size (XYZ)": sizes,
+          "Z-sections/Timepoints": `${img.Pixels["SizeZ"]} x ${img.Pixels["SizeT"]}`,
+          Channels: img.Pixels["SizeC"],
         };
-      }
+      },
     };
   });
 }

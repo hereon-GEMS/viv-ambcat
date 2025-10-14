@@ -1,12 +1,12 @@
-import { addDecoder, getDecoder } from 'geotiff';
-import LZWDecoder from './lzw-decoder';
+import { addDecoder, getDecoder } from "geotiff";
+import LZWDecoder from "./lzw-decoder";
 
 addDecoder(5, () => LZWDecoder);
 
 // @ts-expect-error - We are in a worker context
 const worker: ServiceWorker = self;
 
-worker.addEventListener('message', async e => {
+worker.addEventListener("message", async (e) => {
   // @ts-expect-error - FIXME: we should have strict types
   const { id, fileDirectory, buffer } = e.data;
   const decoder = await getDecoder(fileDirectory);

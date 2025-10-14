@@ -27,6 +27,7 @@
     "react": "catalog:"
   },
   "dependencies": {
+    "@kitware/vtk.js": "^34.13.1",
     "@vivjs/constants": "workspace:*",
     "@vivjs/extensions": "workspace:*",
     "@vivjs/views": "workspace:*",

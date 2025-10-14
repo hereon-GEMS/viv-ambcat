@@ -1,19 +1,19 @@
-import { addDecoder, fromBlob } from 'geotiff';
-import type { Pool } from 'geotiff';
+import { addDecoder, fromBlob } from "geotiff";
+import type { Pool } from "geotiff";
 
-import LZWDecoder from './lib/lzw-decoder';
+import LZWDecoder from "./lib/lzw-decoder";
 import {
   type OmeTiffDims,
   type OmeTiffSelection,
   createGeoTiff,
-  parseFilename
-} from './lib/utils';
+  parseFilename,
+} from "./lib/utils";
 
-import type { OmeXml } from '../omexml';
-import { type MultiTiffImage, load as loadMulti } from './multi-tiff';
-import { loadMultifileOmeTiff } from './multifile-ome-tiff';
-import type TiffPixelSource from './pixel-source';
-import { loadSingleFileOmeTiff } from './singlefile-ome-tiff';
+import type { OmeXml } from "../omexml";
+import { type MultiTiffImage, load as loadMulti } from "./multi-tiff";
+import { loadMultifileOmeTiff } from "./multifile-ome-tiff";
+import type TiffPixelSource from "./pixel-source";
+import { loadSingleFileOmeTiff } from "./singlefile-ome-tiff";
 
 addDecoder(5, () => LZWDecoder);
 
@@ -24,7 +24,7 @@ interface TiffOptions {
 }
 
 interface OmeTiffOptions extends TiffOptions {
-  images?: 'first' | 'all';
+  images?: "first" | "all";
 }
 
 interface MultiTiffOptions {
@@ -40,18 +40,18 @@ type OmeTiffImage = {
 };
 
 function isSupportedCompanionOmeTiffFile(source: string | File) {
-  return typeof source === 'string' && source.endsWith('.companion.ome');
+  return typeof source === "string" && source.endsWith(".companion.ome");
 }
 
 /** @ignore */
 export async function loadOmeTiff(
   source: string | File,
-  opts: TiffOptions & { images: 'all' }
+  opts: TiffOptions & { images: "all" }
 ): Promise<OmeTiffImage[]>;
 /** @ignore */
 export async function loadOmeTiff(
   source: string | File,
-  opts: TiffOptions & { images: 'first' }
+  opts: TiffOptions & { images: "first" }
 ): Promise<OmeTiffImage>;
 /** @ignore */
 export async function loadOmeTiff(
@@ -81,7 +81,7 @@ export async function loadOmeTiff(
     ? loadMultifileOmeTiff
     : loadSingleFileOmeTiff;
   const loaders = await load(source, opts);
-  return opts.images === 'all' ? loaders : loaders[0];
+  return opts.images === "all" ? loaders : loaders[0];
 }
 
 function getImageSelectionName(
@@ -127,22 +127,22 @@ export async function loadMultiTiff(
   ][],
   opts: MultiTiffOptions = {}
 ) {
-  const { pool, headers = {}, name = 'MultiTiff' } = opts;
+  const { pool, headers = {}, name = "MultiTiff" } = opts;
   const tiffImage: MultiTiffImage[] = [];
   const channelNames = [];
 
   for (const source of sources) {
     const [s, file] = source;
     const imageSelections = Array.isArray(s) ? s : [s];
-    if (typeof file === 'string') {
+    if (typeof file === "string") {
       // If the file is a string then we're dealing with loading from a URL.
       const parsedFilename = parseFilename(file);
       const extension = parsedFilename.extension?.toLowerCase();
-      if (extension === 'tif' || extension === 'tiff') {
+      if (extension === "tif" || extension === "tiff") {
         const tiffImageName = parsedFilename.name;
         if (tiffImageName) {
           const curImage = await createGeoTiff(file, {
-            headers
+            headers,
           });
           for (let i = 0; i < imageSelections.length; i++) {
             const curSelection = imageSelections[i];
@@ -189,5 +189,5 @@ export async function loadMultiTiff(
     return loadMulti(name, tiffImage, opts.channelNames || channelNames, pool);
   }
 
-  throw new Error('Unable to load image from provided TiffFolder source.');
+  throw new Error("Unable to load image from provided TiffFolder source.");
 }

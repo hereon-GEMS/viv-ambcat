@@ -1,14 +1,14 @@
-import { LayerExtension } from '@deck.gl/core';
-import { getDefaultPalette, padColors } from '../utils';
-import lens from './lens-module';
+import { LayerExtension } from "@deck.gl/core";
+import { getDefaultPalette, padColors } from "../utils";
+import lens from "./lens-module";
 
 const defaultProps = {
-  lensEnabled: { type: 'boolean', value: false, compare: true },
-  lensSelection: { type: 'number', value: 0, compare: true },
-  lensRadius: { type: 'number', value: 100, compare: true },
-  lensBorderColor: { type: 'array', value: [255, 255, 255], compare: true },
-  lensBorderRadius: { type: 'number', value: 0.02, compare: true },
-  colors: { type: 'array', value: null, compare: true }
+  lensEnabled: { type: "boolean", value: false, compare: true },
+  lensSelection: { type: "number", value: 0, compare: true },
+  lensRadius: { type: "number", value: 100, compare: true },
+  lensBorderColor: { type: "array", value: [255, 255, 255], compare: true },
+  lensBorderRadius: { type: "number", value: 0.02, compare: true },
+  colors: { type: "array", value: null, compare: true },
 };
 
 /**
@@ -26,7 +26,7 @@ const LensExtension = class extends LayerExtension {
   getShaders() {
     return {
       ...super.getShaders(),
-      modules: [lens]
+      modules: [lens],
     };
   }
 
@@ -46,19 +46,19 @@ const LensExtension = class extends LayerExtension {
       }
       const { mousePosition } = layer.context;
       const layerView = layer.context.deck.viewManager.views.filter(
-        view => view.id === viewportId
+        (view) => view.id === viewportId
       )[0];
       const viewState = layer.context.deck.viewManager.viewState[viewportId];
       const viewport = layerView.makeViewport({
         ...viewState,
-        viewState
+        viewState,
       });
       // If the mouse is in the viewport and the mousePosition exists, set
       // the state with the bounding box of the circle that will render as a lens.
       if (mousePosition && viewport.containsPixel(mousePosition)) {
         const offsetMousePosition = {
           x: mousePosition.x - viewport.x,
-          y: mousePosition.y - viewport.y
+          y: mousePosition.y - viewport.y,
         };
         const mousePositionBounds = [
           // left
@@ -68,7 +68,7 @@ const LensExtension = class extends LayerExtension {
           // right
           [offsetMousePosition.x + lensRadius, offsetMousePosition.y],
           // top
-          [offsetMousePosition.x, offsetMousePosition.y - lensRadius]
+          [offsetMousePosition.x, offsetMousePosition.y - lensRadius],
         ];
         // Unproject from screen to world coordinates.
         const unprojectLensBounds = mousePositionBounds.map(
@@ -83,7 +83,7 @@ const LensExtension = class extends LayerExtension {
       this.context.deck.eventManager.on({
         pointermove: onMouseMove,
         pointerleave: onMouseMove,
-        wheel: onMouseMove
+        wheel: onMouseMove,
       });
     }
     this.setState({ onMouseMove, unprojectLensBounds: [0, 0, 0, 0] });
@@ -98,7 +98,7 @@ const LensExtension = class extends LayerExtension {
       lensBorderColor = defaultProps.lensBorderColor.value,
       lensBorderRadius = defaultProps.lensBorderRadius.value,
       colors,
-      channelsVisible
+      channelsVisible,
     } = this.props;
     // Creating a unit-square scaled intersection box for rendering the lens.
     // It is ok if these coordinates are outside the unit square since
@@ -112,20 +112,20 @@ const LensExtension = class extends LayerExtension {
     const topMouseBoundScaled = (topMouseBound - top) / (bottom - top);
     const paddedColors = padColors({
       channelsVisible: channelsVisible || this.selections.map(() => true),
-      colors: colors || getDefaultPalette(this.props.selections.length)
+      colors: colors || getDefaultPalette(this.props.selections.length),
     });
     const uniforms = {
       majorLensAxis: (rightMouseBoundScaled - leftMouseBoundScaled) / 2,
       minorLensAxis: (bottomMouseBoundScaled - topMouseBoundScaled) / 2,
       lensCenter: [
         (rightMouseBoundScaled + leftMouseBoundScaled) / 2,
-        (bottomMouseBoundScaled + topMouseBoundScaled) / 2
+        (bottomMouseBoundScaled + topMouseBoundScaled) / 2,
       ],
       lensEnabled,
       lensSelection,
       lensBorderColor,
       lensBorderRadius,
-      colors: paddedColors
+      colors: paddedColors,
     };
     this.state.model?.setUniforms(uniforms);
   }
@@ -136,13 +136,13 @@ const LensExtension = class extends LayerExtension {
       this.context.deck.eventManager.off({
         pointermove: this.state?.onMouseMove,
         pointerleave: this.state?.onMouseMove,
-        wheel: this.state?.onMouseMove
+        wheel: this.state?.onMouseMove,
       });
     }
   }
 };
 
-LensExtension.extensionName = 'LensExtension';
+LensExtension.extensionName = "LensExtension";
 LensExtension.defaultProps = defaultProps;
 
 export default LensExtension;

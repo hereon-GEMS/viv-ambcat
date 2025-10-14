@@ -5,10 +5,10 @@ float apply_contrast_limits(float intensity, vec2 contrastLimits) {
 `;
 
 export default {
-  name: 'channel-intensity',
+  name: "channel-intensity",
   defines: {
-    SAMPLER_TYPE: 'usampler2D',
-    COLORMAP_FUNCTION: ''
+    SAMPLER_TYPE: "usampler2D",
+    COLORMAP_FUNCTION: "",
   },
-  fs
+  fs,
 };

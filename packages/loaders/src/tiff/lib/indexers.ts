@@ -1,8 +1,8 @@
-import { type GeoTIFF, GeoTIFFImage } from 'geotiff';
-import type { MultiTiffImage } from '../multi-tiff';
-import type { OmeTiffSelection } from './utils';
+import { type GeoTIFF, GeoTIFFImage } from "geotiff";
+import type { MultiTiffImage } from "../multi-tiff";
+import type { OmeTiffSelection } from "./utils";
 
-type ImageFileDirectory = Awaited<ReturnType<GeoTIFF['parseFileDirectoryAt']>>;
+type ImageFileDirectory = Awaited<ReturnType<GeoTIFF["parseFileDirectoryAt"]>>;
 
 export type OmeTiffIndexer = (
   sel: OmeTiffSelection,

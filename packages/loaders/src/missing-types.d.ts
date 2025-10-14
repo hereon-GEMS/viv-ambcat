@@ -1,5 +1,5 @@
 // https://github.com/mourner/quickselect/blob/26a241497b101167ab43c27c077bed4729c6b697/index.d.ts
-declare module 'quickselect' {
+declare module "quickselect" {
   /**
    *
    * Rearranges items so that all items in the [left, k] are the smallest.

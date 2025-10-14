@@ -1,6 +1,6 @@
-import { OrthographicView } from '@deck.gl/core';
-import { Matrix4 } from '@math.gl/core';
-import { DTYPE_VALUES, MAX_CHANNELS } from '@vivjs/constants';
+import { OrthographicView } from "@deck.gl/core";
+import { Matrix4 } from "@math.gl/core";
+import { DTYPE_VALUES, MAX_CHANNELS } from "@vivjs/constants";
 
 export function range(len) {
   return [...Array(len).keys()];
@@ -44,7 +44,7 @@ export function padContrastLimits({
   contrastLimits = [],
   channelsVisible,
   domain,
-  dtype
+  dtype,
 }) {
   const maxSliderValue = domain?.[1] || getDtypeValues(dtype).max;
   const newContrastLimits = contrastLimits.map((slider, i) =>
@@ -78,19 +78,19 @@ export function onPointer(layer) {
   }
   const { mousePosition } = layer.context;
   const layerView = layer.context.deck.viewManager.views.filter(
-    view => view.id === viewportId
+    (view) => view.id === viewportId
   )[0];
   const viewState = layer.context.deck.viewManager.viewState[viewportId];
   const viewport = layerView.makeViewport({
     ...viewState,
-    viewState
+    viewState,
   });
   // If the mouse is in the viewport and the mousePosition exists, set
   // the state with the bounding box of the circle that will render as a lens.
   if (mousePosition && viewport.containsPixel(mousePosition)) {
     const offsetMousePosition = {
       x: mousePosition.x - viewport.x,
-      y: mousePosition.y - viewport.y
+      y: mousePosition.y - viewport.y,
     };
     const mousePositionBounds = [
       // left
@@ -100,7 +100,7 @@ export function onPointer(layer) {
       // right
       [offsetMousePosition.x + lensRadius, offsetMousePosition.y],
       // top
-      [offsetMousePosition.x, offsetMousePosition.y - lensRadius]
+      [offsetMousePosition.x, offsetMousePosition.y - lensRadius],
     ];
     // Unproject from screen to world coordinates.
     const unprojectLensBounds = mousePositionBounds.map(
@@ -136,14 +136,14 @@ export function makeBoundingBox(viewState) {
     // From the current `detail` viewState, we need its projection matrix (actually the inverse).
     viewState,
     height: viewState.height,
-    width: viewState.width
+    width: viewState.width,
   });
   // Use the inverse of the projection matrix to map screen to the view space.
   return [
     viewport.unproject([0, 0]),
     viewport.unproject([viewport.width, 0]),
     viewport.unproject([viewport.width, viewport.height]),
-    viewport.unproject([0, viewport.height])
+    viewport.unproject([0, viewport.height]),
   ];
 }
 
@@ -152,27 +152,27 @@ const MIN_TARGET = TARGETS[0];
 const MAX_TARGET = TARGETS[TARGETS.length - 1];
 
 const SI_PREFIXES = [
-  { symbol: 'Y', exponent: 24 },
-  { symbol: 'Z', exponent: 21 },
-  { symbol: 'E', exponent: 18 },
-  { symbol: 'P', exponent: 15 },
-  { symbol: 'T', exponent: 12 },
-  { symbol: 'G', exponent: 9 },
-  { symbol: 'M', exponent: 6 },
-  { symbol: 'k', exponent: 3 },
-  { symbol: 'h', exponent: 2 },
-  { symbol: 'da', exponent: 1 },
-  { symbol: '', exponent: 0 },
-  { symbol: 'd', exponent: -1 },
-  { symbol: 'c', exponent: -2 },
-  { symbol: 'm', exponent: -3 },
-  { symbol: 'µ', exponent: -6 },
-  { symbol: 'n', exponent: -9 },
-  { symbol: 'p', exponent: -12 },
-  { symbol: 'f', exponent: -15 },
-  { symbol: 'a', exponent: -18 },
-  { symbol: 'z', exponent: -21 },
-  { symbol: 'y', exponent: -24 }
+  { symbol: "Y", exponent: 24 },
+  { symbol: "Z", exponent: 21 },
+  { symbol: "E", exponent: 18 },
+  { symbol: "P", exponent: 15 },
+  { symbol: "T", exponent: 12 },
+  { symbol: "G", exponent: 9 },
+  { symbol: "M", exponent: 6 },
+  { symbol: "k", exponent: 3 },
+  { symbol: "h", exponent: 2 },
+  { symbol: "da", exponent: 1 },
+  { symbol: "", exponent: 0 },
+  { symbol: "d", exponent: -1 },
+  { symbol: "c", exponent: -2 },
+  { symbol: "m", exponent: -3 },
+  { symbol: "µ", exponent: -6 },
+  { symbol: "n", exponent: -9 },
+  { symbol: "p", exponent: -12 },
+  { symbol: "f", exponent: -15 },
+  { symbol: "a", exponent: -18 },
+  { symbol: "z", exponent: -21 },
+  { symbol: "y", exponent: -24 },
 ];
 
 /**
@@ -182,7 +182,7 @@ const SI_PREFIXES = [
  * @returns {number} Size in meters.
  */
 export function sizeToMeters(size, unit) {
-  if (!unit || unit === 'm') {
+  if (!unit || unit === "m") {
     // Already in meters.
     return size;
   }
@@ -190,15 +190,15 @@ export function sizeToMeters(size, unit) {
     // We remove the trailing 'm' from the unit, so 'cm' becomes 'c' and 'dam' becomes 'da'.
     let unitPrefix = unit.substring(0, unit.length - 1);
     // Support 'u' as a prefix for micrometers.
-    if (unitPrefix === 'u') {
-      unitPrefix = 'µ';
+    if (unitPrefix === "u") {
+      unitPrefix = "µ";
     }
-    const unitObj = SI_PREFIXES.find(p => p.symbol === unitPrefix);
+    const unitObj = SI_PREFIXES.find((p) => p.symbol === unitPrefix);
     if (unitObj) {
       return size * 10 ** unitObj.exponent;
     }
   }
-  throw new Error('Received unknown unit');
+  throw new Error("Received unknown unit");
 }
 
 /**
@@ -230,7 +230,7 @@ export function snapValue(value) {
   // we would want to use an exponent of 3 (for 10 or 100 km),
   // since there is not an SI unit for exponents 4 nor 5.
   let snappedUnit = SI_PREFIXES.find(
-    p => p.exponent % 3 === 0 && p.exponent <= magnitude
+    (p) => p.exponent % 3 === 0 && p.exponent <= magnitude
   );
 
   // We re-scale the original value so it is in the range of our
@@ -243,14 +243,14 @@ export function snapValue(value) {
   // value of 1 (in the next SI unit) rather than 1000 (in the previous one).
   if (adjustedValue > 500 && adjustedValue <= 1000) {
     snappedUnit = SI_PREFIXES.find(
-      p => p.exponent % 3 === 0 && p.exponent <= magnitude + 3
+      (p) => p.exponent % 3 === 0 && p.exponent <= magnitude + 3
     );
     adjustedValue = value / 10 ** snappedUnit.exponent;
   }
 
   // We snap to the nearest target value. This will be the
   // number used in the text label.
-  const targetNewUnits = TARGETS.find(t => t > adjustedValue);
+  const targetNewUnits = TARGETS.find((t) => t > adjustedValue);
 
   // We use the "nice" target value to re-compute the value in the
   // original units, which will be used to compute the size in pixels.
@@ -261,7 +261,7 @@ export function snapValue(value) {
 
 export function addAlpha(array) {
   if (!(array instanceof Uint8Array)) {
-    throw new Error('Expected Uint8Array');
+    throw new Error("Expected Uint8Array");
   }
   const alphaArray = new Uint8Array(array.length + array.length / 3);
   for (let i = 0; i < array.length / 3; i += 1) {

@@ -1,5 +1,5 @@
-import { BaseDecoder } from 'geotiff';
-import { decompress } from 'lzw-tiff-decoder';
+import { BaseDecoder } from "geotiff";
+import { decompress } from "lzw-tiff-decoder";
 
 interface FileDirectory {
   TileWidth?: number;

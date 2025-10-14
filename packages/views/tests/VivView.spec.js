@@ -1,19 +1,19 @@
-import { expect, test } from 'vitest';
+import { expect, test } from "vitest";
 
-import { VivView } from '../src';
-import { getVivId } from '../src/utils';
+import { VivView } from "../src";
+import { getVivId } from "../src/utils";
 
 export const defaultArguments = {
-  id: 'foo',
+  id: "foo",
   x: 100,
   y: 50,
   height: 500,
-  width: 1000
+  width: 1000,
 };
 
 export const defaultViewState = {
   target: [5000, 5000, 0],
-  zoom: -4
+  zoom: -4,
 };
 
 export function generateViewTests(ViewType, args, linkedViewIds = []) {
@@ -40,19 +40,19 @@ export function generateViewTests(ViewType, args, linkedViewIds = []) {
   test(`${ViewType.name} layer test`, () => {
     const view = new ViewType(args);
     const viewStates = { [view.id]: defaultViewState };
-    linkedViewIds.forEach(id => {
+    linkedViewIds.forEach((id) => {
       // endow linked views with some properties
       viewStates[id] = view.filterViewState(defaultViewState);
     });
     const layers = view.getLayers({
       props: {
-        loader: [{ type: 'loads' }],
-        selections: [{ foo: 'bar' }],
-        transitionFields: ['foo']
+        loader: [{ type: "loads" }],
+        selections: [{ foo: "bar" }],
+        transitionFields: ["foo"],
       },
-      viewStates
+      viewStates,
     });
-    layers?.forEach(layer => {
+    layers?.forEach((layer) => {
       layer && expect(layer.id.includes(getVivId(view.id))).toBeTruthy();
     });
   });

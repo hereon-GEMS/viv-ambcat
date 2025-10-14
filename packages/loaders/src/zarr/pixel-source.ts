@@ -1,6 +1,6 @@
-import type { ZarrArray } from 'zarr';
-import { getImageSize, isInterleaved } from '../utils';
-import { getIndexer } from './lib/indexer';
+import type { ZarrArray } from "zarr";
+import { getImageSize, isInterleaved } from "../utils";
+import { getIndexer } from "./lib/indexer";
 
 import type {
   Labels,
@@ -8,18 +8,18 @@ import type {
   PixelSource,
   PixelSourceSelection,
   RasterSelection,
-  TileSelection
-} from '@vivjs/types';
+  TileSelection,
+} from "@vivjs/types";
 
 const DTYPE_LOOKUP = {
-  u1: 'Uint8',
-  u2: 'Uint16',
-  u4: 'Uint32',
-  f4: 'Float32',
-  f8: 'Float64',
-  i1: 'Int8',
-  i2: 'Int16',
-  i4: 'Int32'
+  u1: "Uint8",
+  u2: "Uint16",
+  u4: "Uint32",
+  f4: "Float32",
+  f8: "Float64",
+  i1: "Int8",
+  i2: "Int16",
+  i4: "Int32",
 } as const;
 
 type ZarrIndexer<S extends string[]> = (
@@ -49,7 +49,7 @@ function slice(start: number, stop: number): Slice {
   return { start, stop, step: 1, _slice: true };
 }
 
-type ZarrSource = Pick<ZarrArray, 'shape' | 'chunks' | 'dtype' | 'getRaw'>;
+type ZarrSource = Pick<ZarrArray, "shape" | "chunks" | "dtype" | "getRaw">;
 
 class BoundsCheckError extends Error {}
 
@@ -100,20 +100,20 @@ class ZarrPixelSource<S extends string[]> implements PixelSource<S> {
     const { height, width } = getImageSize(this);
     const [xStart, xStop] = [
       x * this.tileSize,
-      Math.min((x + 1) * this.tileSize, width)
+      Math.min((x + 1) * this.tileSize, width),
     ];
     const [yStart, yStop] = [
       y * this.tileSize,
-      Math.min((y + 1) * this.tileSize, height)
+      Math.min((y + 1) * this.tileSize, height),
     ];
     // Deck.gl can sometimes request edge tiles that don't exist. We throw
     // a BoundsCheckError which is picked up in `ZarrPixelSource.onTileError`
     // and ignored by deck.gl.
     if (xStart === xStop || yStart === yStop) {
-      throw new BoundsCheckError('Tile slice is zero-sized.');
+      throw new BoundsCheckError("Tile slice is zero-sized.");
     }
     if (xStart < 0 || yStart < 0 || xStop > width || yStop > height) {
-      throw new BoundsCheckError('Tile slice is out of bounds.');
+      throw new BoundsCheckError("Tile slice is out of bounds.");
     }
 
     return [slice(xStart, xStop), slice(yStart, yStop)];
@@ -125,21 +125,21 @@ class ZarrPixelSource<S extends string[]> implements PixelSource<S> {
     getOptions?: { storeOptions?: any }
   ) {
     const result = await this._data.getRaw(selection, getOptions);
-    if (typeof result !== 'object') {
-      throw new Error('Expected object from getRaw');
+    if (typeof result !== "object") {
+      throw new Error("Expected object from getRaw");
     }
     return result;
   }
 
   async getRaster({
     selection,
-    signal
+    signal,
   }: RasterSelection<S> | ZarrRasterSelection) {
     const sel = this._chunkIndex(selection, { x: null, y: null });
     const result = await this._getRaw(sel, { storeOptions: { signal } });
     const {
       data,
-      shape: [height, width]
+      shape: [height, width],
     } = result;
     return { data, width, height } as PixelData;
   }
@@ -151,7 +151,7 @@ class ZarrPixelSource<S extends string[]> implements PixelSource<S> {
     const tile = await this._getRaw(sel, { storeOptions: { signal } });
     const {
       data,
-      shape: [height, width]
+      shape: [height, width],
     } = tile;
     return { data, height, width } as PixelData;
   }

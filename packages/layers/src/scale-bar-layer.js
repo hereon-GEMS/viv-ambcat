@@ -1,29 +1,29 @@
-import { COORDINATE_SYSTEM, CompositeLayer } from '@deck.gl/core';
-import { LineLayer, TextLayer } from '@deck.gl/layers';
-import { makeBoundingBox, range, sizeToMeters, snapValue } from './utils';
+import { COORDINATE_SYSTEM, CompositeLayer } from "@deck.gl/core";
+import { LineLayer, TextLayer } from "@deck.gl/layers";
+import { makeBoundingBox, range, sizeToMeters, snapValue } from "./utils";
 
-import { DEFAULT_FONT_FAMILY } from '@vivjs/constants';
+import { DEFAULT_FONT_FAMILY } from "@vivjs/constants";
 
 function getPosition(boundingBox, position, length) {
   const viewWidth = boundingBox[2][0] - boundingBox[0][0];
   const viewHeight = boundingBox[2][1] - boundingBox[0][1];
   switch (position) {
-    case 'bottom-right': {
+    case "bottom-right": {
       const yCoord = boundingBox[2][1] - viewHeight * length;
       const xLeftCoord = boundingBox[2][0] - viewWidth * length;
       return [yCoord, xLeftCoord];
     }
-    case 'top-right': {
+    case "top-right": {
       const yCoord = boundingBox[0][1] + viewHeight * length;
       const xLeftCoord = boundingBox[2][0] - viewWidth * length;
       return [yCoord, xLeftCoord];
     }
-    case 'top-left': {
+    case "top-left": {
       const yCoord = boundingBox[0][1] + viewHeight * length;
       const xLeftCoord = boundingBox[0][0] + viewWidth * length;
       return [yCoord, xLeftCoord];
     }
-    case 'bottom-left': {
+    case "bottom-left": {
       const yCoord = boundingBox[2][1] - viewHeight * length;
       const xLeftCoord = boundingBox[0][0] + viewWidth * length;
       return [yCoord, xLeftCoord];
@@ -35,17 +35,17 @@ function getPosition(boundingBox, position, length) {
 }
 
 const defaultProps = {
-  pickable: { type: 'boolean', value: true, compare: true },
+  pickable: { type: "boolean", value: true, compare: true },
   viewState: {
-    type: 'object',
+    type: "object",
     value: { zoom: 0, target: [0, 0, 0], width: 1, height: 1 },
-    compare: true
+    compare: true,
   },
-  unit: { type: 'string', value: '', compare: true },
-  size: { type: 'number', value: 1, compare: true },
-  position: { type: 'string', value: 'bottom-right', compare: true },
-  length: { type: 'number', value: 0.085, compare: true },
-  snap: { type: 'boolean', value: false, compare: true }
+  unit: { type: "string", value: "", compare: true },
+  size: { type: "number", value: 1, compare: true },
+  position: { type: "string", value: "bottom-right", compare: true },
+  length: { type: "number", value: 0.085, compare: true },
+  snap: { type: "boolean", value: false, compare: true },
 };
 /**
  * @typedef LayerProps
@@ -100,7 +100,7 @@ const ScaleBarLayer = class extends CompositeLayer {
     const [yCoord, xLeftCoord] = getPosition(boundingBox, position, length);
     const xRightCoord = xLeftCoord + barLength;
 
-    const isLeft = position.endsWith('-left');
+    const isLeft = position.endsWith("-left");
 
     const lengthBar = new LineLayer({
       id: `scale-bar-length-${id}`,
@@ -108,13 +108,13 @@ const ScaleBarLayer = class extends CompositeLayer {
       data: [
         [
           [isLeft ? xLeftCoord : xRightCoord - adjustedBarLength, yCoord],
-          [isLeft ? xLeftCoord + adjustedBarLength : xRightCoord, yCoord]
-        ]
+          [isLeft ? xLeftCoord + adjustedBarLength : xRightCoord, yCoord],
+        ],
       ],
-      getSourcePosition: d => d[0],
-      getTargetPosition: d => d[1],
+      getSourcePosition: (d) => d[0],
+      getTargetPosition: (d) => d[1],
       getWidth: 2,
-      getColor: [220, 220, 220]
+      getColor: [220, 220, 220],
     });
     const tickBoundsLeft = new LineLayer({
       id: `scale-bar-height-left-${id}`,
@@ -123,18 +123,18 @@ const ScaleBarLayer = class extends CompositeLayer {
         [
           [
             isLeft ? xLeftCoord : xRightCoord - adjustedBarLength,
-            yCoord - barHeight
+            yCoord - barHeight,
           ],
           [
             isLeft ? xLeftCoord : xRightCoord - adjustedBarLength,
-            yCoord + barHeight
-          ]
-        ]
+            yCoord + barHeight,
+          ],
+        ],
       ],
-      getSourcePosition: d => d[0],
-      getTargetPosition: d => d[1],
+      getSourcePosition: (d) => d[0],
+      getTargetPosition: (d) => d[1],
       getWidth: 2,
-      getColor: [220, 220, 220]
+      getColor: [220, 220, 220],
     });
     const tickBoundsRight = new LineLayer({
       id: `scale-bar-height-right-${id}`,
@@ -143,18 +143,18 @@ const ScaleBarLayer = class extends CompositeLayer {
         [
           [
             isLeft ? xLeftCoord + adjustedBarLength : xRightCoord,
-            yCoord - barHeight
+            yCoord - barHeight,
           ],
           [
             isLeft ? xLeftCoord + adjustedBarLength : xRightCoord,
-            yCoord + barHeight
-          ]
-        ]
+            yCoord + barHeight,
+          ],
+        ],
       ],
-      getSourcePosition: d => d[0],
-      getTargetPosition: d => d[1],
+      getSourcePosition: (d) => d[0],
+      getTargetPosition: (d) => d[1],
       getWidth: 2,
-      getColor: [220, 220, 220]
+      getColor: [220, 220, 220],
     });
     const textLayer = new TextLayer({
       id: `units-label-layer-${id}`,
@@ -166,27 +166,27 @@ const ScaleBarLayer = class extends CompositeLayer {
             isLeft
               ? xLeftCoord + barLength * 0.5
               : xRightCoord - barLength * 0.5,
-            yCoord + barHeight * 4
-          ]
-        }
+            yCoord + barHeight * 4,
+          ],
+        },
       ],
       getColor: [220, 220, 220, 255],
       getSize: 12,
       fontFamily: DEFAULT_FONT_FAMILY,
-      sizeUnits: 'meters',
+      sizeUnits: "meters",
       sizeScale: 2 ** -zoom,
       characterSet: [
-        ...displayUnit.split(''),
-        ...range(10).map(i => String(i)),
-        '.',
-        'e',
-        '+'
-      ]
+        ...displayUnit.split(""),
+        ...range(10).map((i) => String(i)),
+        ".",
+        "e",
+        "+",
+      ],
     });
     return [lengthBar, tickBoundsLeft, tickBoundsRight, textLayer];
   }
 };
 
-ScaleBarLayer.layerName = 'ScaleBarLayer';
+ScaleBarLayer.layerName = "ScaleBarLayer";
 ScaleBarLayer.defaultProps = defaultProps;
 export default ScaleBarLayer;

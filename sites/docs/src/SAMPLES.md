@@ -9,15 +9,15 @@ If following the `Data Preparation` tutorial, the server provides Viv access to 
 - `http://localhost:8000/LuCa-7color_Scan1.ome.tif` (OME-TIFF)
 
 ```javascript
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 import {
   getChannelStats,
   loadOmeTiff,
   PictureInPictureViewer,
-} from '@hms-dbmi/viv';
+} from "@hms-dbmi/viv";
 
-const url = 'http://localhost:8000/LuCa-7color_Scan1.ome.tif'; // OME-TIFF
+const url = "http://localhost:8000/LuCa-7color_Scan1.ome.tif"; // OME-TIFF
 
 // Hardcoded rendering properties.
 const props = {
@@ -37,11 +37,10 @@ const props = {
     [0, 255],
   ],
   channelsVisible: [true, true, true],
-}
-
+};
 
 function App() {
-  const [loader, setLoader]= useState(null);
+  const [loader, setLoader] = useState(null);
   const [autoProps, setAutoProps] = useState(null);
   useEffect(() => {
     loadOmeTiff(url).then(setLoader);
@@ -50,30 +49,30 @@ function App() {
   // Viv exposes the getChannelStats to produce nice initial settings
   // so that users can have an "in focus" image immediately.
 
-  async function computeProps(loader){
+  async function computeProps(loader) {
     if (!loader) return null;
     // Use lowest level of the image pyramid for calculating stats.
     const source = loader.data[loader.data.length - 1];
-    const stats = await Promise.all(props.selections.map(async selection => {
-      const raster = await source.getRaster({ selection });
-      return getChannelStats(raster.data);
-    }));
+    const stats = await Promise.all(
+      props.selections.map(async (selection) => {
+        const raster = await source.getRaster({ selection });
+        return getChannelStats(raster.data);
+      })
+    );
     // These are calculated bounds for the contrastLimits
     // that could be used for display purposes.
     // domains = stats.map(stat => stat.domain);
 
     // These are precalculated settings for the contrastLimits that
     // should render a good, "in focus" image initially.
-    const contrastLimits = stats.map(stat => stat.contrastLimits);
+    const contrastLimits = stats.map((stat) => stat.contrastLimits);
     const newProps = { ...props, contrastLimits };
-    return newProps
+    return newProps;
   }
-  
-  useEffect(() => {
 
-    computeProps(loader).then(setAutoProps)
-    
-  }, [loader])
+  useEffect(() => {
+    computeProps(loader).then(setAutoProps);
+  }, [loader]);
 
   if (!loader || !autoProps) return null;
   return (
@@ -91,7 +90,6 @@ function App() {
   );
 }
 export default App;
-
 ```
 
 If you wish to use the `SideBySideViewer`, simply replace `PictureInPictureViewer` with `SideBySideViewer` and add props for `zoomLock` and `panLock` while removing `overview` and `overviewOn`.

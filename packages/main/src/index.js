@@ -8,15 +8,16 @@ export {
   XR3DLayer,
   OverviewLayer,
   VolumeLayer,
-  BitmapLayer
-} from '@vivjs/layers';
+  BitmapLayer,
+} from "@vivjs/layers";
 
 export {
   VivViewer,
   PictureInPictureViewer,
   SideBySideViewer,
-  VolumeViewer
-} from '@vivjs/viewers';
+  VolumeViewer,
+  VtkViewer,
+} from "@vivjs/viewers";
 
 export {
   VivView,
@@ -26,16 +27,16 @@ export {
   VolumeView,
   getDefaultInitialViewState,
   DETAIL_VIEW_ID,
-  OVERVIEW_VIEW_ID
-} from '@vivjs/views';
+  OVERVIEW_VIEW_ID,
+} from "@vivjs/views";
 
 export {
   DTYPE_VALUES,
   MAX_CHANNELS,
   COLORMAPS,
-  RENDERING_MODES
-} from '@vivjs/constants';
+  RENDERING_MODES,
+} from "@vivjs/constants";
 
-export * from '@vivjs/extensions';
+export * from "@vivjs/extensions";
 
-export * from '@vivjs/loaders';
+export * from "@vivjs/loaders";

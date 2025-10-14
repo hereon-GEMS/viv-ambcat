@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
-import Controller from './components/Controller';
-import DropzoneWrapper from './components/DropzoneWrapper';
-import Footer from './components/Footer';
-import SnackBars from './components/Snackbars';
-import Viewer from './components/Viewer';
-import { useImage } from './hooks';
-import { useViewerStore } from './state';
+import Controller from "./components/Controller";
+import DropzoneWrapper from "./components/DropzoneWrapper";
+import Footer from "./components/Footer";
+import SnackBars from "./components/Snackbars";
+import Viewer from "./components/Viewer";
+import { useImage } from "./hooks";
+import { useViewerStore } from "./state";
 
-import './index.css';
+import "./index.css";
 
 /**
  * This component serves as batteries-included visualization for OME-compliant tiff or zarr images.
@@ -19,17 +19,17 @@ import './index.css';
  * */
 export default function Ambivator(props) {
   const { source: initSource, isDemoImage } = props;
-  const isViewerLoading = useViewerStore(store => store.isViewerLoading);
-  const source = useViewerStore(store => store.source);
-  const useLinkedView = useViewerStore(store => store.useLinkedView);
+  const isViewerLoading = useViewerStore((store) => store.isViewerLoading);
+  const source = useViewerStore((store) => store.source);
+  const useLinkedView = useViewerStore((store) => store.useLinkedView);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Ignore carried over from eslint, without explanation.
   useEffect(() => {
     useViewerStore.setState({
       source: initSource,
-      isVolumeRenderingWarningOn: false,  // Disable volume rendering warning for ambivator
+      isVolumeRenderingWarningOn: false, // Disable volume rendering warning for ambivator
       //isNoImageUrlSnackbarOn: isDemoImage,
-      isNoImageUrlSnackbarOn: false  // Disable no image url snackbar for ambivator
+      isNoImageUrlSnackbarOn: false, // Disable no image url snackbar for ambivator
     });
   }, []);
   useImage(source);

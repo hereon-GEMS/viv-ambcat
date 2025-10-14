@@ -1,38 +1,38 @@
-import { useEffect } from 'react';
-import { unstable_batchedUpdates } from 'react-dom';
-import { useDropzone as useReactDropzone } from 'react-dropzone';
-import { useShallow } from 'zustand/shallow';
+import { useEffect } from "react";
+import { unstable_batchedUpdates } from "react-dom";
+import { useDropzone as useReactDropzone } from "react-dropzone";
+import { useShallow } from "zustand/shallow";
 
-import { COLOR_PALLETE, FILL_PIXEL_VALUE } from './constants';
+import { COLOR_PALLETE, FILL_PIXEL_VALUE } from "./constants";
 import {
   useChannelsStore,
   useImageSettingsStore,
   useLoader,
   useMetadata,
-  useViewerStore
-} from './state';
+  useViewerStore,
+} from "./state";
 import {
   buildDefaultSelection,
   createLoader,
   getBoundingCube,
   getMultiSelectionStats,
   guessRgb,
-  isInterleaved
-} from './utils';
+  isInterleaved,
+} from "./utils";
 
 /** @typedef {{ urlOrFile: string | File; description: string; isDemoImage: boolean; }} ImageSource */
 
 /** @param {ImageSource} source */
-export const useImage = source => {
+export const useImage = (source) => {
   const [use3d, toggleUse3d, toggleIsOffsetsSnackbarOn] = useViewerStore(
-    useShallow(store => [
+    useShallow((store) => [
       store.use3d,
       store.toggleUse3d,
-      store.toggleIsOffsetsSnackbarOn
+      store.toggleIsOffsetsSnackbarOn,
     ])
   );
   const [lensEnabled, toggleLensEnabled] = useImageSettingsStore(
-    useShallow(store => [store.lensEnabled, store.toggleLensEnabled])
+    useShallow((store) => [store.lensEnabled, store.toggleLensEnabled])
   );
   const loader = useLoader();
   const metadata = useMetadata();
@@ -41,10 +41,10 @@ export const useImage = source => {
     async function changeLoader() {
       if (!source || !source.urlOrFile) {
         // No source or URL — clear loading states and exit early
-        useViewerStore.setState({ 
-          isChannelLoading: [false], 
+        useViewerStore.setState({
+          isChannelLoading: [false],
           isViewerLoading: false,
-          metadata: null
+          metadata: null,
         });
         //useChannelsStore.setState({ loader: null });
         return;
@@ -58,17 +58,17 @@ export const useImage = source => {
       const newLoader = await createLoader(
         urlOrFile,
         toggleIsOffsetsSnackbarOn,
-        message =>
+        (message) =>
           useViewerStore.setState({
-            loaderErrorSnackbar: { on: true, message }
+            loaderErrorSnackbar: { on: true, message },
           })
       );
       let nextMeta;
       let nextLoader;
       if (Array.isArray(newLoader)) {
         if (newLoader.length > 1) {
-          nextMeta = newLoader.map(l => l.metadata);
-          nextLoader = newLoader.map(l => l.data);
+          nextMeta = newLoader.map((l) => l.metadata);
+          nextLoader = newLoader.map((l) => l.data);
         } else {
           nextMeta = newLoader[0].metadata;
           nextLoader = newLoader[0].data;
@@ -79,21 +79,21 @@ export const useImage = source => {
       }
       if (nextLoader) {
         console.info(
-          'Metadata (in JSON-like form) for current file being viewed: ',
+          "Metadata (in JSON-like form) for current file being viewed: ",
           nextMeta
         );
         unstable_batchedUpdates(() => {
           useChannelsStore.setState({ loader: nextLoader });
           useViewerStore.setState({
-            metadata: nextMeta
+            metadata: nextMeta,
           });
         });
         if (use3d) toggleUse3d();
 
         const url = new URL(window.location.href);
         url.search =
-          typeof urlOrFile === 'string' ? `?image_url=${urlOrFile}` : '';
-        window.history.pushState({}, '', url);
+          typeof urlOrFile === "string" ? `?image_url=${urlOrFile}` : "";
+        window.history.pushState({}, "", url);
       }
     }
     if (source) changeLoader();
@@ -133,17 +133,17 @@ export const useImage = source => {
           newContrastLimits = [
             [0, 255],
             [0, 255],
-            [0, 255]
+            [0, 255],
           ];
           newDomains = [
             [0, 255],
             [0, 255],
-            [0, 255]
+            [0, 255],
           ];
           newColors = [
             [255, 0, 0],
             [0, 255, 0],
-            [0, 0, 255]
+            [0, 0, 255],
           ];
         }
         if (lensEnabled) {
@@ -154,7 +154,7 @@ export const useImage = source => {
         const stats = await getMultiSelectionStats({
           loader,
           selections: newSelections,
-          use3d: false
+          use3d: false,
         });
         newDomains = stats.domains;
         newContrastLimits = stats.contrastLimits;
@@ -167,7 +167,7 @@ export const useImage = source => {
               );
         useViewerStore.setState({
           useLens: channelOptions.length !== 1,
-          useColormap: true
+          useColormap: true,
         });
       }
       useChannelsStore.setState({
@@ -176,21 +176,21 @@ export const useImage = source => {
         domains: newDomains,
         contrastLimits: newContrastLimits,
         colors: newColors,
-        channelsVisible: newColors.map(() => true)
+        channelsVisible: newColors.map(() => true),
       });
       useViewerStore.setState({
-        isChannelLoading: newSelections.map(i => !i),
+        isChannelLoading: newSelections.map((i) => !i),
         isViewerLoading: false,
         pixelValues: new Array(newSelections.length).fill(FILL_PIXEL_VALUE),
         // Set the global selections (needed for the UI). All selections have the same global selection.
         globalSelection: newSelections[0],
-        channelOptions
+        channelOptions,
       });
       const [xSlice, ySlice, zSlice] = getBoundingCube(loader);
       useImageSettingsStore.setState({
         xSlice,
         ySlice,
-        zSlice
+        zSlice,
       });
     };
     if (metadata) changeSettings();
@@ -198,23 +198,23 @@ export const useImage = source => {
 };
 
 export const useDropzone = () => {
-  const handleSubmitFile = files => {
+  const handleSubmitFile = (files) => {
     let newSource;
     if (files.length === 1) {
       newSource = {
         urlOrFile: files[0],
         // Use the trailing part of the URL (file name, presumably) as the description.
-        description: files[0].name
+        description: files[0].name,
       };
     } else {
       newSource = {
         urlOrFile: files,
-        description: 'data.zarr'
+        description: "data.zarr",
       };
     }
     useViewerStore.setState({ source: newSource });
   };
   return useReactDropzone({
-    onDrop: handleSubmitFile
+    onDrop: handleSubmitFile,
   });
 };

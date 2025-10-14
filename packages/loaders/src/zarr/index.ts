@@ -1,9 +1,10 @@
-import { HTTPStore } from 'zarr';
-import { FileStore } from './lib/storage';
-import { getRootPrefix } from './lib/utils';
+import { HTTPStore } from "zarr";
+import { FileStore } from "./lib/storage";
+import { getRootPrefix } from "./lib/utils";
 
-import { load as loadBioformats } from './bioformats-zarr';
-import { load as loadOme } from './ome-zarr';
+import { load as loadBioformats } from "./bioformats-zarr";
+import { load as loadOme } from "./ome-zarr";
+import { load as loadPlain } from "./plain-zarr";
 
 interface ZarrOptions {
   fetchOptions: RequestInit;
@@ -21,15 +22,15 @@ export async function loadBioformatsZarr(
   source: string | (File & { path: string })[],
   options: Partial<ZarrOptions> = {}
 ) {
-  const METADATA = 'METADATA.ome.xml';
-  const ZARR_DIR = 'data.zarr';
+  const METADATA = "METADATA.ome.xml";
+  const ZARR_DIR = "data.zarr";
 
-  if (typeof source === 'string') {
-    const url = source.endsWith('/') ? source.slice(0, -1) : source;
+  if (typeof source === "string") {
+    const url = source.endsWith("/") ? source.slice(0, -1) : source;
     const store = new HTTPStore(`${url}/${ZARR_DIR}`, options);
     const xmlSource = await fetch(`${url}/${METADATA}`, options.fetchOptions);
     if (!xmlSource.ok) {
-      throw Error('No OME-XML metadata found for store.');
+      return loadPlain(store);
     }
     return loadBioformats(store, xmlSource);
   }
@@ -54,7 +55,7 @@ export async function loadBioformatsZarr(
   }
 
   if (!xmlFile) {
-    throw Error('No OME-XML metadata found for store.');
+    return loadPlain(store);
   }
 
   const store = new FileStore(fMap, getRootPrefix(source, ZARR_DIR));
@@ -70,12 +71,12 @@ export async function loadBioformatsZarr(
  */
 export async function loadOmeZarr(
   source: string,
-  options: Partial<ZarrOptions & { type: 'multiscales' }> = {}
+  options: Partial<ZarrOptions & { type: "multiscales" }> = {}
 ) {
   const store = new HTTPStore(source, options);
 
-  if (options?.type !== 'multiscales') {
-    throw Error('Only multiscale OME-Zarr is supported.');
+  if (options?.type !== "multiscales") {
+    throw Error("Only multiscale OME-Zarr is supported.");
   }
 
   return loadOme(store);

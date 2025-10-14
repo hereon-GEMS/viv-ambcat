@@ -1,20 +1,20 @@
-import { Controller, OrthographicView } from '@deck.gl/core';
-import { OverviewLayer, makeBoundingBox } from '@vivjs/layers';
-import { getImageSize } from '@vivjs/loaders';
+import { Controller, OrthographicView } from "@deck.gl/core";
+import { OverviewLayer, makeBoundingBox } from "@vivjs/layers";
+import { getImageSize } from "@vivjs/loaders";
 
-import VivView from './VivView';
-import { getVivId } from './utils';
+import VivView from "./VivView";
+import { getVivId } from "./utils";
 
-export const OVERVIEW_VIEW_ID = 'overview';
+export const OVERVIEW_VIEW_ID = "overview";
 
 class OverviewController extends Controller {
   constructor(props) {
     super(props);
-    this.events = ['click'];
+    this.events = ["click"];
   }
 
   handleEvent(event) {
-    if (event.type !== 'click') {
+    if (event.type !== "click") {
       return;
     }
     let [x, y] = this.getCenter(event);
@@ -57,12 +57,12 @@ export default class OverviewView extends VivView {
     detailWidth,
     scale = 0.2,
     margin = 25,
-    position = 'bottom-right',
+    position = "bottom-right",
     minimumWidth = 150,
     maximumWidth = 350,
     minimumHeight = 150,
     maximumHeight = 350,
-    clickCenter = true
+    clickCenter = true,
   }) {
     super({ id });
     this.margin = margin;
@@ -77,7 +77,7 @@ export default class OverviewView extends VivView {
       minimumWidth,
       maximumWidth,
       minimumHeight,
-      maximumHeight
+      maximumHeight,
     });
     this._setXY();
     this.clickCenter = clickCenter;
@@ -93,7 +93,7 @@ export default class OverviewView extends VivView {
     minimumWidth,
     maximumWidth,
     minimumHeight,
-    maximumHeight
+    maximumHeight,
   }) {
     const numLevels = this.loader.length;
     const { width: rasterWidth, height: rasterHeight } = getImageSize(
@@ -128,22 +128,22 @@ export default class OverviewView extends VivView {
   _setXY() {
     const { height, width, margin, position, detailWidth, detailHeight } = this;
     switch (position) {
-      case 'bottom-right': {
+      case "bottom-right": {
         this.x = detailWidth - width - margin;
         this.y = detailHeight - height - margin;
         break;
       }
-      case 'top-right': {
+      case "top-right": {
         this.x = detailWidth - width - margin;
         this.y = margin;
         break;
       }
-      case 'top-left': {
+      case "top-left": {
         this.x = margin;
         this.y = margin;
         break;
       }
-      case 'bottom-left': {
+      case "bottom-left": {
         this.x = margin;
         this.y = detailHeight - height - margin;
         break;
@@ -166,7 +166,7 @@ export default class OverviewView extends VivView {
       width: this.width,
       x: this.x,
       y: this.y,
-      clear: true
+      clear: true,
     });
   }
 
@@ -179,24 +179,24 @@ export default class OverviewView extends VivView {
       width: this.width,
       id: this.id,
       target: [(_imageWidth * scale) / 2, (_imageHeight * scale) / 2, 0],
-      zoom: -(this.loader.length - 1)
+      zoom: -(this.loader.length - 1),
     };
   }
 
   getLayers({ viewStates, props }) {
     const { detail, overview } = viewStates;
     if (!detail) {
-      throw new Error('Overview requires a viewState with id detail');
+      throw new Error("Overview requires a viewState with id detail");
     }
     // Scale the bounding box.
-    const boundingBox = makeBoundingBox(detail).map(coords =>
-      coords.map(e => e * this.scale)
+    const boundingBox = makeBoundingBox(detail).map((coords) =>
+      coords.map((e) => e * this.scale)
     );
     const overviewLayer = new OverviewLayer(props, {
       id: getVivId(this.id),
       boundingBox,
       overviewScale: this.scale,
-      zoom: -overview.zoom
+      zoom: -overview.zoom,
     });
     return [overviewLayer];
   }

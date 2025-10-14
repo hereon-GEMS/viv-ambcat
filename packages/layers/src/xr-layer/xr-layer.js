@@ -1,27 +1,27 @@
-import { COORDINATE_SYSTEM, Layer, picking, project32 } from '@deck.gl/core';
+import { COORDINATE_SYSTEM, Layer, picking, project32 } from "@deck.gl/core";
 // A lot of this codes inherits paradigms form DeckGL that
 // we live in place for now, hence some of the not-destructuring
 // ... needed to destructure for it to build with luma.gl 9, but we probably need to change these anyway
-import { GL } from '@luma.gl/constants';
-import { Geometry, Model } from '@luma.gl/engine';
-import { ShaderAssembler } from '@luma.gl/shadertools';
-import { padContrastLimits } from '../utils';
-import channels from './shader-modules/channel-intensity';
-import { getRenderingAttrs } from './utils';
+import { GL } from "@luma.gl/constants";
+import { Geometry, Model } from "@luma.gl/engine";
+import { ShaderAssembler } from "@luma.gl/shadertools";
+import { padContrastLimits } from "../utils";
+import channels from "./shader-modules/channel-intensity";
+import { getRenderingAttrs } from "./utils";
 
 const defaultProps = {
-  pickable: { type: 'boolean', value: true, compare: true },
+  pickable: { type: "boolean", value: true, compare: true },
   coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
-  channelData: { type: 'object', value: {}, compare: true },
-  bounds: { type: 'array', value: [0, 0, 1, 1], compare: true },
-  contrastLimits: { type: 'array', value: [], compare: true },
-  channelsVisible: { type: 'array', value: [], compare: true },
-  dtype: { type: 'string', value: 'Uint16', compare: true },
+  channelData: { type: "object", value: {}, compare: true },
+  bounds: { type: "array", value: [0, 0, 1, 1], compare: true },
+  contrastLimits: { type: "array", value: [], compare: true },
+  channelsVisible: { type: "array", value: [], compare: true },
+  dtype: { type: "string", value: "Uint16", compare: true },
   interpolation: {
-    type: 'string',
-    value: 'nearest',
-    compare: true
-  }
+    type: "string",
+    value: "nearest",
+    compare: true,
+  },
 };
 
 /**
@@ -51,29 +51,29 @@ const XRLayer = class extends Layer {
     const { dtype, interpolation } = this.props;
     const { shaderModule, sampler } = getRenderingAttrs(dtype, interpolation);
     const extensionDefinesDeckglProcessIntensity =
-      this._isHookDefinedByExtensions('fs:DECKGL_PROCESS_INTENSITY');
+      this._isHookDefinedByExtensions("fs:DECKGL_PROCESS_INTENSITY");
     const newChannelsModule = { ...channels, inject: {} };
     if (!extensionDefinesDeckglProcessIntensity) {
-      newChannelsModule.inject['fs:DECKGL_PROCESS_INTENSITY'] = `
+      newChannelsModule.inject["fs:DECKGL_PROCESS_INTENSITY"] = `
         intensity = apply_contrast_limits(intensity, contrastLimits);
       `;
     }
     return super.getShaders({
       ...shaderModule,
       defines: {
-        SAMPLER_TYPE: sampler
+        SAMPLER_TYPE: sampler,
       },
-      modules: [project32, picking, newChannelsModule]
+      modules: [project32, picking, newChannelsModule],
     });
   }
 
   _isHookDefinedByExtensions(hookName) {
     const { extensions } = this.props;
-    return extensions?.some(e => {
+    return extensions?.some((e) => {
       const shaders = e.getShaders();
       const { inject = {}, modules = [] } = shaders;
       const definesInjection = inject[hookName];
-      const moduleDefinesInjection = modules.some(m => m?.inject[hookName]);
+      const moduleDefinesInjection = modules.some((m) => m?.inject[hookName]);
       return definesInjection || moduleDefinesInjection;
     });
   }
@@ -90,28 +90,28 @@ const XRLayer = class extends Layer {
     // -- this way of setting parameters is now deprecated and will be subject to further changes moving towards later luma.gl versions & WebGPU.
     device.setParametersWebGL({
       [GL.UNPACK_ALIGNMENT]: 1,
-      [GL.PACK_ALIGNMENT]: 1
+      [GL.PACK_ALIGNMENT]: 1,
     });
     const attributeManager = this.getAttributeManager();
     attributeManager.add({
       positions: {
         size: 3,
-        type: 'float64',
+        type: "float64",
         fp64: this.use64bitPositions(),
         update: this.calculatePositions,
-        noAlloc: true
-      }
+        noAlloc: true,
+      },
     });
     this.setState({
       numInstances: 1,
-      positions: new Float64Array(12)
+      positions: new Float64Array(12),
     });
     const shaderAssembler = ShaderAssembler.getDefaultShaderAssembler();
 
     const mutateStr =
-      'fs:DECKGL_MUTATE_COLOR(inout vec4 rgba, float intensity0, float intensity1, float intensity2, float intensity3, float intensity4, float intensity5, vec2 vTexCoord)';
+      "fs:DECKGL_MUTATE_COLOR(inout vec4 rgba, float intensity0, float intensity1, float intensity2, float intensity3, float intensity4, float intensity5, vec2 vTexCoord)";
     const processStr =
-      'fs:DECKGL_PROCESS_INTENSITY(inout float intensity, vec2 contrastLimits, int channelIndex)';
+      "fs:DECKGL_PROCESS_INTENSITY(inout float intensity, vec2 contrastLimits, int channelIndex)";
     // Only initialize shader hook functions _once globally_
     // Since the program manager is shared across all layers, but many layers
     // might be created, this solves the performance issue of always adding new
@@ -134,7 +134,7 @@ const XRLayer = class extends Layer {
     super.finalizeState();
 
     if (this.state.textures) {
-      Object.values(this.state.textures).forEach(tex => tex?.delete());
+      Object.values(this.state.textures).forEach((tex) => tex?.delete());
     }
   }
 
@@ -166,7 +166,7 @@ const XRLayer = class extends Layer {
     }
     const attributeManager = this.getAttributeManager();
     if (props.bounds !== oldProps.bounds) {
-      attributeManager.invalidate('positions');
+      attributeManager.invalidate("positions");
     }
   }
 
@@ -187,18 +187,18 @@ const XRLayer = class extends Layer {
       ...this.getShaders(),
       id: this.props.id,
       geometry: new Geometry({
-        topology: 'triangle-list',
+        topology: "triangle-list",
         vertexCount: 6,
         indices: new Uint16Array([0, 1, 3, 1, 2, 3]),
         attributes: {
           texCoords: {
             value: new Float32Array([0, 1, 0, 0, 1, 0, 1, 1]),
-            size: 2
-          }
-        }
+            size: 2,
+          },
+        },
       }),
       bufferLayout: this.getAttributeManager().getBufferLayouts(),
-      isInstanced: false
+      isInstanced: false,
     });
   }
 
@@ -244,19 +244,19 @@ const XRLayer = class extends Layer {
     if (textures && model) {
       const { contrastLimits, domain, dtype, channelsVisible } = this.props;
       // Check number of textures not null.
-      const numTextures = Object.values(textures).filter(t => t).length;
+      const numTextures = Object.values(textures).filter((t) => t).length;
       // Slider values and color values can come in before textures since their data is async.
       // Thus we pad based on the number of textures bound.
       const paddedContrastLimits = padContrastLimits({
         contrastLimits: contrastLimits.slice(0, numTextures),
         channelsVisible: channelsVisible.slice(0, numTextures),
         domain,
-        dtype
+        dtype,
       });
       model.setUniforms(
         {
           ...uniforms,
-          contrastLimits: paddedContrastLimits
+          contrastLimits: paddedContrastLimits,
         },
         { disableWarnings: false }
       );
@@ -275,10 +275,10 @@ const XRLayer = class extends Layer {
       channel2: null,
       channel3: null,
       channel4: null,
-      channel5: null
+      channel5: null,
     };
     if (this.state.textures) {
-      Object.values(this.state.textures).forEach(tex => tex?.delete());
+      Object.values(this.state.textures).forEach((tex) => tex?.delete());
     }
     if (
       channelData &&
@@ -294,7 +294,7 @@ const XRLayer = class extends Layer {
       }, this);
       // null textures will throw errors, so we just set unused channels to the first texture for now.
       for (const key in textures) {
-        if (!textures.channel0) throw new Error('Bad texture state!');
+        if (!textures.channel0) throw new Error("Bad texture state!");
         if (!textures[key]) textures[key] = textures.channel0;
       }
       this.setState({ textures });
@@ -311,7 +311,7 @@ const XRLayer = class extends Layer {
     return this.context.device.createTexture({
       width,
       height,
-      dimension: '2d',
+      dimension: "2d",
       data: attrs.cast?.(data) ?? data,
       // we don't want or need mimaps
       mipmaps: false,
@@ -320,14 +320,14 @@ const XRLayer = class extends Layer {
         minFilter: attrs.filter,
         magFilter: attrs.filter,
         // CLAMP_TO_EDGE to remove tile artifacts
-        addressModeU: 'clamp-to-edge',
-        addressModeV: 'clamp-to-edge'
+        addressModeU: "clamp-to-edge",
+        addressModeV: "clamp-to-edge",
       },
-      format: attrs.format
+      format: attrs.format,
     });
   }
 };
 
-XRLayer.layerName = 'XRLayer';
+XRLayer.layerName = "XRLayer";
 XRLayer.defaultProps = defaultProps;
 export default XRLayer;

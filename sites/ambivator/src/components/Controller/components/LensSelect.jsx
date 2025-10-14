@@ -1,29 +1,29 @@
-import React from 'react';
+import React from "react";
 
-import Checkbox from '@mui/material/Checkbox';
-import FormControl from '@mui/material/FormControl';
-import Grid from '@mui/material/Grid2';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import { useShallow } from 'zustand/shallow';
+import Checkbox from "@mui/material/Checkbox";
+import FormControl from "@mui/material/FormControl";
+import Grid from "@mui/material/Grid2";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import { useShallow } from "zustand/shallow";
 
 import {
   useChannelsStore,
   useImageSettingsStore,
-  useViewerStore
-} from '../../../state';
+  useViewerStore,
+} from "../../../state";
 
 function LensSelect() {
-  const selections = useChannelsStore(store => store.selections);
+  const selections = useChannelsStore((store) => store.selections);
   const [lensEnabled, toggleLensEnabled, lensSelection] = useImageSettingsStore(
-    useShallow(store => [
+    useShallow((store) => [
       store.lensEnabled,
       store.toggleLensEnabled,
-      store.lensSelection
+      store.lensSelection,
     ])
   );
-  const channelOptions = useViewerStore(store => store.channelOptions);
-  const currChannelIndices = selections.map(sel => sel.c);
+  const channelOptions = useViewerStore((store) => store.channelOptions);
+  const currChannelIndices = selections.map((sel) => sel.c);
 
   const checkboxColor = `rgb(${[255, 255, 255]})`;
   return (
@@ -31,8 +31,8 @@ function LensSelect() {
       container
       direction="row"
       sx={{
-        justifyContent: 'flex-start',
-        alignItems: 'center'
+        justifyContent: "flex-start",
+        alignItems: "center",
       }}
     >
       <Grid item size={2}>
@@ -44,9 +44,9 @@ function LensSelect() {
           checked={lensEnabled}
           style={{
             color: checkboxColor,
-            '&$checked': {
-              color: checkboxColor
-            }
+            "&$checked": {
+              color: checkboxColor,
+            },
           }}
         />
       </Grid>
@@ -55,9 +55,9 @@ function LensSelect() {
           <Select
             size="small"
             value={lensSelection}
-            onChange={e =>
+            onChange={(e) =>
               useImageSettingsStore.setState({
-                lensSelection: Number.parseInt(e.target.value)
+                lensSelection: Number.parseInt(e.target.value),
               })
             }
           >

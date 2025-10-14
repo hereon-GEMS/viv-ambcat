@@ -1,12 +1,12 @@
-import { LayerExtension } from '@deck.gl/core';
-import { getDefaultPalette, padColors } from '../utils';
-import colorPalette from './color-palette-module';
+import { LayerExtension } from "@deck.gl/core";
+import { getDefaultPalette, padColors } from "../utils";
+import colorPalette from "./color-palette-module";
 
 const defaultProps = {
-  colors: { type: 'array', value: null, compare: true },
-  opacity: { type: 'number', value: 1.0, compare: true },
-  transparentColor: { type: 'array', value: null, compare: true },
-  useTransparentColor: { type: 'boolean', value: false, compare: true }
+  colors: { type: "array", value: null, compare: true },
+  opacity: { type: "number", value: 1.0, compare: true },
+  transparentColor: { type: "array", value: null, compare: true },
+  useTransparentColor: { type: "boolean", value: false, compare: true },
 };
 /**
  * This deck.gl extension allows for a color palette to be used for pseudo-coloring channels.
@@ -22,7 +22,7 @@ const ColorPaletteExtension = class extends LayerExtension {
   getShaders() {
     return {
       ...super.getShaders(),
-      modules: [colorPalette]
+      modules: [colorPalette],
     };
   }
 
@@ -32,23 +32,23 @@ const ColorPaletteExtension = class extends LayerExtension {
       channelsVisible,
       opacity = defaultProps.opacity.value,
       transparentColor = defaultProps.transparentColor.value,
-      useTransparentColor = defaultProps.useTransparentColor.value
+      useTransparentColor = defaultProps.useTransparentColor.value,
     } = this.props;
     const paddedColors = padColors({
       channelsVisible: channelsVisible || this.selections.map(() => true),
-      colors: colors || getDefaultPalette(this.props.selections.length)
+      colors: colors || getDefaultPalette(this.props.selections.length),
     });
     const uniforms = {
       colors: paddedColors,
       opacity,
-      transparentColor: (transparentColor || [0, 0, 0]).map(i => i / 255),
-      useTransparentColor: Boolean(useTransparentColor)
+      transparentColor: (transparentColor || [0, 0, 0]).map((i) => i / 255),
+      useTransparentColor: Boolean(useTransparentColor),
     };
     this.state.model?.setUniforms(uniforms);
   }
 };
 
-ColorPaletteExtension.extensionName = 'ColorPaletteExtension';
+ColorPaletteExtension.extensionName = "ColorPaletteExtension";
 ColorPaletteExtension.defaultProps = defaultProps;
 
 export default ColorPaletteExtension;

@@ -1,6 +1,6 @@
-import type { GeoTIFFImage } from 'geotiff';
-import type { TypedArray } from 'zarr';
-import { SIGNAL_ABORTED, getImageSize, isInterleaved } from '../utils';
+import type { GeoTIFFImage } from "geotiff";
+import type { TypedArray } from "zarr";
+import { SIGNAL_ABORTED, getImageSize, isInterleaved } from "../utils";
 
 import type {
   Labels,
@@ -10,12 +10,12 @@ import type {
   PixelSourceSelection,
   RasterSelection,
   SupportedDtype,
-  TileSelection
-} from '@vivjs/types';
-import type Pool from './lib/Pool';
+  TileSelection,
+} from "@vivjs/types";
+import type Pool from "./lib/Pool";
 
 type ReadRastersOptions = NonNullable<
-  Parameters<GeoTIFFImage['readRasters']>[0]
+  Parameters<GeoTIFFImage["readRasters"]>[0]
 >;
 
 class TiffPixelSource<S extends string[]> implements PixelSource<S> {
@@ -53,7 +53,7 @@ class TiffPixelSource<S extends string[]> implements PixelSource<S> {
     const raster = await image.readRasters({
       interleave,
       ...props,
-      pool: this.pool
+      pool: this.pool,
     });
 
     if (props?.signal?.aborted) {
@@ -68,7 +68,7 @@ class TiffPixelSource<S extends string[]> implements PixelSource<S> {
     return {
       data,
       width: (raster as TypedArray & { width: number }).width,
-      height: (raster as TypedArray & { height: number }).height
+      height: (raster as TypedArray & { height: number }).height,
     } as PixelData;
   }
 

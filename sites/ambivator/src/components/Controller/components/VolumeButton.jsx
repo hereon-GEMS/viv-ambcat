@@ -1,30 +1,30 @@
-import React, { useRef, useReducer } from 'react';
+import React, { useRef, useReducer } from "react";
 
-import Button from '@mui/material/Button';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
+import Button from "@mui/material/Button";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import MenuItem from "@mui/material/MenuItem";
+import MenuList from "@mui/material/MenuList";
+import Paper from "@mui/material/Paper";
+import Popper from "@mui/material/Popper";
 
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from "zustand/shallow";
 
 import {
   useChannelsStore,
   useImageSettingsStore,
   useLoader,
-  useViewerStore
-} from '../../../state';
-import { getBoundingCube, getMultiSelectionStats, range } from '../../../utils';
+  useViewerStore,
+} from "../../../state";
+import { getBoundingCube, getMultiSelectionStats, range } from "../../../utils";
 
 function formatBytes(bytes, decimals = 2) {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
 
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ["Bytes", "KB", "MB", "GB"];
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
@@ -33,9 +33,9 @@ function formatBytes(bytes, decimals = 2) {
 
 const getStatsForResolution = (loader, resolution) => {
   const { shape, labels } = loader[resolution];
-  const height = shape[labels.indexOf('y')];
-  const width = shape[labels.indexOf('x')];
-  const depth = shape[labels.indexOf('z')];
+  const height = shape[labels.indexOf("y")];
+  const width = shape[labels.indexOf("x")];
+  const depth = shape[labels.indexOf("z")];
   const depthDownsampled = Math.max(1, depth >> resolution);
   // Check memory allocation limits for Float32Array (used in XR3DLayer for rendering)
   const totalBytes = 4 * height * width * depthDownsampled;
@@ -63,49 +63,49 @@ const canLoadResolution = (loader, resolution) => {
 
 const useStyles = makeStyles(() => ({
   paper: {
-    backgroundColor: 'rgba(0, 0, 0, 1)'
+    backgroundColor: "rgba(0, 0, 0, 1)",
   },
   span: {
-    width: '70px',
-    textAlign: 'center',
-    paddingLeft: '2px',
-    paddingRight: '2px'
+    width: "70px",
+    textAlign: "center",
+    paddingLeft: "2px",
+    paddingRight: "2px",
   },
   colors: {
-    '&:hover': {
-      backgroundColor: 'transparent'
+    "&:hover": {
+      backgroundColor: "transparent",
     },
-    paddingLeft: '2px',
-    paddingRight: '2px'
-  }
+    paddingLeft: "2px",
+    paddingRight: "2px",
+  },
 }));
 
 function VolumeButton() {
   const [selections, setPropertiesForChannel] = useChannelsStore(
-    useShallow(store => [store.selections, store.setPropertiesForChannel])
+    useShallow((store) => [store.selections, store.setPropertiesForChannel])
   );
   const loader = useLoader();
   const [
     use3d,
     toggleUse3d,
     toggleIsVolumeRenderingWarningOn,
-    isViewerLoading
+    isViewerLoading,
   ] = useViewerStore(
-    useShallow(store => [
+    useShallow((store) => [
       store.use3d,
       store.toggleUse3d,
       store.toggleIsVolumeRenderingWarningOn,
-      store.isViewerLoading
+      store.isViewerLoading,
     ])
   );
 
-  const [open, toggle] = useReducer(v => !v, false);
+  const [open, toggle] = useReducer((v) => !v, false);
   const anchorRef = useRef(null);
   const classes = useStyles();
   const { shape, labels } = Array.isArray(loader) ? loader[0] : loader;
   // Only show volume button if we can actually view resolutions.
   const hasViewableResolutions = Array.from({
-    length: loader.length
+    length: loader.length,
   }).filter((_, resolution) => canLoadResolution(loader, resolution)).length;
   return (
     <>
@@ -114,7 +114,7 @@ function VolumeButton() {
         size="small"
         ref={anchorRef}
         disabled={
-          !(shape[labels.indexOf('z')] > 1) ||
+          !(shape[labels.indexOf("z")] > 1) ||
           isViewerLoading ||
           !hasViewableResolutions
         }
@@ -123,18 +123,18 @@ function VolumeButton() {
           if (use3d) {
             toggleUse3d();
             useViewerStore.setState({
-              isChannelLoading: Array(selections.length).fill(true)
+              isChannelLoading: Array(selections.length).fill(true),
             });
             getMultiSelectionStats({ loader, selections, use3d: !use3d }).then(
               ({ domains, contrastLimits }) => {
                 range(selections.length).forEach((channel, j) =>
                   setPropertiesForChannel(channel, {
                     domains: domains[j],
-                    contrastLimits: contrastLimits[j]
+                    contrastLimits: contrastLimits[j],
                   })
                 );
                 useViewerStore.setState({
-                  isChannelLoading: Array(selections.length).fill(false)
+                  isChannelLoading: Array(selections.length).fill(false),
                 });
               }
             );
@@ -142,7 +142,7 @@ function VolumeButton() {
         }}
         fullWidth
       >
-        {use3d ? 'Hide' : 'Show'} Volumetric Rendering
+        {use3d ? "Hide" : "Show"} Volumetric Rendering
       </Button>
       <Popper open={open} anchorEl={anchorRef.current} placement="bottom-end">
         <Paper className={classes.paper}>
@@ -163,7 +163,7 @@ function VolumeButton() {
                             useViewerStore.setState({
                               isChannelLoading: Array(selections.length).fill(
                                 true
-                              )
+                              ),
                             });
                             const [xSlice, ySlice, zSlice] =
                               getBoundingCube(loader);
@@ -171,36 +171,36 @@ function VolumeButton() {
                               resolution,
                               xSlice,
                               ySlice,
-                              zSlice
+                              zSlice,
                             });
                             toggle();
                             getMultiSelectionStats({
                               loader,
                               selections,
-                              use3d: true
+                              use3d: true,
                             }).then(({ domains, contrastLimits }) => {
                               range(selections.length).forEach((channel, j) =>
                                 setPropertiesForChannel(channel, {
                                   domains: domains[j],
-                                  contrastLimits: contrastLimits[j]
+                                  contrastLimits: contrastLimits[j],
                                 })
                               );
                               useImageSettingsStore.setState({
                                 onViewportLoad: () => {
                                   useImageSettingsStore.setState({
-                                    onViewportLoad: () => {}
+                                    onViewportLoad: () => {},
                                   });
                                   useViewerStore.setState({
                                     isChannelLoading: Array(
                                       selections.length
-                                    ).fill(false)
+                                    ).fill(false),
                                   });
-                                }
+                                },
                               });
                               toggleUse3d();
                               const isWebGL2Supported = !!document
-                                .createElement('canvas')
-                                .getContext('webgl2');
+                                .createElement("canvas")
+                                .getContext("webgl2");
                               if (!isWebGL2Supported) {
                                 toggleIsVolumeRenderingWarningOn();
                               }

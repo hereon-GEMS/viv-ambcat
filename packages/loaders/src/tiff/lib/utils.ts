@@ -1,18 +1,18 @@
-import { fromBlob, fromFile, fromUrl } from 'geotiff';
-import type { GeoTIFF, GeoTIFFImage } from 'geotiff';
-import type { DimensionOrder, OmeXml, PhysicalUnit } from '../../omexml';
-import { assert, DTYPE_LOOKUP, getLabels, prevPowerOf2 } from '../../utils';
-import type { MultiTiffImage } from '../multi-tiff';
-import { createOffsetsProxy } from './proxies';
+import { fromBlob, fromFile, fromUrl } from "geotiff";
+import type { GeoTIFF, GeoTIFFImage } from "geotiff";
+import type { DimensionOrder, OmeXml, PhysicalUnit } from "../../omexml";
+import { assert, DTYPE_LOOKUP, getLabels, prevPowerOf2 } from "../../utils";
+import type { MultiTiffImage } from "../multi-tiff";
+import { createOffsetsProxy } from "./proxies";
 
 // TODO: Remove the fancy label stuff
 export type OmeTiffDims =
-  | ['t', 'c', 'z']
-  | ['z', 't', 'c']
-  | ['t', 'z', 'c']
-  | ['c', 'z', 't']
-  | ['z', 'c', 't']
-  | ['c', 't', 'z'];
+  | ["t", "c", "z"]
+  | ["z", "t", "c"]
+  | ["t", "z", "c"]
+  | ["c", "z", "t"]
+  | ["z", "c", "t"]
+  | ["c", "t", "z"];
 
 export interface OmeTiffSelection {
   t: number;
@@ -32,24 +32,24 @@ type PhysicalSizes = {
 };
 
 export function extractPhysicalSizesfromPixels(
-  d: OmeXml[number]['Pixels']
+  d: OmeXml[number]["Pixels"]
 ): undefined | PhysicalSizes {
   if (
-    !d['PhysicalSizeX'] ||
-    !d['PhysicalSizeY'] ||
-    !d['PhysicalSizeXUnit'] ||
-    !d['PhysicalSizeYUnit']
+    !d["PhysicalSizeX"] ||
+    !d["PhysicalSizeY"] ||
+    !d["PhysicalSizeXUnit"] ||
+    !d["PhysicalSizeYUnit"]
   ) {
     return undefined;
   }
   const physicalSizes: PhysicalSizes = {
-    x: { size: d['PhysicalSizeX'], unit: d['PhysicalSizeXUnit'] },
-    y: { size: d['PhysicalSizeY'], unit: d['PhysicalSizeYUnit'] }
+    x: { size: d["PhysicalSizeX"], unit: d["PhysicalSizeXUnit"] },
+    y: { size: d["PhysicalSizeY"], unit: d["PhysicalSizeYUnit"] },
   };
-  if (d['PhysicalSizeZ'] && d['PhysicalSizeZUnit']) {
+  if (d["PhysicalSizeZ"] && d["PhysicalSizeZUnit"]) {
     physicalSizes.z = {
-      size: d['PhysicalSizeZ'],
-      unit: d['PhysicalSizeZUnit']
+      size: d["PhysicalSizeZ"],
+      unit: d["PhysicalSizeZUnit"],
     };
   }
   return physicalSizes;
@@ -60,22 +60,22 @@ export function parsePixelDataType(dtype: string) {
   return DTYPE_LOOKUP[dtype as keyof typeof DTYPE_LOOKUP];
 }
 
-export function extractAxesFromPixels(d: OmeXml[number]['Pixels']) {
+export function extractAxesFromPixels(d: OmeXml[number]["Pixels"]) {
   // e.g. 'XYZCT' -> ['t', 'c', 'z', 'y', 'x']
-  const labels = getLabels(d['DimensionOrder']);
+  const labels = getLabels(d["DimensionOrder"]);
 
   // Compute "shape" of image
   const shape: number[] = Array(labels.length).fill(0);
-  shape[labels.indexOf('t')] = d['SizeT'];
-  shape[labels.indexOf('c')] = d['SizeC'];
-  shape[labels.indexOf('z')] = d['SizeZ'];
-  shape[labels.indexOf('y')] = d['SizeY'];
-  shape[labels.indexOf('x')] = d['SizeX'];
+  shape[labels.indexOf("t")] = d["SizeT"];
+  shape[labels.indexOf("c")] = d["SizeC"];
+  shape[labels.indexOf("z")] = d["SizeZ"];
+  shape[labels.indexOf("y")] = d["SizeY"];
+  shape[labels.indexOf("x")] = d["SizeX"];
 
   // Push extra dimension if data are interleaved.
-  if (d['Interleaved']) {
+  if (d["Interleaved"]) {
     // @ts-expect-error private, unused dim name for selection
-    labels.push('_c');
+    labels.push("_c");
     shape.push(3);
   }
 
@@ -93,10 +93,10 @@ export function getShapeForBinaryDownsampleLevel(options: {
   level: number;
 }) {
   const { axes, level } = options;
-  const xIndex = axes.labels.indexOf('x');
-  assert(xIndex !== -1, 'x dimension not found');
-  const yIndex = axes.labels.indexOf('y');
-  assert(yIndex !== -1, 'y dimension not found');
+  const xIndex = axes.labels.indexOf("x");
+  assert(xIndex !== -1, "x dimension not found");
+  const yIndex = axes.labels.indexOf("y");
+  assert(yIndex !== -1, "y dimension not found");
   const resolutionShape = axes.shape.slice();
   resolutionShape[xIndex] = axes.shape[xIndex] >> level;
   resolutionShape[yIndex] = axes.shape[yIndex] >> level;
@@ -157,7 +157,7 @@ function guessImageDataType(image: GeoTIFFImage) {
     default:
       break;
   }
-  throw Error('Unsupported data format/bitsPerSample');
+  throw Error("Unsupported data format/bitsPerSample");
 }
 
 function getMultiTiffShapeMap(tiffs: MultiTiffImage[]): {
@@ -176,7 +176,7 @@ function getMultiTiffShapeMap(tiffs: MultiTiffImage[]): {
     y: firstTiff.getHeight(),
     z: z + 1,
     c: c + 1,
-    t: t + 1
+    t: t + 1,
   };
 }
 
@@ -195,7 +195,7 @@ function getChannelSamplesPerPixel(
       existingSamplesPerPixel &&
       existingSamplesPerPixel !== curSamplesPerPixel
     ) {
-      throw Error('Channel samples per pixel mismatch');
+      throw Error("Channel samples per pixel mismatch");
     }
     channelSamplesPerPixel[curChannel] = curSamplesPerPixel;
   }
@@ -232,7 +232,7 @@ function getMultiTiffPixelMedatata(
     channelMetadata.push({
       ID: `Channel:${imageNumber}:${i}`,
       Name: channelNames[i],
-      SamplesPerPixel: channelSamplesPerPixel[i]
+      SamplesPerPixel: channelSamplesPerPixel[i],
     });
   }
   return {
@@ -245,7 +245,7 @@ function getMultiTiffPixelMedatata(
     SizeY: shapeMap.y,
     SizeZ: shapeMap.z,
     Type: dType,
-    Channels: channelMetadata
+    Channels: channelMetadata,
   };
 }
 
@@ -258,8 +258,8 @@ export function getMultiTiffMetadata(
 ) {
   const imageNumber = 0;
   const id = `Image:${imageNumber}`;
-  const date = '';
-  const description = '';
+  const date = "";
+  const description = "";
   const shapeMap = getMultiTiffShapeMap(tiffImages);
   const channelSamplesPerPixel = getChannelSamplesPerPixel(
     tiffImages,
@@ -268,7 +268,7 @@ export function getMultiTiffMetadata(
 
   if (channelNames.length !== shapeMap.c)
     throw Error(
-      'Wrong number of channel names for number of channels provided'
+      "Wrong number of channel names for number of channels provided"
     );
 
   const pixels = getMultiTiffPixelMedatata(
@@ -283,11 +283,11 @@ export function getMultiTiffMetadata(
 
   const format = () => {
     return {
-      'Acquisition Date': date,
-      'Dimensions (XY)': `${shapeMap.x} x ${shapeMap.y}`,
+      "Acquisition Date": date,
+      "Dimensions (XY)": `${shapeMap.x} x ${shapeMap.y}`,
       PixelsType: dType,
-      'Z-sections/Timepoints': `${shapeMap.z} x ${shapeMap.t}`,
-      Channels: shapeMap.c
+      "Z-sections/Timepoints": `${shapeMap.z} x ${shapeMap.t}`,
+      Channels: shapeMap.c,
     };
   };
   return {
@@ -296,16 +296,16 @@ export function getMultiTiffMetadata(
     AcquisitionDate: date,
     Description: description,
     Pixels: pixels,
-    format
+    format,
   };
 }
 
 export function parseFilename(path: string) {
   const parsedFilename: { name?: string; extension?: string } = {};
-  const filename = path.split('/').pop();
-  const splitFilename = filename?.split('.');
+  const filename = path.split("/").pop();
+  const splitFilename = filename?.split(".");
   if (splitFilename) {
-    parsedFilename.name = splitFilename.slice(0, -1).join('.');
+    parsedFilename.name = splitFilename.slice(0, -1).join(".");
     [, parsedFilename.extension] = splitFilename;
   }
   return parsedFilename;
@@ -325,8 +325,8 @@ function createGeoTiffObject(
   if (source instanceof Blob) {
     return fromBlob(source);
   }
-  const url = typeof source === 'string' ? new URL(source) : source;
-  if (url.protocol === 'file:') {
+  const url = typeof source === "string" ? new URL(source) : source;
+  if (url.protocol === "file:") {
     return fromFile(url.pathname);
   }
   // https://github.com/ilan-gold/geotiff.js/tree/viv#abortcontroller-support

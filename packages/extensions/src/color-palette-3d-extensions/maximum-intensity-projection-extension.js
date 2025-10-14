@@ -1,4 +1,4 @@
-import BaseExtension from './base-extension';
+import BaseExtension from "./base-extension";
 
 const _BEFORE_RENDER = `\
   float maxVals[6] = float[6](-1.0, -1.0, -1.0, -1.0, -1.0, -1.0);
@@ -33,6 +33,6 @@ const MaximumIntensityProjectionExtension = class extends BaseExtension {
 };
 
 MaximumIntensityProjectionExtension.extensionName =
-  'MaximumIntensityProjectionExtension';
+  "MaximumIntensityProjectionExtension";
 
 export default MaximumIntensityProjectionExtension;

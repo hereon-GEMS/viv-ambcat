@@ -1,8 +1,8 @@
-import { LayerExtension } from '@deck.gl/core';
-import { apply_transparent_color } from '../shader-utils';
+import { LayerExtension } from "@deck.gl/core";
+import { apply_transparent_color } from "../shader-utils";
 
 // This file is generated via `packages/extensions/prepare.mjs`
-import * as cmaps from '../generated-colormaps';
+import * as cmaps from "../generated-colormaps";
 
 /**
  * A utility to create a Deck.gl shader module for a `glsl-colormap`.
@@ -33,7 +33,7 @@ vec4 colormap(float intensity) {
   return vec4(apply_transparent_color(apply_cmap(min(1.,intensity)).xyz, apply_cmap(0.).xyz, useTransparentColor, opacity));
 }`,
     inject: {
-      'fs:DECKGL_MUTATE_COLOR': `\
+      "fs:DECKGL_MUTATE_COLOR": `\
   float intensityCombo = 0.;
   intensityCombo += max(0.,intensity0);
   intensityCombo += max(0.,intensity1);
@@ -41,15 +41,15 @@ vec4 colormap(float intensity) {
   intensityCombo += max(0.,intensity3);
   intensityCombo += max(0.,intensity4);
   intensityCombo += max(0.,intensity5);
-  rgba = colormap(intensityCombo);`
-    }
+  rgba = colormap(intensityCombo);`,
+    },
   };
 }
 
 const defaultProps = {
-  colormap: { type: 'string', value: 'viridis', compare: true },
-  opacity: { type: 'number', value: 1.0, compare: true },
-  useTransparentColor: { type: 'boolean', value: false, compare: true }
+  colormap: { type: "string", value: "viridis", compare: true },
+  opacity: { type: "number", value: 1.0, compare: true },
+  useTransparentColor: { type: "boolean", value: false, compare: true },
 };
 
 /**
@@ -84,17 +84,17 @@ const AdditiveColormapExtension = class extends LayerExtension {
   draw() {
     const {
       useTransparentColor = defaultProps.useTransparentColor.value,
-      opacity = defaultProps.opacity.value
+      opacity = defaultProps.opacity.value,
     } = this.props;
     const uniforms = {
       opacity,
-      useTransparentColor
+      useTransparentColor,
     };
     this.state.model?.setUniforms(uniforms);
   }
 };
 
-AdditiveColormapExtension.extensionName = 'AdditiveColormapExtension';
+AdditiveColormapExtension.extensionName = "AdditiveColormapExtension";
 AdditiveColormapExtension.defaultProps = defaultProps;
 
 export default AdditiveColormapExtension;

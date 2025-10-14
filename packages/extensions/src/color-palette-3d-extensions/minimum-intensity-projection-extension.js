@@ -1,4 +1,4 @@
-import BaseExtension from './base-extension';
+import BaseExtension from "./base-extension";
 
 const _BEFORE_RENDER = `\
   float minVals[6] = float[6](1. / 0., 1. / 0., 1. / 0., 1. / 0., 1. / 0., 1. / 0.);
@@ -33,6 +33,6 @@ const MinimumIntensityProjectionExtension = class extends BaseExtension {
 };
 
 MinimumIntensityProjectionExtension.extensionName =
-  'MinimumIntensityProjectionExtension';
+  "MinimumIntensityProjectionExtension";
 
 export default MinimumIntensityProjectionExtension;

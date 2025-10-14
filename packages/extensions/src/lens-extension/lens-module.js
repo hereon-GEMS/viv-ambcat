@@ -61,17 +61,17 @@ void mutate_color(inout vec3 rgb, float intensity0, float intensity1, float inte
 `;
 
 export default {
-  name: 'lens-module',
+  name: "lens-module",
   fs,
   inject: {
-    'fs:DECKGL_MUTATE_COLOR': `
+    "fs:DECKGL_MUTATE_COLOR": `
    vec3 rgb = rgba.rgb;
    mutate_color(rgb, intensity0, intensity1, intensity2, intensity3, intensity4, intensity5, vTexCoord);
    rgba = vec4(rgb, 1.);
   `,
-    'fs:#main-end': `
+    "fs:#main-end": `
       bool isFragOnLensBounds = frag_on_lens_bounds(vTexCoord);
       fragColor = (lensEnabled && isFragOnLensBounds) ? vec4(lensBorderColor, 1.) : fragColor;
-  `
-  }
+  `,
+  },
 };

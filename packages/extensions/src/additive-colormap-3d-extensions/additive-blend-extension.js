@@ -1,6 +1,6 @@
-import BaseExtension from './base-extension';
+import BaseExtension from "./base-extension";
 
-const _BEFORE_RENDER = '';
+const _BEFORE_RENDER = "";
 
 const _RENDER = `\
   float intensityArray[6] = float[6](intensityValue0, intensityValue1, intensityValue2, intensityValue3, intensityValue4, intensityValue5);
@@ -24,7 +24,7 @@ const _RENDER = `\
   p += ray_dir * dt;
 `;
 
-const _AFTER_RENDER = '';
+const _AFTER_RENDER = "";
 
 /**
  * This deck.gl extension allows for an additive colormap like viridis or jet to be used for pseudo-coloring channels with Additive Blending in 3D.
@@ -36,6 +36,6 @@ const AdditiveBlendExtension = class extends BaseExtension {
   }
 };
 
-AdditiveBlendExtension.extensionName = 'AdditiveBlendExtension';
+AdditiveBlendExtension.extensionName = "AdditiveBlendExtension";
 
 export default AdditiveBlendExtension;

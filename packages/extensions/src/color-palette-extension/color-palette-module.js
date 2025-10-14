@@ -1,4 +1,4 @@
-import { apply_transparent_color } from '../shader-utils';
+import { apply_transparent_color } from "../shader-utils";
 
 const fs = `\
 uniform vec3 transparentColor;
@@ -30,9 +30,9 @@ rgba = apply_opacity(rgb);
 `;
 
 export default {
-  name: 'color-palette-module',
+  name: "color-palette-module",
   fs,
   inject: {
-    'fs:DECKGL_MUTATE_COLOR': DECKGL_MUTATE_COLOR
-  }
+    "fs:DECKGL_MUTATE_COLOR": DECKGL_MUTATE_COLOR,
+  },
 };

@@ -1,7 +1,7 @@
-import { OrbitView } from '@deck.gl/core';
-import { VolumeLayer } from '@vivjs/layers';
-import VivView from './VivView';
-import { getVivId } from './utils';
+import { OrbitView } from "@deck.gl/core";
+import { VolumeLayer } from "@vivjs/layers";
+import VivView from "./VivView";
+import { getVivId } from "./utils";
 
 /**
  * This class generates a VolumeLayer and a view for use in the VivViewer as volumetric rendering.
@@ -25,7 +25,7 @@ export default class VolumeView extends VivView {
       width,
       x,
       y,
-      orbitAxis: 'Y'
+      orbitAxis: "Y",
     });
   }
 
@@ -35,7 +35,7 @@ export default class VolumeView extends VivView {
       ? {
           ...viewState,
           // fix the center of the camera if desired
-          target: useFixedAxis ? target : viewState.target
+          target: useFixedAxis ? target : viewState.target,
         }
       : null;
   }
@@ -46,8 +46,8 @@ export default class VolumeView extends VivView {
 
     const layers = [
       new VolumeLayer(props, {
-        id: `${loader.type}${getVivId(id)}`
-      })
+        id: `${loader.type}${getVivId(id)}`,
+      }),
     ];
 
     return layers;

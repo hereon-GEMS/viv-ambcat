@@ -11,7 +11,7 @@
 export function getIndexer<T extends string>(labels: T[]) {
   const labelSet = new Set(labels);
   if (labelSet.size !== labels.length) {
-    throw new Error('Labels must be unique');
+    throw new Error("Labels must be unique");
   }
   return (sel: { [K in T]: number } | number[]) => {
     if (Array.isArray(sel)) {

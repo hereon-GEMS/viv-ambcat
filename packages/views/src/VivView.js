@@ -1,4 +1,4 @@
-import { OrthographicView } from '@deck.gl/core';
+import { OrthographicView } from "@deck.gl/core";
 
 /**
  * This class generates a layer and a view for use in the VivViewer
@@ -30,7 +30,7 @@ export default class VivView {
       height: this.height,
       width: this.width,
       x: this.x,
-      y: this.y
+      y: this.y,
     });
   }
 

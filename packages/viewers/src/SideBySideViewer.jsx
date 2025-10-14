@@ -1,7 +1,7 @@
-import { ColorPaletteExtension } from '@vivjs/extensions';
-import { SideBySideView, getDefaultInitialViewState } from '@vivjs/views';
-import * as React from 'react';
-import VivViewer from './VivViewer';
+import { ColorPaletteExtension } from "@vivjs/extensions";
+import { SideBySideView, getDefaultInitialViewState } from "@vivjs/views";
+import * as React from "react";
+import VivViewer from "./VivViewer";
 
 /**
  * This component provides a side-by-side VivViewer with linked zoom/pan.
@@ -35,7 +35,7 @@ import VivViewer from './VivViewer';
  *     https://deck.gl/docs/developer-guide/interactivity#the-picking-info-object)
  * @param {Object} [props.deckProps] Additional options used when creating the DeckGL component.  See [the deck.gl docs.](https://deck.gl/docs/api-reference/core/deck#initialization-settings).  `layerFilter`, `layers`, `onViewStateChange`, `views`, `viewState`, `useDevicePixels`, and `getCursor` are already set.
  */
-const SideBySideViewer = props => {
+const SideBySideViewer = (props) => {
   const {
     loader,
     contrastLimits,
@@ -59,10 +59,10 @@ const SideBySideViewer = props => {
     onHover,
     onViewportLoad,
     extensions = [new ColorPaletteExtension()],
-    deckProps
+    deckProps,
   } = props;
-  const leftViewState = viewStatesProp?.find(v => v.id === 'left');
-  const rightViewState = viewStatesProp?.find(v => v.id === 'right');
+  const leftViewState = viewStatesProp?.find((v) => v.id === "left");
+  const rightViewState = viewStatesProp?.find((v) => v.id === "right");
   // biome-ignore lint/correctness/useExhaustiveDependencies: Ignore carried over from eslint, without explanation.
   const viewStates = React.useMemo(() => {
     if (leftViewState && rightViewState) {
@@ -74,29 +74,29 @@ const SideBySideViewer = props => {
       0.5
     );
     return [
-      leftViewState || { ...defaultViewState, id: 'left' },
-      rightViewState || { ...defaultViewState, id: 'right' }
+      leftViewState || { ...defaultViewState, id: "left" },
+      rightViewState || { ...defaultViewState, id: "right" },
     ];
   }, [loader, leftViewState, rightViewState]);
 
   const detailViewLeft = new SideBySideView({
-    id: 'left',
-    linkedIds: ['right'],
+    id: "left",
+    linkedIds: ["right"],
     panLock,
     zoomLock,
     height,
     width: width / 2,
-    snapScaleBar
+    snapScaleBar,
   });
   const detailViewRight = new SideBySideView({
-    id: 'right',
+    id: "right",
     x: width / 2,
-    linkedIds: ['left'],
+    linkedIds: ["left"],
     panLock,
     zoomLock,
     height,
     width: width / 2,
-    snapScaleBar
+    snapScaleBar,
   });
   const layerConfig = {
     loader,
@@ -112,7 +112,7 @@ const SideBySideViewer = props => {
     lensBorderColor,
     lensBorderRadius,
     extensions,
-    transparentColor
+    transparentColor,
   };
   const views = [detailViewRight, detailViewLeft];
   const layerProps = [layerConfig, layerConfig];

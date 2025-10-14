@@ -1,19 +1,19 @@
-import * as childProcess from 'node:child_process';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-import * as url from 'node:url';
+import * as childProcess from "node:child_process";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import * as url from "node:url";
 
-import matter from 'gray-matter';
+import matter from "gray-matter";
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
-const mainPackage = '@hms-dbmi/viv';
+const mainPackage = "@hms-dbmi/viv";
 
 /**
  * @param {matter.GrayMatterFile<string>} changeset
  */
 function getGreatestBumpType(changeset) {
-  const BUMP_TYPES = /** @type {const} */ (['none', 'patch', 'minor', 'major']);
-  const versions = Object.values(changeset.data).map(v =>
+  const BUMP_TYPES = /** @type {const} */ (["none", "patch", "minor", "major"]);
+  const versions = Object.values(changeset.data).map((v) =>
     BUMP_TYPES.indexOf(v)
   );
   const bumpType = BUMP_TYPES[Math.max(...versions)];
@@ -28,12 +28,12 @@ function getGreatestBumpType(changeset) {
  * @param {matter.GrayMatterFile<string>} changeset
  */
 function updateContentsWithAffectedPackages(changeset) {
-  const contentLines = changeset.content.split('\n');
+  const contentLines = changeset.content.split("\n");
   const packageInfo = Object.keys(changeset.data)
-    .map(name => `\`${name}\``)
-    .join(', ');
+    .map((name) => `\`${name}\``)
+    .join(", ");
   contentLines[1] = `${contentLines[1]} (${packageInfo})`;
-  return contentLines.join('\n');
+  return contentLines.join("\n");
 }
 
 /**
@@ -62,12 +62,12 @@ function updateContentsWithAffectedPackages(changeset) {
  *
  */
 function preChangesetsVersion() {
-  const entries = fs.readdirSync(path.resolve(__dirname, '../.changeset'));
+  const entries = fs.readdirSync(path.resolve(__dirname, "../.changeset"));
   for (const file of entries) {
-    if (!file.endsWith('.md')) {
+    if (!file.endsWith(".md")) {
       continue;
     }
-    const filePath = path.resolve(__dirname, '../.changeset', file);
+    const filePath = path.resolve(__dirname, "../.changeset", file);
     const changeset = matter.read(filePath);
     changeset.content = updateContentsWithAffectedPackages(changeset);
     changeset.data = { [mainPackage]: getGreatestBumpType(changeset) };
@@ -80,9 +80,9 @@ function preChangesetsVersion() {
 
 function clearChangelogs(pkgDir) {
   for (const pkg of fs.readdirSync(pkgDir)) {
-    if (pkg === 'main') continue;
+    if (pkg === "main") continue;
     try {
-      fs.unlinkSync(path.resolve(pkgDir, pkg, 'CHANGELOG.md'));
+      fs.unlinkSync(path.resolve(pkgDir, pkg, "CHANGELOG.md"));
     } catch {
       // ignore
     }
@@ -96,15 +96,15 @@ function clearChangelogs(pkgDir) {
  * Deletes all the other changelogs.
  */
 function postChangesetsVersion() {
-  const mainPkg = path.resolve(__dirname, '..', 'packages', 'main');
+  const mainPkg = path.resolve(__dirname, "..", "packages", "main");
   // remove dependency updates from main changelog
-  const mainChangelogPath = path.resolve(mainPkg, 'CHANGELOG.md');
-  const contents = fs.readFileSync(mainChangelogPath, { encoding: 'utf-8' });
+  const mainChangelogPath = path.resolve(mainPkg, "CHANGELOG.md");
+  const contents = fs.readFileSync(mainChangelogPath, { encoding: "utf-8" });
   const newChangelog = contents
-    .split('\n')
-    .filter(line => !line.startsWith('- Updated dependencies'))
-    .filter(line => !line.startsWith('  - @vivjs/'))
-    .join('\n');
+    .split("\n")
+    .filter((line) => !line.startsWith("- Updated dependencies"))
+    .filter((line) => !line.startsWith("  - @vivjs/"))
+    .join("\n");
   fs.writeFileSync(mainChangelogPath, newChangelog);
 
   // clearChangelogs(path.resolve(__dirname, '..', 'packages'));
@@ -112,5 +112,5 @@ function postChangesetsVersion() {
 }
 
 preChangesetsVersion();
-childProcess.execSync('pnpm changeset version');
+childProcess.execSync("pnpm changeset version");
 postChangesetsVersion();

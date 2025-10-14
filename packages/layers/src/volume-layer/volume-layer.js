@@ -1,43 +1,43 @@
-import { COORDINATE_SYSTEM, CompositeLayer } from '@deck.gl/core';
-import { GL } from '@luma.gl/constants';
-import { Matrix4 } from '@math.gl/core';
-import { ColorPalette3DExtensions } from '@vivjs/extensions';
+import { COORDINATE_SYSTEM, CompositeLayer } from "@deck.gl/core";
+import { GL } from "@luma.gl/constants";
+import { Matrix4 } from "@math.gl/core";
+import { ColorPalette3DExtensions } from "@vivjs/extensions";
 
-import { getPhysicalSizeScalingMatrix } from '../utils';
-import XR3DLayer from '../xr-3d-layer/xr-3d-layer';
-import { getTextLayer, getVolume } from './utils';
+import { getPhysicalSizeScalingMatrix } from "../utils";
+import XR3DLayer from "../xr-3d-layer/xr-3d-layer";
+import { getTextLayer, getVolume } from "./utils";
 
 const defaultProps = {
   pickable: false,
   coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
-  contrastLimits: { type: 'array', value: [], compare: true },
-  channelsVisible: { type: 'array', value: [], compare: true },
-  selections: { type: 'array', value: [], compare: true },
-  resolution: { type: 'number', value: 0, compare: true },
-  domain: { type: 'array', value: [], compare: true },
+  contrastLimits: { type: "array", value: [], compare: true },
+  channelsVisible: { type: "array", value: [], compare: true },
+  selections: { type: "array", value: [], compare: true },
+  resolution: { type: "number", value: 0, compare: true },
+  domain: { type: "array", value: [], compare: true },
   loader: {
-    type: 'object',
+    type: "object",
     value: [
       {
         getRaster: async () => ({ data: [], height: 0, width: 0 }),
-        dtype: 'Uint16',
+        dtype: "Uint16",
         shape: [1],
-        labels: ['z']
-      }
+        labels: ["z"],
+      },
     ],
-    compare: true
+    compare: true,
   },
-  xSlice: { type: 'array', value: null, compare: true },
-  ySlice: { type: 'array', value: null, compare: true },
-  zSlice: { type: 'array', value: null, compare: true },
-  clippingPlanes: { type: 'array', value: [], compare: true },
-  onUpdate: { type: 'function', value: () => {}, compare: true },
-  useProgressIndicator: { type: 'boolean', value: true, compare: true },
+  xSlice: { type: "array", value: null, compare: true },
+  ySlice: { type: "array", value: null, compare: true },
+  zSlice: { type: "array", value: null, compare: true },
+  clippingPlanes: { type: "array", value: [], compare: true },
+  onUpdate: { type: "function", value: () => {}, compare: true },
+  useProgressIndicator: { type: "boolean", value: true, compare: true },
   extensions: {
-    type: 'array',
+    type: "array",
     value: [new ColorPalette3DExtensions.AdditiveBlendExtension()],
-    compare: true
-  }
+    compare: true,
+  },
 };
 
 /**
@@ -74,7 +74,7 @@ const VolumeLayer = class extends CompositeLayer {
       physicalSizeScalingMatrix: null,
       resolutionMatrix: null,
       progress: 0,
-      abortController: null
+      abortController: null,
     });
   }
 
@@ -96,12 +96,12 @@ const VolumeLayer = class extends CompositeLayer {
         loader,
         selections = [],
         resolution,
-        onViewportLoad
+        onViewportLoad,
       } = this.props;
       const source = loader[resolution];
       let progress = 0;
       const totalRequests =
-        (source.shape[source.labels.indexOf('z')] >> resolution) *
+        (source.shape[source.labels.indexOf("z")] >> resolution) *
         selections.length;
       const onUpdate = () => {
         progress += 0.5 / totalRequests;
@@ -113,34 +113,34 @@ const VolumeLayer = class extends CompositeLayer {
       const abortController = new AbortController();
       this.setState({ abortController });
       const { signal } = abortController;
-      const volumePromises = selections.map(selection =>
+      const volumePromises = selections.map((selection) =>
         getVolume({
           selection,
           source,
           onUpdate,
           downsampleDepth: 2 ** resolution,
-          signal
+          signal,
         })
       );
       const physicalSizeScalingMatrix = getPhysicalSizeScalingMatrix(
         loader[resolution]
       );
 
-      Promise.all(volumePromises).then(volumes => {
+      Promise.all(volumePromises).then((volumes) => {
         if (onViewportLoad) {
           onViewportLoad(volumes);
         }
         const volume = {
-          data: volumes.map(d => d.data),
+          data: volumes.map((d) => d.data),
           width: volumes[0]?.width,
           height: volumes[0]?.height,
-          depth: volumes[0]?.depth
+          depth: volumes[0]?.depth,
         };
 
         this.setState({
           ...volume,
           physicalSizeScalingMatrix,
-          resolutionMatrix: new Matrix4().scale(2 ** resolution)
+          resolutionMatrix: new Matrix4().scale(2 ** resolution),
         });
       });
     }
@@ -156,7 +156,7 @@ const VolumeLayer = class extends CompositeLayer {
       depth,
       progress,
       physicalSizeScalingMatrix,
-      resolutionMatrix
+      resolutionMatrix,
     } = this.state;
     if (!(width && height) && useProgressIndicator) {
       const { viewport } = this.context;
@@ -175,14 +175,14 @@ const VolumeLayer = class extends CompositeLayer {
         [GL.CULL_FACE_MODE]: GL.FRONT,
         [GL.DEPTH_TEST]: false,
         blendFunc: [GL.SRC_ALPHA, GL.ONE],
-        blend: true
+        blend: true,
       },
       resolutionMatrix,
-      dtype
+      dtype,
     });
   }
 };
 
-VolumeLayer.layerName = 'VolumeLayer';
+VolumeLayer.layerName = "VolumeLayer";
 VolumeLayer.defaultProps = defaultProps;
 export default VolumeLayer;

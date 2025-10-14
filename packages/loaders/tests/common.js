@@ -1,6 +1,6 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { KeyError } from 'zarr';
+import fs from "node:fs/promises";
+import path from "node:path";
+import { KeyError } from "zarr";
 
 /*
  * Minimal store implementation to read zarr from file system in Node.
@@ -17,7 +17,7 @@ export class FileSystemStore {
       const value = await fs.readFile(fp, null);
       return value;
     } catch (err) {
-      if (err.code === 'ENOENT') {
+      if (err.code === "ENOENT") {
         // TODO(zarrita): Return undefined here instead
         throw new KeyError(key);
       }

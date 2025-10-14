@@ -1,17 +1,17 @@
-import { COORDINATE_SYSTEM } from '@deck.gl/core';
-import { TileLayer } from '@deck.gl/geo-layers';
-import { renderSubLayers } from './utils';
+import { COORDINATE_SYSTEM } from "@deck.gl/core";
+import { TileLayer } from "@deck.gl/geo-layers";
+import { renderSubLayers } from "./utils";
 
 const defaultProps = {
-  pickable: { type: 'boolean', value: true, compare: true },
+  pickable: { type: "boolean", value: true, compare: true },
   coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
-  contrastLimits: { type: 'array', value: [], compare: true },
-  channelsVisible: { type: 'array', value: [], compare: true },
-  renderSubLayers: { type: 'function', value: renderSubLayers, compare: false },
-  dtype: { type: 'string', value: 'Uint16', compare: true },
-  domain: { type: 'array', value: [], compare: true },
-  viewportId: { type: 'string', value: '', compare: true },
-  interpolation: { type: 'number', value: null, compare: true }
+  contrastLimits: { type: "array", value: [], compare: true },
+  channelsVisible: { type: "array", value: [], compare: true },
+  renderSubLayers: { type: "function", value: renderSubLayers, compare: false },
+  dtype: { type: "string", value: "Uint16", compare: true },
+  domain: { type: "array", value: [], compare: true },
+  viewportId: { type: "string", value: "", compare: true },
+  interpolation: { type: "number", value: null, compare: true },
 };
 
 /**
@@ -40,5 +40,5 @@ export default class MultiscaleImageLayerBase extends TileLayer {
   }
 }
 
-MultiscaleImageLayerBase.layerName = 'MultiscaleImageLayerBase';
+MultiscaleImageLayerBase.layerName = "MultiscaleImageLayerBase";
 MultiscaleImageLayerBase.defaultProps = defaultProps;

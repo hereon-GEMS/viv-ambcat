@@ -1,6 +1,6 @@
-import type { GeoTIFF } from 'geotiff';
+import type { GeoTIFF } from "geotiff";
 
-const VIV_PROXY_KEY = '__viv';
+const VIV_PROXY_KEY = "__viv";
 const OFFSETS_PROXY_KEY = `${VIV_PROXY_KEY}-offsets` as const;
 
 /*
@@ -9,7 +9,7 @@ const OFFSETS_PROXY_KEY = `${VIV_PROXY_KEY}-offsets` as const;
  */
 export function checkProxies(tiff: GeoTIFF) {
   if (!isProxy(tiff)) {
-    console.warn('GeoTIFF source is missing offsets proxy.');
+    console.warn("GeoTIFF source is missing offsets proxy.");
   }
 }
 
@@ -35,7 +35,7 @@ function isProxy(tiff: GeoTIFF & { [VIV_PROXY_KEY]?: boolean }) {
 export function createOffsetsProxy(tiff: GeoTIFF, offsets: number[]) {
   const get = (target: GeoTIFF, key: unknown) => {
     // Intercept `tiff.getImage`
-    if (key === 'getImage') {
+    if (key === "getImage") {
       return (index: number) => {
         // Manually add ifdRequest to tiff if missing and we have an offset.
         if (!(index in target.ifdRequests) && index in offsets) {

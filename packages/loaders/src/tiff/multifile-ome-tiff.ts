@@ -1,8 +1,8 @@
-import type { GeoTIFF } from 'geotiff';
-import { type OmeXml, fromString } from '../omexml';
-import { assert } from '../utils';
-import type Pool from './lib/Pool';
-import { createOmeImageIndexerFromResolver } from './lib/indexers';
+import type { GeoTIFF } from "geotiff";
+import { type OmeXml, fromString } from "../omexml";
+import { assert } from "../utils";
+import type Pool from "./lib/Pool";
+import { createOmeImageIndexerFromResolver } from "./lib/indexers";
 import {
   type OmeTiffDims,
   type OmeTiffSelection,
@@ -11,11 +11,11 @@ import {
   extractPhysicalSizesfromPixels,
   getShapeForBinaryDownsampleLevel,
   getTiffTileSize,
-  parsePixelDataType
-} from './lib/utils';
-import TiffPixelSource from './pixel-source';
+  parsePixelDataType,
+} from "./lib/utils";
+import TiffPixelSource from "./pixel-source";
 
-type TiffDataTags = NonNullable<OmeXml[number]['Pixels']['TiffData']>;
+type TiffDataTags = NonNullable<OmeXml[number]["Pixels"]["TiffData"]>;
 type TIffDataItem = TiffDataTags[number];
 type OmeTiffImage = {
   data: TiffPixelSource<OmeTiffDims>[];
@@ -26,33 +26,33 @@ function isCompleteTiffDataItem(
   item: TIffDataItem
 ): item is Required<TIffDataItem> {
   return (
-    'FirstC' in item &&
-    'FirstT' in item &&
-    'FirstZ' in item &&
-    'IFD' in item &&
-    'UUID' in item
+    "FirstC" in item &&
+    "FirstT" in item &&
+    "FirstZ" in item &&
+    "IFD" in item &&
+    "UUID" in item
   );
 }
 
 function createMultifileImageDataLookup(
-  tiffData: OmeXml[number]['Pixels']['TiffData']
+  tiffData: OmeXml[number]["Pixels"]["TiffData"]
 ) {
   type ImageDataPointer = { ifd: number; filename: string };
   const lookup: Map<string, ImageDataPointer> = new Map();
   function keyFor({ t, c, z }: OmeTiffSelection) {
     return `t${t}.c${c}.z${z}`;
   }
-  assert(tiffData, 'No TiffData in OME-XML');
+  assert(tiffData, "No TiffData in OME-XML");
   for (const imageData of tiffData) {
-    assert(isCompleteTiffDataItem(imageData), 'Incomplete TiffData item');
+    assert(isCompleteTiffDataItem(imageData), "Incomplete TiffData item");
     const key = keyFor({
-      t: imageData['FirstT'],
-      c: imageData['FirstC'],
-      z: imageData['FirstZ']
+      t: imageData["FirstT"],
+      c: imageData["FirstC"],
+      z: imageData["FirstZ"],
     });
     const imageDataPointer: ImageDataPointer = {
-      ifd: imageData['IFD'],
-      filename: imageData['UUID']['FileName']
+      ifd: imageData["IFD"],
+      filename: imageData["UUID"]["FileName"],
     };
     lookup.set(key, imageDataPointer);
   }
@@ -61,12 +61,12 @@ function createMultifileImageDataLookup(
       const entry = lookup.get(keyFor(selection));
       assert(entry, `No image for selection: ${JSON.stringify(selection)}`);
       return entry;
-    }
+    },
   };
 }
 
 function createMultifileOmeTiffResolver(options: {
-  tiffData: OmeXml[number]['Pixels']['TiffData'];
+  tiffData: OmeXml[number]["Pixels"]["TiffData"];
   baseUrl: URL;
   headers: Headers | Record<string, string>;
 }) {
@@ -103,9 +103,9 @@ async function getPixelSourceOptionsForImage(
   }
 ) {
   const resolveOmeSelection = createMultifileOmeTiffResolver({
-    tiffData: metadata['Pixels']['TiffData'],
+    tiffData: metadata["Pixels"]["TiffData"],
     baseUrl: config.baseUrl,
-    headers: config.headers
+    headers: config.headers,
   });
   const { tiff, ifdIndex } = await resolveOmeSelection({ c: 0, t: 0, z: 0 });
   const baseImage = await tiff.getImage(ifdIndex);
@@ -113,10 +113,10 @@ async function getPixelSourceOptionsForImage(
     resolveOmeSelection,
     {
       size: {
-        z: metadata['Pixels']['SizeZ'],
-        t: metadata['Pixels']['SizeT'],
-        c: metadata['Pixels']['SizeC']
-      }
+        z: metadata["Pixels"]["SizeZ"],
+        t: metadata["Pixels"]["SizeT"],
+        c: metadata["Pixels"]["SizeC"],
+      },
     }
   );
   return {
@@ -125,13 +125,13 @@ async function getPixelSourceOptionsForImage(
       ? baseImage.fileDirectory.SubIFDs.length + 1
       : 1,
     tileSize: getTiffTileSize(baseImage),
-    axes: extractAxesFromPixels(metadata['Pixels']),
-    dtype: parsePixelDataType(metadata['Pixels']['Type']),
+    axes: extractAxesFromPixels(metadata["Pixels"]),
+    dtype: parsePixelDataType(metadata["Pixels"]["Type"]),
     meta: {
-      physicalSizes: extractPhysicalSizesfromPixels(metadata['Pixels']),
+      physicalSizes: extractPhysicalSizesfromPixels(metadata["Pixels"]),
       photometricInterpretation:
-        baseImage.fileDirectory.PhotometricInterpretation
-    }
+        baseImage.fileDirectory.PhotometricInterpretation,
+    },
   };
 }
 
@@ -144,23 +144,23 @@ export async function loadMultifileOmeTiff(
 ) {
   assert(
     !(source instanceof File),
-    'File or Blob not supported for multifile OME-TIFF'
+    "File or Blob not supported for multifile OME-TIFF"
   );
   const url = new URL(source);
-  const text = await fetch(url).then(res => res.text());
+  const text = await fetch(url).then((res) => res.text());
   const rootMeta = fromString(text);
   const images: OmeTiffImage[] = [];
 
   for (const metadata of rootMeta) {
     const opts = await getPixelSourceOptionsForImage(metadata, {
       baseUrl: url,
-      headers: options.headers || {}
+      headers: options.headers || {},
     });
     const data = Array.from(
       { length: opts.levels },
       (_, level) =>
         new TiffPixelSource(
-          sel => opts.pyramidIndexer(sel, level),
+          (sel) => opts.pyramidIndexer(sel, level),
           opts.dtype,
           opts.tileSize,
           getShapeForBinaryDownsampleLevel({ axes: opts.axes, level }),

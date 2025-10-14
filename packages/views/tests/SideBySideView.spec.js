@@ -1,26 +1,26 @@
-import { PolygonLayer } from '@deck.gl/layers';
-import { ImageLayer, MultiscaleImageLayer, ScaleBarLayer } from '@vivjs/layers';
-import { describe, expect, test } from 'vitest';
-import { SideBySideView } from '../src';
-import { defaultArguments, generateViewTests } from './VivView.spec';
+import { PolygonLayer } from "@deck.gl/layers";
+import { ImageLayer, MultiscaleImageLayer, ScaleBarLayer } from "@vivjs/layers";
+import { describe, expect, test } from "vitest";
+import { SideBySideView } from "../src";
+import { defaultArguments, generateViewTests } from "./VivView.spec";
 
 generateViewTests(SideBySideView, defaultArguments);
 
-test('SideBySideView layer type and props check', () => {
+test("SideBySideView layer type and props check", () => {
   const view = new SideBySideView(defaultArguments);
-  const loader = { type: 'loads' };
+  const loader = { type: "loads" };
   const layers = view.getLayers({
     props: {
       loader: [
-        { ...loader, meta: { physicalSizes: { x: { value: 1, unit: 'cm' } } } }
-      ]
+        { ...loader, meta: { physicalSizes: { x: { value: 1, unit: "cm" } } } },
+      ],
     },
     viewStates: {
       foo: {
         target: [0, 0, 0],
-        zoom: 0
-      }
-    }
+        zoom: 0,
+      },
+    },
   });
   expect(layers[0] instanceof ImageLayer).toBeTruthy();
   expect(layers[1] instanceof PolygonLayer).toBeTruthy();
@@ -28,22 +28,22 @@ test('SideBySideView layer type and props check', () => {
   expect(layers[0].props.viewportId).toBe(view.id);
 });
 
-test('SideBySideView layer with multiscale', () => {
+test("SideBySideView layer with multiscale", () => {
   const view = new SideBySideView(defaultArguments);
-  const loader = { type: 'loads' };
+  const loader = { type: "loads" };
   const layers = view.getLayers({
     props: {
       loader: [
-        { ...loader, meta: { physicalSizes: { x: { value: 1, unit: 'cm' } } } },
-        { ...loader, meta: { physicalSizes: { x: { value: 1, unit: 'cm' } } } }
-      ]
+        { ...loader, meta: { physicalSizes: { x: { value: 1, unit: "cm" } } } },
+        { ...loader, meta: { physicalSizes: { x: { value: 1, unit: "cm" } } } },
+      ],
     },
     viewStates: {
       foo: {
         target: [0, 0, 0],
-        zoom: 0
-      }
-    }
+        zoom: 0,
+      },
+    },
   });
   expect(layers[0] instanceof MultiscaleImageLayer).toBeTruthy();
   expect(layers[1] instanceof PolygonLayer).toBeTruthy();
@@ -51,19 +51,19 @@ test('SideBySideView layer with multiscale', () => {
   expect(layers[0].props.viewportId).toBe(view.id);
 });
 
-test('SideBySideView layer does not render scale bar without physical size', () => {
+test("SideBySideView layer does not render scale bar without physical size", () => {
   const view = new SideBySideView(defaultArguments);
-  const loader = { type: 'loads' };
+  const loader = { type: "loads" };
   const layers = view.getLayers({
     props: {
-      loader: [loader, loader]
+      loader: [loader, loader],
     },
     viewStates: {
       foo: {
         target: [0, 0, 0],
-        zoom: 0
-      }
-    }
+        zoom: 0,
+      },
+    },
   });
   expect(layers[0] instanceof MultiscaleImageLayer).toBeTruthy();
   expect(layers[1] instanceof PolygonLayer).toBeTruthy();
@@ -71,15 +71,15 @@ test('SideBySideView layer does not render scale bar without physical size', () 
 });
 
 const generateZoomLockTest = (panLock, zoomLock) => {
-  test(`SideBySideView ${panLock ? 'with' : 'without'} pan and ${
-    zoomLock ? 'with' : 'without'
+  test(`SideBySideView ${panLock ? "with" : "without"} pan and ${
+    zoomLock ? "with" : "without"
   } zoom lock.`, () => {
-    const linkedId = 'bar';
+    const linkedId = "bar";
     const view = new SideBySideView({
       ...defaultArguments,
       panLock,
       zoomLock,
-      linkedIds: [linkedId]
+      linkedIds: [linkedId],
     });
     const dx = 6;
     const dy = -5;
@@ -88,26 +88,26 @@ const generateZoomLockTest = (panLock, zoomLock) => {
       height: 10,
       width: 10,
       target: [0, 0, 0],
-      zoom: 0
+      zoom: 0,
     };
     const viewState = {
       id: linkedId,
       height: 10,
       width: 10,
       target: [0 + dx, 0 + dy, 0],
-      zoom: 0 + dZoom
+      zoom: 0 + dZoom,
     };
     const oldViewState = {
       id: linkedId,
       height: 10,
       width: 10,
       target: [0, 0, 0],
-      zoom: 0
+      zoom: 0,
     };
     const newViewState = view.filterViewState({
       currentViewState,
       oldViewState,
-      viewState
+      viewState,
     });
     expect(newViewState.target[0]).toBe(panLock ? dx : 0);
     expect(newViewState.target[1]).toBe(panLock ? dy : 0);

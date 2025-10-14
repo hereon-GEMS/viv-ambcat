@@ -1,9 +1,9 @@
-import { ScaleBarLayer } from '@vivjs/layers';
-import { OVERVIEW_VIEW_ID } from './OverviewView';
-import VivView from './VivView';
-import { getImageLayer, getVivId } from './utils';
+import { ScaleBarLayer } from "@vivjs/layers";
+import { OVERVIEW_VIEW_ID } from "./OverviewView";
+import VivView from "./VivView";
+import { getImageLayer, getVivId } from "./utils";
 
-export const DETAIL_VIEW_ID = 'detail';
+export const DETAIL_VIEW_ID = "detail";
 
 /**
  * This class generates a MultiscaleImageLayer and a view for use in the VivViewer as a detailed view.
@@ -39,7 +39,7 @@ export default class DetailView extends VivView {
           unit,
           size,
           snap: this.snapScaleBar,
-          viewState: { ...layerViewState, height, width }
+          viewState: { ...layerViewState, height, width },
         })
       );
     }

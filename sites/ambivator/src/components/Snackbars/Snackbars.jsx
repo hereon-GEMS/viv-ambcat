@@ -1,15 +1,15 @@
-import Alert from '@mui/material/Alert';
-import Snackbar from '@mui/material/Snackbar';
-import React from 'react';
-import { useShallow } from 'zustand/shallow';
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import React from "react";
+import { useShallow } from "zustand/shallow";
 
-import { useViewerStore } from '../../state';
+import { useViewerStore } from "../../state";
 import {
   LoaderError,
   NoImageUrlInfo,
   OffsetsWarning,
-  VolumeRenderingWarning
-} from './SnackbarAlerts';
+  VolumeRenderingWarning,
+} from "./SnackbarAlerts";
 
 const SnackBars = () => {
   const [
@@ -19,23 +19,23 @@ const SnackBars = () => {
     toggleIsOffsetsSnackbarOn,
     toggleIsNoImageUrlSnackbarOn,
     isVolumeRenderingWarningOn,
-    toggleIsVolumeRenderingWarningOn
+    toggleIsVolumeRenderingWarningOn,
   ] = useViewerStore(
-    useShallow(store => [
+    useShallow((store) => [
       store.isOffsetsSnackbarOn,
       store.loaderErrorSnackbar,
       store.isNoImageUrlSnackbarOn,
       store.toggleIsOffsetsSnackbarOn,
       store.toggleIsNoImageUrlSnackbarOn,
       store.isVolumeRenderingWarningOn,
-      store.toggleIsVolumeRenderingWarningOn
+      store.toggleIsVolumeRenderingWarningOn,
     ])
   );
   return (
     <>
       <Snackbar
         open={isOffsetsSnackbarOn}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         elevation={6}
         variant="filled"
       >
@@ -45,14 +45,14 @@ const SnackBars = () => {
       </Snackbar>
       <Snackbar
         open={loaderErrorSnackbar.on}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         elevation={6}
         variant="filled"
       >
         <Alert
           onClose={() =>
             useViewerStore.setState({
-              loaderErrorSnackbar: { on: false, message: null }
+              loaderErrorSnackbar: { on: false, message: null },
             })
           }
           severity="error"
@@ -63,7 +63,7 @@ const SnackBars = () => {
 
       <Snackbar
         open={isNoImageUrlSnackbarOn}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         elevation={6}
         variant="filled"
       >
@@ -73,7 +73,7 @@ const SnackBars = () => {
       </Snackbar>
       <Snackbar
         open={isVolumeRenderingWarningOn}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         elevation={6}
         variant="filled"
       >

@@ -1,20 +1,20 @@
-import type { ZarrArray } from 'zarr';
+import type { ZarrArray } from "zarr";
 
-import { fromString } from '../omexml';
+import { fromString } from "../omexml";
 import {
   guessBioformatsLabels,
   guessTileSize,
-  loadMultiscales
-} from './lib/utils';
-import ZarrPixelSource from './pixel-source';
+  loadMultiscales,
+} from "./lib/utils";
+import ZarrPixelSource from "./pixel-source";
 
 export async function load(
-  root: ZarrArray['store'],
+  root: ZarrArray["store"],
   xmlSource: string | File | Response
 ) {
   let xmlSourceText: string;
   // If 'File' or 'Response', read as text.
-  if (typeof xmlSource !== 'string') {
+  if (typeof xmlSource !== "string") {
     xmlSourceText = await xmlSource.text();
   } else {
     xmlSourceText = xmlSource;
@@ -22,14 +22,14 @@ export async function load(
 
   // Get metadata and multiscale data for _first_ image.
   const imgMeta = fromString(xmlSourceText)[0];
-  const { data } = await loadMultiscales(root, '0');
+  const { data } = await loadMultiscales(root, "0");
 
   const labels = guessBioformatsLabels(data[0], imgMeta);
   const tileSize = guessTileSize(data[0]);
-  const pyramid = data.map(arr => new ZarrPixelSource(arr, labels, tileSize));
+  const pyramid = data.map((arr) => new ZarrPixelSource(arr, labels, tileSize));
 
   return {
     data: pyramid,
-    metadata: imgMeta
+    metadata: imgMeta,
   };
 }

@@ -1,5 +1,5 @@
-import { LayerExtension } from '@deck.gl/core';
-import * as cmaps from '../generated-colormaps.js';
+import { LayerExtension } from "@deck.gl/core";
+import * as cmaps from "../generated-colormaps.js";
 
 /**
  * A utility to create a Deck.gl shader module for a `glsl-colormap`.
@@ -25,12 +25,12 @@ vec4 colormap(float intensity, float opacity) {
 }`;
   return {
     name: `additive-colormap-3d-${name}`,
-    fs
+    fs,
   };
 }
 
 const defaultProps = {
-  colormap: { type: 'string', value: 'viridis', compare: true }
+  colormap: { type: "string", value: "viridis", compare: true },
 };
 
 /**
@@ -51,7 +51,7 @@ const BaseExtension = class extends LayerExtension {
     const apply_cmap = cmaps[name];
     return {
       ...super.getShaders(),
-      modules: [colormapModuleFactory3D(name, apply_cmap)]
+      modules: [colormapModuleFactory3D(name, apply_cmap)],
     };
   }
 
@@ -67,7 +67,7 @@ const BaseExtension = class extends LayerExtension {
   }
 };
 
-BaseExtension.extensionName = 'BaseExtension';
+BaseExtension.extensionName = "BaseExtension";
 BaseExtension.defaultProps = defaultProps;
 
 export default BaseExtension;

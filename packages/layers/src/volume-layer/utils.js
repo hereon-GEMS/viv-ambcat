@@ -1,7 +1,7 @@
 /* global globalThis */
-import { COORDINATE_SYSTEM } from '@deck.gl/core';
-import { TextLayer } from '@deck.gl/layers';
-import { getImageSize } from '@vivjs/loaders';
+import { COORDINATE_SYSTEM } from "@deck.gl/core";
+import { TextLayer } from "@deck.gl/layers";
+import { getImageSize } from "@vivjs/loaders";
 
 /**
  * Creates a single continguous TypedArray that can visualized as a volume in 3D space where the y-axis going up is positive,
@@ -24,11 +24,11 @@ export async function getVolume({
   selection,
   onUpdate = () => {},
   downsampleDepth = 1,
-  signal
+  signal,
 }) {
   const { shape, labels, dtype } = source;
   const { height, width } = getImageSize(source);
-  const depth = shape[labels.indexOf('z')];
+  const depth = shape[labels.indexOf("z")];
   const depthDownsampled = Math.max(1, Math.floor(depth / downsampleDepth));
   const rasterSize = height * width;
   const name = `${dtype}Array`;
@@ -38,11 +38,11 @@ export async function getVolume({
     new Array(depthDownsampled).fill(0).map(async (_, z) => {
       const depthSelection = {
         ...selection,
-        z: z * downsampleDepth
+        z: z * downsampleDepth,
       };
       const { data: rasterData } = await source.getRaster({
         selection: depthSelection,
-        signal
+        signal,
       });
       let r = 0;
       onUpdate();
@@ -62,7 +62,7 @@ export async function getVolume({
     data: volumeData,
     height,
     width,
-    depth: depthDownsampled
+    depth: depthDownsampled,
   };
 }
 
@@ -73,13 +73,13 @@ export const getTextLayer = (text, viewport, id) => {
     data: [
       {
         text,
-        position: viewport.position
-      }
+        position: viewport.position,
+      },
     ],
     getColor: [220, 220, 220, 255],
     getSize: 25,
-    sizeUnits: 'meters',
+    sizeUnits: "meters",
     sizeScale: 2 ** -viewport.zoom,
-    fontFamily: 'Helvetica'
+    fontFamily: "Helvetica",
   });
 };

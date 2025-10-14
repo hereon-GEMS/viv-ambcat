@@ -1,28 +1,28 @@
-import { CompositeLayer } from '@deck.gl/core';
-import { GL } from '@luma.gl/constants';
-import { Matrix4 } from '@math.gl/core';
+import { CompositeLayer } from "@deck.gl/core";
+import { GL } from "@luma.gl/constants";
+import { Matrix4 } from "@math.gl/core";
 
-import { ColorPaletteExtension } from '@vivjs/extensions';
-import { SIGNAL_ABORTED, getImageSize, isInterleaved } from '@vivjs/loaders';
-import ImageLayer from '../image-layer';
-import MultiscaleImageLayerBase from './multiscale-image-layer-base';
+import { ColorPaletteExtension } from "@vivjs/extensions";
+import { SIGNAL_ABORTED, getImageSize, isInterleaved } from "@vivjs/loaders";
+import ImageLayer from "../image-layer";
+import MultiscaleImageLayerBase from "./multiscale-image-layer-base";
 
 const defaultProps = {
-  pickable: { type: 'boolean', value: true, compare: true },
-  onHover: { type: 'function', value: null, compare: false },
-  contrastLimits: { type: 'array', value: [], compare: true },
-  channelsVisible: { type: 'array', value: [], compare: true },
-  domain: { type: 'array', value: [], compare: true },
-  viewportId: { type: 'string', value: '', compare: true },
-  maxRequests: { type: 'number', value: 10, compare: true },
-  onClick: { type: 'function', value: null, compare: true },
-  refinementStrategy: { type: 'string', value: null, compare: true },
-  excludeBackground: { type: 'boolean', value: false, compare: true },
+  pickable: { type: "boolean", value: true, compare: true },
+  onHover: { type: "function", value: null, compare: false },
+  contrastLimits: { type: "array", value: [], compare: true },
+  channelsVisible: { type: "array", value: [], compare: true },
+  domain: { type: "array", value: [], compare: true },
+  viewportId: { type: "string", value: "", compare: true },
+  maxRequests: { type: "number", value: 10, compare: true },
+  onClick: { type: "function", value: null, compare: true },
+  refinementStrategy: { type: "string", value: null, compare: true },
+  excludeBackground: { type: "boolean", value: false, compare: true },
   extensions: {
-    type: 'array',
+    type: "array",
     value: [new ColorPaletteExtension()],
-    compare: true
-  }
+    compare: true,
+  },
 };
 
 /**
@@ -62,7 +62,7 @@ const MultiscaleImageLayer = class extends CompositeLayer {
       onClick,
       modelMatrix,
       excludeBackground,
-      refinementStrategy
+      refinementStrategy,
     } = this.props;
     // Get properties from highest resolution
     const { tileSize, dtype } = loader[0];
@@ -83,7 +83,7 @@ const MultiscaleImageLayer = class extends CompositeLayer {
       // The image-tile example works without, this but I have a feeling there is something
       // going on with our pyramids and/or rendering that is different.
       const resolution = Math.round(-z);
-      const getTile = selection => {
+      const getTile = (selection) => {
         const config = { x, y, selection, signal };
         return loader[resolution].getTile(config);
       };
@@ -100,16 +100,16 @@ const MultiscaleImageLayer = class extends CompositeLayer {
         const tiles = await Promise.all(selections.map(getTile));
 
         const tile = {
-          data: tiles.map(d => d.data),
+          data: tiles.map((d) => d.data),
           width: tiles[0].width,
-          height: tiles[0].height
+          height: tiles[0].height,
         };
 
         if (isInterleaved(loader[resolution].shape)) {
           tile.data = tile.data[0];
           if (tile.data.length === tile.width * tile.height * 3) {
             // This indicates the data is RGB but it will be converted to RGBA
-            tile.format = 'rgba8unorm';
+            tile.format = "rgba8unorm";
           }
           // can just return early, no need  to check for webgl2
           return tile;
@@ -150,14 +150,14 @@ const MultiscaleImageLayer = class extends CompositeLayer {
       // We want a no-overlap caching strategy with an opacity < 1 to prevent
       // multiple rendered sublayers (some of which have been cached) from overlapping
       refinementStrategy:
-        refinementStrategy || (opacity === 1 ? 'best-available' : 'no-overlap'),
+        refinementStrategy || (opacity === 1 ? "best-available" : "no-overlap"),
       // TileLayer checks `changeFlags.updateTriggersChanged.getTileData` to see if tile cache
       // needs to be re-created. We want to trigger this behavior if the loader changes.
       // https://github.com/uber/deck.gl/blob/3f67ea6dfd09a4d74122f93903cb6b819dd88d52/modules/geo-layers/src/tile-layer/tile-layer.js#L50
       updateTriggers: {
-        getTileData: [loader, selections]
+        getTileData: [loader, selections],
       },
-      onTileError: onTileError || loader[0].onTileError
+      onTileError: onTileError || loader[0].onTileError,
     });
 
     // This gives us a background image and also solves the current
@@ -166,7 +166,7 @@ const MultiscaleImageLayer = class extends CompositeLayer {
     // we are zoomed out too far.
     const lowestResolution = loader[loader.length - 1];
     const implementsGetRaster =
-      typeof lowestResolution.getRaster === 'function';
+      typeof lowestResolution.getRaster === "function";
     const layerModelMatrix = modelMatrix ? modelMatrix.clone() : new Matrix4();
     const baseLayer =
       implementsGetRaster &&
@@ -179,14 +179,14 @@ const MultiscaleImageLayer = class extends CompositeLayer {
         onHover,
         onClick,
         // Background image is nicest when LINEAR in my opinion.
-        interpolation: 'linear',
-        onViewportLoad: null
+        interpolation: "linear",
+        onViewportLoad: null,
       });
     const layers = [baseLayer, tiledLayer];
     return layers;
   }
 };
 
-MultiscaleImageLayer.layerName = 'MultiscaleImageLayer';
+MultiscaleImageLayer.layerName = "MultiscaleImageLayer";
 MultiscaleImageLayer.defaultProps = defaultProps;
 export default MultiscaleImageLayer;

@@ -1,18 +1,18 @@
-import Button from '@mui/material/Button';
-import React from 'react';
-import { useShallow } from 'zustand/shallow';
+import Button from "@mui/material/Button";
+import React from "react";
+import { useShallow } from "zustand/shallow";
 
-import { useImageSettingsStore, useViewerStore } from '../../../state';
+import { useImageSettingsStore, useViewerStore } from "../../../state";
 
 const PictureInPictureToggle = () => {
   const [isOverviewOn, toggleIsOverviewOn] = useImageSettingsStore(
-    useShallow(store => [store.isOverviewOn, store.toggleIsOverviewOn])
+    useShallow((store) => [store.isOverviewOn, store.toggleIsOverviewOn])
   );
   const [isViewerLoading, useLinkedView, use3d] = useViewerStore(
-    useShallow(store => [
+    useShallow((store) => [
       store.isViewerLoading,
       store.useLinkedView,
-      store.use3d
+      store.use3d,
     ])
   );
   return (
@@ -23,7 +23,7 @@ const PictureInPictureToggle = () => {
       size="small"
       fullWidth
     >
-      {isOverviewOn ? 'Hide' : 'Show'} Picture-In-Picture
+      {isOverviewOn ? "Hide" : "Show"} Picture-In-Picture
     </Button>
   );
 };

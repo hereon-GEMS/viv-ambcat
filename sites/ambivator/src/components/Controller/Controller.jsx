@@ -1,34 +1,34 @@
-import CircularProgress from '@mui/material/CircularProgress';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid2';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import React, { useState } from 'react';
-import { useShallow } from 'zustand/shallow';
+import CircularProgress from "@mui/material/CircularProgress";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid2";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import React, { useState } from "react";
+import { useShallow } from "zustand/shallow";
 
-import { GLOBAL_SLIDER_DIMENSION_FIELDS } from '../../constants';
+import { GLOBAL_SLIDER_DIMENSION_FIELDS } from "../../constants";
 import {
   useChannelsStore,
   useImageSettingsStore,
   useLoader,
   useMetadata,
-  useViewerStore
-} from '../../state';
-import { getSingleSelectionStats, guessRgb, useWindowSize } from '../../utils';
-import AddChannel from './components/AddChannel';
-import CameraOptions from './components/CameraOptions';
-import ChannelController from './components/ChannelController';
-import ColormapSelect from './components/ColormapSelect';
-import GlobalSelectionSlider from './components/GlobalSelectionSlider';
-import LensSelect from './components/LensSelect';
-import Menu from './components/Menu';
-import PanLockToggle from './components/PanLockToggle';
-import PictureInPictureToggle from './components/PictureInPictureToggle';
-import RenderingModeSelect from './components/RenderingModeSelect';
-import SideBySideToggle from './components/SideBySideToggle';
-import Slicer from './components/Slicer';
-import VolumeButton from './components/VolumeButton';
-import ZoomLockToggle from './components/ZoomLockToggle';
+  useViewerStore,
+} from "../../state";
+import { getSingleSelectionStats, guessRgb, useWindowSize } from "../../utils";
+import AddChannel from "./components/AddChannel";
+import CameraOptions from "./components/CameraOptions";
+import ChannelController from "./components/ChannelController";
+import ColormapSelect from "./components/ColormapSelect";
+import GlobalSelectionSlider from "./components/GlobalSelectionSlider";
+import LensSelect from "./components/LensSelect";
+import Menu from "./components/Menu";
+import PanLockToggle from "./components/PanLockToggle";
+import PictureInPictureToggle from "./components/PictureInPictureToggle";
+import RenderingModeSelect from "./components/RenderingModeSelect";
+import SideBySideToggle from "./components/SideBySideToggle";
+import Slicer from "./components/Slicer";
+import VolumeButton from "./components/VolumeButton";
+import ZoomLockToggle from "./components/ZoomLockToggle";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -56,9 +56,9 @@ const Controller = () => {
     ids,
     setPropertiesForChannel,
     toggleIsOnSetter,
-    removeChannel
+    removeChannel,
   ] = useChannelsStore(
-    useShallow(store => [
+    useShallow((store) => [
       store.channelsVisible,
       store.contrastLimits,
       store.colors,
@@ -67,12 +67,12 @@ const Controller = () => {
       store.ids,
       store.setPropertiesForChannel,
       store.toggleIsOn,
-      store.removeChannel
+      store.removeChannel,
     ])
   );
   const loader = useLoader();
 
-  const colormap = useImageSettingsStore(store => store.colormap);
+  const colormap = useImageSettingsStore((store) => store.colormap);
   const [
     channelOptions,
     useLinkedView,
@@ -83,9 +83,9 @@ const Controller = () => {
     setIsChannelLoading,
     removeIsChannelLoading,
     pixelValues,
-    isViewerLoading
+    isViewerLoading,
   ] = useViewerStore(
-    useShallow(store => [
+    useShallow((store) => [
       store.channelOptions,
       store.useLinkedView,
       store.use3d,
@@ -95,35 +95,35 @@ const Controller = () => {
       store.setIsChannelLoading,
       store.removeIsChannelLoading,
       store.pixelValues,
-      store.isViewerLoading
+      store.isViewerLoading,
     ])
   );
   const metadata = useMetadata();
   const viewSize = useWindowSize();
   const isRgb = metadata && guessRgb(metadata);
   const { shape, labels } = loader[0];
-  const globalControlLabels = labels.filter(label =>
+  const globalControlLabels = labels.filter((label) =>
     GLOBAL_SLIDER_DIMENSION_FIELDS.includes(label)
   );
   const channelControllers = ids.map((id, i) => {
-    const onSelectionChange = e => {
+    const onSelectionChange = (e) => {
       const selection = {
         ...selections[i],
-        c: channelOptions.indexOf(e.target.value)
+        c: channelOptions.indexOf(e.target.value),
       };
       setIsChannelLoading(i, true);
       getSingleSelectionStats({
         loader,
         selection,
-        use3d
+        use3d,
       }).then(({ domain, contrastLimits: newContrastLimit }) => {
         const {
-          Pixels: { Channels }
+          Pixels: { Channels },
         } = metadata;
         const { c } = selection;
         const newProps = {
           contrastLimits: newContrastLimit,
-          domains: domain
+          domains: domain,
         };
         if (Channels[c].Color) {
           newProps.colors = Channels[c].Color.slice(0, -1);
@@ -133,7 +133,7 @@ const Controller = () => {
           onViewportLoad: () => {
             useImageSettingsStore.setState({ onViewportLoad: () => {} });
             setIsChannelLoading(i, false);
-          }
+          },
         });
         setPropertiesForChannel(i, { selections: selection });
       });
@@ -145,14 +145,14 @@ const Controller = () => {
       removeChannel(i);
       removeIsChannelLoading(i);
     };
-    const handleColorSelect = color => {
+    const handleColorSelect = (color) => {
       setPropertiesForChannel(i, { colors: color });
     };
     const name = channelOptions[selections[i].c];
     return (
       <Grid
         key={`channel-controller-${name}-${id}`}
-        style={{ width: '100%' }}
+        style={{ width: "100%" }}
         item
       >
         <ChannelController
@@ -172,7 +172,7 @@ const Controller = () => {
       </Grid>
     );
   });
-  const globalControllers = globalControlLabels.map(label => {
+  const globalControllers = globalControlLabels.map((label) => {
     const size = shape[labels.indexOf(label)];
     // Only return a slider if there is a "stack."
     return size > 1 ? (
@@ -191,17 +191,17 @@ const Controller = () => {
         onChange={handleTabChange}
         aria-label="tabs"
         variant="fullWidth"
-        style={{ height: '24px', minHeight: '24px' }}
+        style={{ height: "24px", minHeight: "24px" }}
       >
-        <Tab label="Channels" style={{ fontSize: '.75rem', bottom: 12 }} />
-        <Tab label="Volume" style={{ fontSize: '.75rem', bottom: 12 }} />
+        <Tab label="Channels" style={{ fontSize: ".75rem", bottom: 12 }} />
+        <Tab label="Volume" style={{ fontSize: ".75rem", bottom: 12 }} />
       </Tabs>
       <Divider />
       <TabPanel value={tab} index={0}>
         {useColormap && <ColormapSelect />}
-        {useLens && !colormap && !use3d && shape[labels.indexOf('c')] > 1 && (
+        {useLens && !colormap && !use3d && shape[labels.indexOf("c")] > 1 && (
           <LensSelect
-            channelOptions={selections.map(sel => channelOptions[sel.c])}
+            channelOptions={selections.map((sel) => channelOptions[sel.c])}
           />
         )}
         {!use3d && globalControllers}
@@ -211,7 +211,7 @@ const Controller = () => {
           <Grid
             container
             sx={{
-              justifyContent: 'center'
+              justifyContent: "center",
             }}
           >
             {!isRgb && <CircularProgress />}
@@ -226,8 +226,8 @@ const Controller = () => {
       </TabPanel>
       <Divider
         style={{
-          marginTop: '8px',
-          marginBottom: '8px'
+          marginTop: "8px",
+          marginBottom: "8px",
         }}
       />
       {<VolumeButton />}

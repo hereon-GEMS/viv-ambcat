@@ -1,17 +1,17 @@
-import AddIcon from '@mui/icons-material/Add';
-import Button from '@mui/material/Button';
-import React, { useCallback } from 'react';
-import { useShallow } from 'zustand/shallow';
+import AddIcon from "@mui/icons-material/Add";
+import Button from "@mui/material/Button";
+import React, { useCallback } from "react";
+import { useShallow } from "zustand/shallow";
 
-import { COLOR_PALLETE, MAX_CHANNELS } from '../../../constants';
+import { COLOR_PALLETE, MAX_CHANNELS } from "../../../constants";
 import {
   useChannelsStore,
   useImageSettingsStore,
   useLoader,
   useMetadata,
-  useViewerStore
-} from '../../../state';
-import { getSingleSelectionStats } from '../../../utils';
+  useViewerStore,
+} from "../../../state";
+import { getSingleSelectionStats } from "../../../utils";
 
 const AddChannel = () => {
   const [
@@ -19,49 +19,49 @@ const AddChannel = () => {
     isViewerLoading,
     use3d,
     setIsChannelLoading,
-    addIsChannelLoading
+    addIsChannelLoading,
   ] = useViewerStore(
-    useShallow(store => [
+    useShallow((store) => [
       store.globalSelection,
       store.isViewerLoading,
       store.use3d,
       store.setIsChannelLoading,
-      store.addIsChannelLoading
+      store.addIsChannelLoading,
     ])
   );
   const [selections, addChannel, setPropertiesForChannel] = useChannelsStore(
-    useShallow(store => [
+    useShallow((store) => [
       store.selections,
       store.addChannel,
-      store.setPropertiesForChannel
+      store.setPropertiesForChannel,
     ])
   );
   const loader = useLoader();
   const metadata = useMetadata();
   const { labels } = loader[0];
   const handleChannelAdd = useCallback(() => {
-    let selection = Object.fromEntries(labels.map(l => [l, 0]));
+    let selection = Object.fromEntries(labels.map((l) => [l, 0]));
     selection = { ...selection, ...globalSelection };
     const numSelectionsBeforeAdd = selections.length;
     getSingleSelectionStats({
       loader,
       selection,
-      use3d
+      use3d,
     }).then(({ domain, contrastLimits }) => {
       setPropertiesForChannel(numSelectionsBeforeAdd, {
         domains: domain,
         contrastLimits,
-        channelsVisible: true
+        channelsVisible: true,
       });
       useImageSettingsStore.setState({
         onViewportLoad: () => {
           useImageSettingsStore.setState({ onViewportLoad: () => {} });
           setIsChannelLoading(numSelectionsBeforeAdd, false);
-        }
+        },
       });
       addIsChannelLoading(true);
       const {
-        Pixels: { Channels }
+        Pixels: { Channels },
       } = metadata;
       const { c } = selection;
       addChannel({
@@ -70,7 +70,7 @@ const AddChannel = () => {
         channelsVisible: false,
         colors:
           Channels[c].Color?.slice(0, -1) ??
-          (COLOR_PALLETE[c] || [255, 255, 255])
+          (COLOR_PALLETE[c] || [255, 255, 255]),
       });
     });
   }, [
@@ -83,7 +83,7 @@ const AddChannel = () => {
     selections,
     setIsChannelLoading,
     setPropertiesForChannel,
-    metadata
+    metadata,
   ]);
   return (
     <Button
@@ -91,7 +91,7 @@ const AddChannel = () => {
       onClick={handleChannelAdd}
       fullWidth
       variant="outlined"
-      style={{ borderStyle: 'dashed' }}
+      style={{ borderStyle: "dashed" }}
       startIcon={<AddIcon />}
       size="small"
     >

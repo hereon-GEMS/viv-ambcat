@@ -1,4 +1,4 @@
-import { COORDINATE_SYSTEM, Layer } from '@deck.gl/core';
+import { COORDINATE_SYSTEM, Layer } from "@deck.gl/core";
 /* This is largely an adaptation of Will Usher's excellent blog post/code:
 https://github.com/Twinklebear/webgl-volume-raycaster
 Without his app, this would have been exponentially more difficult to do, so we thank him dearly.
@@ -26,83 +26,71 @@ https://github.com/visgl/luma.gl/issues/1415
 - We allow for arbtirary affine transformations via deck.gl's modelMatrix prop and have updated the vertex shader accordingly.
 More information about that is detailed in the comments there.
 */
-import { GL } from '@luma.gl/constants';
-import { Geometry, Model } from '@luma.gl/engine';
-import { ShaderAssembler } from '@luma.gl/shadertools';
-import { Matrix4 } from '@math.gl/core';
-import { Plane } from '@math.gl/culling';
+import { GL } from "@luma.gl/constants";
+import { Geometry, Model } from "@luma.gl/engine";
+import { ShaderAssembler } from "@luma.gl/shadertools";
+import { Matrix4 } from "@math.gl/core";
+import { Plane } from "@math.gl/culling";
 
-import fs from './xr-3d-layer-fragment.glsl';
-import vs from './xr-3d-layer-vertex.glsl';
+import fs from "./xr-3d-layer-fragment.glsl";
+import vs from "./xr-3d-layer-vertex.glsl";
 
-import { ColorPalette3DExtensions } from '@vivjs/extensions';
-import { getDtypeValues, padContrastLimits, padWithDefault } from '../utils';
+import { ColorPalette3DExtensions } from "@vivjs/extensions";
+import { getDtypeValues, padContrastLimits, padWithDefault } from "../utils";
 
 const channelsModule = {
-  name: 'channel-intensity-module',
+  name: "channel-intensity-module",
   fs: `\
     float apply_contrast_limits(float intensity, vec2 contrastLimits) {
       float contrastLimitsAppliedToIntensity = (intensity - contrastLimits[0]) / max(0.0005, (contrastLimits[1] - contrastLimits[0]));
       return max(0., contrastLimitsAppliedToIntensity);
     }
-  `
+  `,
 };
 
 // biome-ignore format: Avoid reformatting to keep the rows clear
 const CUBE_STRIP = [
-	1, 1, 0,
-	0, 1, 0,
-	1, 1, 1,
-	0, 1, 1,
-	0, 0, 1,
-	0, 1, 0,
-	0, 0, 0,
-	1, 1, 0,
-	1, 0, 0,
-	1, 1, 1,
-	1, 0, 1,
-	0, 0, 1,
-	1, 0, 0,
-	0, 0, 0
+  1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0,
+  0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0,
 ];
 const NUM_PLANES_DEFAULT = 1;
 
 const defaultProps = {
   pickable: false,
   coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
-  channelData: { type: 'object', value: {}, compare: true },
-  contrastLimits: { type: 'array', value: [], compare: true },
-  dtype: { type: 'string', value: 'Uint8', compare: true },
-  xSlice: { type: 'array', value: null, compare: true },
-  ySlice: { type: 'array', value: null, compare: true },
-  zSlice: { type: 'array', value: null, compare: true },
-  clippingPlanes: { type: 'array', value: [], compare: true },
-  resolutionMatrix: { type: 'object', value: new Matrix4(), compare: true },
-  channelsVisible: { type: 'array', value: [], compare: true },
+  channelData: { type: "object", value: {}, compare: true },
+  contrastLimits: { type: "array", value: [], compare: true },
+  dtype: { type: "string", value: "Uint8", compare: true },
+  xSlice: { type: "array", value: null, compare: true },
+  ySlice: { type: "array", value: null, compare: true },
+  zSlice: { type: "array", value: null, compare: true },
+  clippingPlanes: { type: "array", value: [], compare: true },
+  resolutionMatrix: { type: "object", value: new Matrix4(), compare: true },
+  channelsVisible: { type: "array", value: [], compare: true },
   extensions: {
-    type: 'array',
+    type: "array",
     value: [new ColorPalette3DExtensions.AdditiveBlendExtension()],
-    compare: true
-  }
+    compare: true,
+  },
 };
 
 function getRenderingAttrs() {
-  const values = getDtypeValues('Float32');
+  const values = getDtypeValues("Float32");
   return {
     ...values,
-    sampler: values.sampler.replace('2D', '3D'),
-    cast: data => new Float32Array(data)
+    sampler: values.sampler.replace("2D", "3D"),
+    cast: (data) => new Float32Array(data),
   };
 }
 
 function getRenderingFromExtensions(extensions) {
   let rendering = {};
-  extensions.forEach(extension => {
+  extensions.forEach((extension) => {
     rendering = extension.rendering;
   });
   if (!rendering._RENDER) {
     throw new Error(
-      'XR3DLayer requires at least one extension to define opts.rendering as an object with _RENDER as a property at the minimum.'
+      "XR3DLayer requires at least one extension to define opts.rendering as an object with _RENDER as a property at the minimum."
     );
   }
   return rendering;
@@ -137,11 +125,11 @@ const XR3DLayer = class extends Layer {
     // https://stackoverflow.com/questions/42789896/webgl-error-arraybuffer-not-big-enough-for-request-in-case-of-gl-luminance
     device.setParametersWebGL({
       [GL.UNPACK_ALIGNMENT]: 1,
-      [GL.PACK_ALIGNMENT]: 1
+      [GL.PACK_ALIGNMENT]: 1,
     });
     const programManager = ShaderAssembler.getDefaultShaderAssembler();
     const processStr =
-      'fs:DECKGL_PROCESS_INTENSITY(inout float intensity, vec2 contrastLimits, int channelIndex)';
+      "fs:DECKGL_PROCESS_INTENSITY(inout float intensity, vec2 contrastLimits, int channelIndex)";
     if (!programManager._hookFunctions.includes(processStr)) {
       programManager.addShaderHook(processStr);
     }
@@ -149,12 +137,14 @@ const XR3DLayer = class extends Layer {
 
   _isHookDefinedByExtensions(hookName) {
     const { extensions } = this.props;
-    return extensions?.some(e => {
+    return extensions?.some((e) => {
       const shaders = e.getShaders();
       if (shaders) {
         const { inject = {}, modules = [] } = shaders;
         const definesInjection = inject[hookName];
-        const moduleDefinesInjection = modules.some(m => m?.inject?.[hookName]);
+        const moduleDefinesInjection = modules.some(
+          (m) => m?.inject?.[hookName]
+        );
         return definesInjection || moduleDefinesInjection;
       }
       return false;
@@ -170,24 +160,24 @@ const XR3DLayer = class extends Layer {
     const { _BEFORE_RENDER, _RENDER, _AFTER_RENDER } =
       getRenderingFromExtensions(extensions);
     const extensionDefinesDeckglProcessIntensity =
-      this._isHookDefinedByExtensions('fs:DECKGL_PROCESS_INTENSITY');
+      this._isHookDefinedByExtensions("fs:DECKGL_PROCESS_INTENSITY");
     const newChannelsModule = { inject: {}, ...channelsModule };
     if (!extensionDefinesDeckglProcessIntensity) {
-      newChannelsModule.inject['fs:DECKGL_PROCESS_INTENSITY'] = `
+      newChannelsModule.inject["fs:DECKGL_PROCESS_INTENSITY"] = `
         intensity = apply_contrast_limits(intensity, contrastLimits);
       `;
     }
     return super.getShaders({
       vs,
       fs: fs
-        .replace('_BEFORE_RENDER', _BEFORE_RENDER)
-        .replace('_RENDER', _RENDER)
-        .replace('_AFTER_RENDER', _AFTER_RENDER),
+        .replace("_BEFORE_RENDER", _BEFORE_RENDER)
+        .replace("_RENDER", _RENDER)
+        .replace("_AFTER_RENDER", _AFTER_RENDER),
       defines: {
         SAMPLER_TYPE: sampler,
-        NUM_PLANES: String(clippingPlanes.length || NUM_PLANES_DEFAULT)
+        NUM_PLANES: String(clippingPlanes.length || NUM_PLANES_DEFAULT),
       },
-      modules: [newChannelsModule]
+      modules: [newChannelsModule],
     });
   }
 
@@ -198,7 +188,7 @@ const XR3DLayer = class extends Layer {
     super.finalizeState();
 
     if (this.state.textures) {
-      Object.values(this.state.textures).forEach(tex => tex?.delete());
+      Object.values(this.state.textures).forEach((tex) => tex?.delete());
     }
   }
 
@@ -238,11 +228,11 @@ const XR3DLayer = class extends Layer {
     return new Model(gl, {
       ...this.getShaders(),
       geometry: new Geometry({
-        topology: 'triangle-strip',
+        topology: "triangle-strip",
         attributes: {
-          positions: new Float32Array(CUBE_STRIP)
-        }
-      })
+          positions: new Float32Array(CUBE_STRIP),
+        },
+      }),
     });
   }
 
@@ -262,7 +252,7 @@ const XR3DLayer = class extends Layer {
       domain,
       dtype,
       clippingPlanes,
-      resolutionMatrix
+      resolutionMatrix,
     } = this.props;
     const { viewMatrix, viewMatrixInverse, projectionMatrix } =
       this.context.viewport;
@@ -271,12 +261,12 @@ const XR3DLayer = class extends Layer {
         contrastLimits,
         channelsVisible,
         domain,
-        dtype
+        dtype,
       });
       const invertedScaleMatrix = scaleMatrix.clone().invert();
       const invertedResolutionMatrix = resolutionMatrix.clone().invert();
       const paddedClippingPlanes = padWithDefault(
-        clippingPlanes.map(p =>
+        clippingPlanes.map((p) =>
           p
             .clone()
             .transform(invertedScaleMatrix)
@@ -286,8 +276,8 @@ const XR3DLayer = class extends Layer {
         clippingPlanes.length || NUM_PLANES_DEFAULT
       );
       // Need to flatten for shaders.
-      const normals = paddedClippingPlanes.flatMap(plane => plane.normal);
-      const distances = paddedClippingPlanes.map(plane => plane.distance);
+      const normals = paddedClippingPlanes.flatMap((plane) => plane.normal);
+      const distances = paddedClippingPlanes.map((plane) => plane.distance);
 
       model.setUniforms(
         {
@@ -295,23 +285,23 @@ const XR3DLayer = class extends Layer {
           contrastLimits: paddedContrastLimits,
           xSlice: new Float32Array(
             xSlice
-              ? xSlice.map(i => i / scaleMatrix[0] / resolutionMatrix[0])
+              ? xSlice.map((i) => i / scaleMatrix[0] / resolutionMatrix[0])
               : [0, 1]
           ),
           ySlice: new Float32Array(
             ySlice
-              ? ySlice.map(i => i / scaleMatrix[5] / resolutionMatrix[5])
+              ? ySlice.map((i) => i / scaleMatrix[5] / resolutionMatrix[5])
               : [0, 1]
           ),
           zSlice: new Float32Array(
             zSlice
-              ? zSlice.map(i => i / scaleMatrix[10] / resolutionMatrix[10])
+              ? zSlice.map((i) => i / scaleMatrix[10] / resolutionMatrix[10])
               : [0, 1]
           ),
           eye_pos: new Float32Array([
             viewMatrixInverse[12],
             viewMatrixInverse[13],
-            viewMatrixInverse[14]
+            viewMatrixInverse[14],
           ]),
           view: viewMatrix,
           proj: projectionMatrix,
@@ -319,7 +309,7 @@ const XR3DLayer = class extends Layer {
           resolution: resolutionMatrix,
           model: modelMatrix || new Matrix4(),
           normals,
-          distances
+          distances,
         },
         { disableWanings: false }
       );
@@ -338,10 +328,10 @@ const XR3DLayer = class extends Layer {
       volume2: null,
       volume3: null,
       volume4: null,
-      volume5: null
+      volume5: null,
     };
     if (this.state.textures) {
-      Object.values(this.state.textures).forEach(tex => tex?.delete());
+      Object.values(this.state.textures).forEach((tex) => tex?.delete());
     }
     if (
       channelData &&
@@ -354,7 +344,7 @@ const XR3DLayer = class extends Layer {
       }, this);
       // null textures will throw errors, so we just set unused channels to the first texture for now.
       for (const key in textures) {
-        if (!textures.volume0) throw new Error('Bad texture state!');
+        if (!textures.volume0) throw new Error("Bad texture state!");
         if (!textures[key]) textures[key] = textures.volume0;
       }
       this.setState({
@@ -363,9 +353,9 @@ const XR3DLayer = class extends Layer {
           this.props.physicalSizeScalingMatrix.transformPoint([
             width,
             height,
-            depth
+            depth,
           ])
-        )
+        ),
       });
     }
   }
@@ -379,22 +369,22 @@ const XR3DLayer = class extends Layer {
       width,
       height,
       depth,
-      dimension: '3d',
+      dimension: "3d",
       data: attrs.cast?.(data) ?? data,
       format: attrs.format,
       mipmaps: false,
       sampler: {
-        minFilter: 'linear',
-        magFilter: 'linear',
-        addressModeU: 'clamp-to-edge',
-        addressModeV: 'clamp-to-edge',
-        addressModeW: 'clamp-to-edge'
-      }
+        minFilter: "linear",
+        magFilter: "linear",
+        addressModeU: "clamp-to-edge",
+        addressModeV: "clamp-to-edge",
+        addressModeW: "clamp-to-edge",
+      },
     });
     return texture;
   }
 };
 
-XR3DLayer.layerName = 'XR3DLayer';
+XR3DLayer.layerName = "XR3DLayer";
 XR3DLayer.defaultProps = defaultProps;
 export default XR3DLayer;

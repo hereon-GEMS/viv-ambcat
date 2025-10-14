@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: An existing feature does not work
-title: ''
+title: ""
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 **Describe the bug**
@@ -20,6 +19,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Environment:**
- - Release or git hash:
- - Browser:
- - Browser version:
+
+- Release or git hash:
+- Browser:
+- Browser version:

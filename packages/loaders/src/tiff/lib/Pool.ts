@@ -1,4 +1,4 @@
-import { Pool } from 'geotiff';
+import { Pool } from "geotiff";
 
 // https://developer.mozilla.org/en-US/docs/Web/API/NavigatorConcurrentHardware/hardwareConcurrency
 // We need to give a different way of getting this for safari, so 4 is probably a safe bet
@@ -7,7 +7,7 @@ import { Pool } from 'geotiff';
 const defaultPoolSize = globalThis?.navigator?.hardwareConcurrency ?? 4;
 
 function createWorker() {
-  return new Worker('./decoder.worker.ts');
+  return new Worker("./decoder.worker.ts");
 }
 
 export default class extends Pool {

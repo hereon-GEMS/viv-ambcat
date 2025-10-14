@@ -1,29 +1,29 @@
-import CloseIcon from '@mui/icons-material/Close';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import Grid from '@mui/material/Grid2';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import React from 'react';
-import { useViewerStore } from '../../../state';
+import CloseIcon from "@mui/icons-material/Close";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import Grid from "@mui/material/Grid2";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import React from "react";
+import { useViewerStore } from "../../../state";
 
 const hideButtonStyle = {
-  marginRight: '4.5px',
-  marginTop: '3px'
+  marginRight: "4.5px",
+  marginTop: "3px",
 };
 function MenuTitle() {
   const toggleIsControllerOn = useViewerStore(
-    store => store.toggleIsControllerOn
+    (store) => store.toggleIsControllerOn
   );
   return (
     <Grid
       container
       direction="row"
       sx={{
-        justifyContent: 'flex-end',
-        alignItems: 'center'
+        justifyContent: "flex-end",
+        alignItems: "center",
       }}
     >
-      <Grid style={{ marginRight: 'auto' }} item>
+      <Grid style={{ marginRight: "auto" }} item>
         <Typography variant="body1">
           <strong>AMBCAT explorer</strong>
         </Typography>

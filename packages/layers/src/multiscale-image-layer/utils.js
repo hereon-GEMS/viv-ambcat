@@ -1,7 +1,7 @@
-import { getImageSize, isInterleaved } from '@vivjs/loaders';
+import { getImageSize, isInterleaved } from "@vivjs/loaders";
 
-import BitmapLayer from '../bitmap-layer';
-import XRLayer from '../xr-layer/xr-layer';
+import BitmapLayer from "../bitmap-layer";
+import XRLayer from "../xr-layer/xr-layer";
 
 export function range(len) {
   return [...Array(len).keys()];
@@ -10,11 +10,11 @@ export function range(len) {
 export function renderSubLayers(props) {
   const {
     bbox: { left, top, right, bottom },
-    index: { x, y, z }
+    index: { x, y, z },
   } = props.tile;
   const { data, id, loader, maxZoom } = props;
   // Only render in positive coorinate system
-  if ([left, bottom, right, top].some(v => v < 0) || !data) {
+  if ([left, bottom, right, top].some((v) => v < 0) || !data) {
     return null;
   }
   const base = loader[0];
@@ -25,7 +25,7 @@ export function renderSubLayers(props) {
     left,
     data.height < base.tileSize ? height : bottom,
     data.width < base.tileSize ? width : right,
-    top
+    top,
   ];
   if (isInterleaved(base.shape)) {
     const { photometricInterpretation = 2 } = base.meta;
@@ -36,7 +36,7 @@ export function renderSubLayers(props) {
       bounds,
       id: `tile-sub-layer-${bounds}-${id}`,
       tileId: { x, y, z },
-      extensions: []
+      extensions: [],
     });
   }
   return new XRLayer(props, {
@@ -49,6 +49,6 @@ export function renderSubLayers(props) {
     id: `tile-sub-layer-${bounds}-${id}`,
     tileId: { x, y, z },
     // The auto setting is NEAREST at the highest resolution but LINEAR otherwise.
-    interpolation: z === maxZoom ? 'nearest' : 'linear'
+    interpolation: z === maxZoom ? "nearest" : "linear",
   });
 }

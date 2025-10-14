@@ -1,36 +1,36 @@
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-import IconButton from '@mui/material/IconButton';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
-import makeStyles from '@mui/styles/makeStyles';
-import React, { useReducer, useRef } from 'react';
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import IconButton from "@mui/material/IconButton";
+import MenuItem from "@mui/material/MenuItem";
+import MenuList from "@mui/material/MenuList";
+import Paper from "@mui/material/Paper";
+import Popper from "@mui/material/Popper";
+import makeStyles from "@mui/styles/makeStyles";
+import React, { useReducer, useRef } from "react";
 
-import ColorPalette from './ColorPalette';
+import ColorPalette from "./ColorPalette";
 
 const useStyles = makeStyles(() => ({
   paper: {
-    backgroundColor: 'rgba(0, 0, 0, 0.75)'
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
   },
   span: {
-    width: '70px',
-    textAlign: 'center',
-    paddingLeft: '2px',
-    paddingRight: '2px'
+    width: "70px",
+    textAlign: "center",
+    paddingLeft: "2px",
+    paddingRight: "2px",
   },
   colors: {
-    '&:hover': {
-      backgroundColor: 'transparent'
+    "&:hover": {
+      backgroundColor: "transparent",
     },
-    paddingLeft: '2px',
-    paddingRight: '2px'
-  }
+    paddingLeft: "2px",
+    paddingRight: "2px",
+  },
 }));
 
 function ChannelOptions({ handleColorSelect, disabled, handleModeSelect }) {
-  const [open, toggle] = useReducer(v => !v, false);
+  const [open, toggle] = useReducer((v) => !v, false);
   const anchorRef = useRef(null);
 
   const classes = useStyles();

@@ -1,5 +1,5 @@
-import { KeyError } from 'zarr';
-import type { AsyncStore } from 'zarr/types/storage/types';
+import { KeyError } from "zarr";
+import type { AsyncStore } from "zarr/types/storage/types";
 
 /**
  * Preserves (double) slashes earlier in the path, so this works better
@@ -9,11 +9,11 @@ import type { AsyncStore } from 'zarr/types/storage/types';
 function joinUrlParts(...args: string[]) {
   return args
     .map((part, i) => {
-      if (i === 0) return part.trim().replace(/[/]*$/g, '');
-      return part.trim().replace(/(^[/]*|[/]*$)/g, '');
+      if (i === 0) return part.trim().replace(/[/]*$/g, "");
+      return part.trim().replace(/(^[/]*|[/]*$)/g, "");
     })
-    .filter(x => x.length)
-    .join('/');
+    .filter((x) => x.length)
+    .join("/");
 }
 
 class ReadOnlyStore {
@@ -26,7 +26,7 @@ class ReadOnlyStore {
   }
 
   async setItem() {
-    console.warn('Cannot write to read-only store.');
+    console.warn("Cannot write to read-only store.");
     return false;
   }
 }
@@ -38,7 +38,7 @@ export class FileStore
   private _map: Map<string, File>;
   private _rootPrefix: string;
 
-  constructor(fileMap: Map<string, File>, rootPrefix = '') {
+  constructor(fileMap: Map<string, File>, rootPrefix = "") {
     super();
     this._map = fileMap;
     this._rootPrefix = rootPrefix;

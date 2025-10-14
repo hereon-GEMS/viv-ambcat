@@ -1,11 +1,11 @@
-import { Matrix4 } from '@math.gl/core';
-import { getImageSize } from '@vivjs/loaders';
+import { Matrix4 } from "@math.gl/core";
+import { getImageSize } from "@vivjs/loaders";
 
 import {
   ImageLayer,
   MultiscaleImageLayer,
-  getPhysicalSizeScalingMatrix
-} from '@vivjs/layers';
+  getPhysicalSizeScalingMatrix,
+} from "@vivjs/layers";
 
 export function getVivId(id) {
   return `-#${id}#`;
@@ -36,9 +36,9 @@ export function getDefaultInitialViewState(
   const scale = (modelMatrix || new Matrix4()).getScale();
   const [trueWidth, trueHeight] = [
     scale[0] * pixelWidth,
-    scale[1] * pixelHeight
+    scale[1] * pixelHeight,
   ];
-  const depth = source.shape[source.labels.indexOf('z')];
+  const depth = source.shape[source.labels.indexOf("z")];
   const zoom =
     Math.log2(
       Math.min(viewSize.width / trueWidth, viewSize.height / trueHeight)
@@ -49,10 +49,10 @@ export function getDefaultInitialViewState(
       (use3d ? physicalSizeScalingMatrix : new Matrix4()).transformPoint([
         pixelWidth / 2,
         pixelHeight / 2,
-        use3d ? depth / 2 : 0
+        use3d ? depth / 2 : 0,
       ])
     ),
-    zoom
+    zoom,
   };
   return loaderInitialViewState;
 }
@@ -76,6 +76,6 @@ export function getImageLayer(id, props) {
     ...props,
     id: `${sourceName}${getVivId(id)}`,
     viewportId: id,
-    loader: layerLoader
+    loader: layerLoader,
   });
 }

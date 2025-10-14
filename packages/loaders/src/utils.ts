@@ -1,17 +1,17 @@
-import type { Labels, PixelSource } from '@vivjs/types';
-import quickselect from 'quickselect';
-import type { TypedArray } from 'zarr';
-import type { OmeXml } from './omexml';
+import type { Labels, PixelSource } from "@vivjs/types";
+import quickselect from "quickselect";
+import type { TypedArray } from "zarr";
+import type { OmeXml } from "./omexml";
 
 export const DTYPE_LOOKUP = {
-  uint8: 'Uint8',
-  uint16: 'Uint16',
-  uint32: 'Uint32',
-  float: 'Float32',
-  double: 'Float64',
-  int8: 'Int8',
-  int16: 'Int16',
-  int32: 'Int32'
+  uint8: "Uint8",
+  uint16: "Uint16",
+  uint32: "Uint32",
+  float: "Float32",
+  double: "Float64",
+  int8: "Int8",
+  int16: "Int16",
+  int32: "Int32",
 } as const;
 
 /**
@@ -77,7 +77,7 @@ export function getChannelStats(arr: TypedArray) {
   quickselect(cutoffArr, bottomCutoffLocation, 0, topCutoffLocation);
   const contrastLimits = [
     cutoffArr[bottomCutoffLocation] || 0,
-    cutoffArr[topCutoffLocation] || 0
+    cutoffArr[topCutoffLocation] || 0,
   ];
   return {
     mean,
@@ -86,7 +86,7 @@ export function getChannelStats(arr: TypedArray) {
     q3,
     median,
     domain: [min, max],
-    contrastLimits
+    contrastLimits,
   };
 }
 
@@ -99,7 +99,7 @@ export function getChannelStats(arr: TypedArray) {
  */
 export function intToRgba(int: number) {
   if (!Number.isInteger(int)) {
-    throw Error('Not an integer.');
+    throw Error("Not an integer.");
   }
 
   // Write number to int32 representation (4 bytes).
@@ -131,8 +131,8 @@ type Sel<Dim extends string> =
   Dim extends `${infer Z}${infer X}${infer A}${infer B}${infer C}`
     ? [C, B, A]
     : never;
-export function getLabels(dimOrder: OmeXml[0]['Pixels']['DimensionOrder']) {
-  return dimOrder.toLowerCase().split('').reverse() as Labels<
+export function getLabels(dimOrder: OmeXml[0]["Pixels"]["DimensionOrder"]) {
+  return dimOrder.toLowerCase().split("").reverse() as Labels<
     Sel<Lowercase<typeof dimOrder>>
   >;
 }
@@ -147,7 +147,7 @@ export function prevPowerOf2(x: number) {
   return 2 ** Math.floor(Math.log2(x));
 }
 
-export const SIGNAL_ABORTED = '__vivSignalAborted';
+export const SIGNAL_ABORTED = "__vivSignalAborted";
 
 function isElement(node: Node): node is HTMLElement {
   return node.nodeType === 1;
@@ -165,7 +165,7 @@ function xmlToJson(
 ): XmlNode {
   if (isText(xmlNode)) {
     // If the node is a text node
-    return xmlNode.nodeValue?.trim() ?? '';
+    return xmlNode.nodeValue?.trim() ?? "";
   }
 
   // If the node has no attributes and no children, return an empty string
@@ -173,7 +173,7 @@ function xmlToJson(
     xmlNode.childNodes.length === 0 &&
     (!xmlNode.attributes || xmlNode.attributes.length === 0)
   ) {
-    return '';
+    return "";
   }
 
   const xmlObj: XmlNode = {};
@@ -193,8 +193,8 @@ function xmlToJson(
       continue;
     }
     const childXmlObj = xmlToJson(childNode, options);
-    if (childXmlObj !== undefined && childXmlObj !== '') {
-      if (childNode.nodeName === '#text' && xmlNode.childNodes.length === 1) {
+    if (childXmlObj !== undefined && childXmlObj !== "") {
+      if (childNode.nodeName === "#text" && xmlNode.childNodes.length === 1) {
         return childXmlObj;
       }
       if (xmlObj[childNode.nodeName]) {
@@ -216,10 +216,10 @@ export function parseXML(xmlString: string) {
   // Remove trailing null character, which can break XML parsing in Firefox
   const doc = parser.parseFromString(
     // biome-ignore lint/suspicious/noControlCharactersInRegex: Necessary for parsing XML
-    xmlString.replace(/\u0000$/, ''),
-    'application/xml'
+    xmlString.replace(/\u0000$/, ""),
+    "application/xml"
   );
-  return xmlToJson(doc.documentElement, { attrtibutesKey: 'attr' });
+  return xmlToJson(doc.documentElement, { attrtibutesKey: "attr" });
 }
 
 /** Asserts the condition. */
@@ -228,6 +228,6 @@ export function assert(
   message?: string
 ): asserts condition {
   if (!condition) {
-    throw new Error(`Assert failed${message ? `: ${message}` : ''}`);
+    throw new Error(`Assert failed${message ? `: ${message}` : ""}`);
   }
 }

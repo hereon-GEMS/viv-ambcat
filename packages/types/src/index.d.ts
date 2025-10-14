@@ -1,5 +1,5 @@
-import type { COLORMAPS, DTYPE_VALUES } from '@vivjs/constants';
-import type { Matrix4 } from 'math.gl';
+import type { COLORMAPS, DTYPE_VALUES } from "@vivjs/constants";
+import type { Matrix4 } from "math.gl";
 
 export type SupportedDtype = keyof typeof DTYPE_VALUES;
 export type SupportedTypedArray = InstanceType<
@@ -39,8 +39,8 @@ export interface PixelSourceMeta {
 }
 
 export type Labels<S extends string[]> =
-  | [...S, 'y', 'x']
-  | [...S, 'y', 'x', '_c'];
+  | [...S, "y", "x"]
+  | [...S, "y", "x", "_c"];
 
 export interface PixelSource<S extends string[]> {
   getRaster(sel: RasterSelection<S>): Promise<PixelData>;
@@ -101,8 +101,8 @@ type ExtractLoader<LayerProps, S extends string[]> = LayerProps extends {
 }
   ? { loader: PixelSource<S>[] }
   : LayerProps extends { loader: object }
-    ? { loader: PixelSource<S> }
-    : unknown;
+  ? { loader: PixelSource<S> }
+  : unknown;
 
 // Add optional extention props to layer if 'extensions' is defined on LayerProps.
 type WithExtensionProps<LayerProps> = LayerProps extends { extensions: unknown }
@@ -127,7 +127,7 @@ type WithExtensionProps<LayerProps> = LayerProps extends { extensions: unknown }
  * is much more strict and useful.
  */
 export type Viv<LayerProps, S extends string[] = string[]> = Override<
-  Omit<LayerProps, 'loader'>,
+  Omit<LayerProps, "loader">,
   PreciseLayerProps<S>
 > &
   ExtractLoader<LayerProps, S> &

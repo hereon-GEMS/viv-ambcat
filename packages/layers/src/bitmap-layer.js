@@ -1,8 +1,8 @@
-import { COORDINATE_SYSTEM, CompositeLayer } from '@deck.gl/core';
-import { BitmapLayer as BaseBitmapLayer } from '@deck.gl/layers';
-import { GL } from '@luma.gl/constants';
-import { Model } from '@luma.gl/engine';
-import { addAlpha } from './utils';
+import { COORDINATE_SYSTEM, CompositeLayer } from "@deck.gl/core";
+import { BitmapLayer as BaseBitmapLayer } from "@deck.gl/layers";
+import { GL } from "@luma.gl/constants";
+import { Model } from "@luma.gl/engine";
+import { addAlpha } from "./utils";
 
 const PHOTOMETRIC_INTERPRETATIONS = {
   WhiteIsZero: 0,
@@ -13,23 +13,23 @@ const PHOTOMETRIC_INTERPRETATIONS = {
   CMYK: 5,
   YCbCr: 6,
   CIELab: 8,
-  ICCLab: 9
+  ICCLab: 9,
 };
 
 const defaultProps = {
   ...BaseBitmapLayer.defaultProps,
-  pickable: { type: 'boolean', value: true, compare: true },
-  coordinateSystem: COORDINATE_SYSTEM.CARTESIAN
+  pickable: { type: "boolean", value: true, compare: true },
+  coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
 };
 
 const getPhotometricInterpretationShader = (
   photometricInterpretation,
   transparentColorInHook
 ) => {
-  const useTransparentColor = transparentColorInHook ? 'true' : 'false';
+  const useTransparentColor = transparentColorInHook ? "true" : "false";
   const transparentColorVector = `vec3(${(transparentColorInHook || [0, 0, 0])
-    .map(i => String(i / 255))
-    .join(',')})`;
+    .map((i) => String(i / 255))
+    .join(",")})`;
   switch (photometricInterpretation) {
     case PHOTOMETRIC_INTERPRETATIONS.RGB:
       return `color[3] = (${useTransparentColor} && (color.rgb == ${transparentColorVector})) ? 0.0 : color.a;`;
@@ -56,13 +56,13 @@ const getPhotometricInterpretationShader = (
         `;
     default:
       console.error(
-        'Unsupported photometric interpretation or none provided.  No transformation will be done to image data'
+        "Unsupported photometric interpretation or none provided.  No transformation will be done to image data"
       );
-      return '';
+      return "";
   }
 };
 
-const getTransparentColor = photometricInterpretation => {
+const getTransparentColor = (photometricInterpretation) => {
   switch (photometricInterpretation) {
     case PHOTOMETRIC_INTERPRETATIONS.RGB:
       return [0, 0, 0, 0];
@@ -74,7 +74,7 @@ const getTransparentColor = photometricInterpretation => {
       return [16, 128, 128, 0];
     default:
       console.error(
-        'Unsupported photometric interpretation or none provided.  No transformation will be done to image data'
+        "Unsupported photometric interpretation or none provided.  No transformation will be done to image data"
       );
       return [0, 0, 0, 0];
   }
@@ -93,11 +93,11 @@ class BitmapLayerWrapper extends BaseBitmapLayer {
       ...this.getShaders(),
       id: this.props.id,
       bufferLayout: this.getAttributeManager().getBufferLayouts(),
-      topology: 'triangle-list',
+      topology: "triangle-list",
       isInstanced: false,
       inject: {
-        'fs:DECKGL_FILTER_COLOR': photometricInterpretationShader
-      }
+        "fs:DECKGL_FILTER_COLOR": photometricInterpretationShader,
+      },
     });
   }
 }
@@ -130,7 +130,7 @@ const BitmapLayer = class extends CompositeLayer {
     // See: https://github.com/visgl/deck.gl/pull/5197
     device.setParametersWebGL({
       [GL.UNPACK_ALIGNMENT]: 1,
-      [GL.PACK_ALIGNMENT]: 1
+      [GL.PACK_ALIGNMENT]: 1,
     });
     super.initializeState(args);
   }
@@ -138,7 +138,7 @@ const BitmapLayer = class extends CompositeLayer {
   renderLayers() {
     const {
       photometricInterpretation,
-      transparentColor: transparentColorInHook
+      transparentColor: transparentColorInHook,
     } = this.props;
     const transparentColor = getTransparentColor(photometricInterpretation);
     this.props.image.data = addAlpha(this.props.image.data);
@@ -149,21 +149,21 @@ const BitmapLayer = class extends CompositeLayer {
       transparentColor,
       // This is our transparentColor props which needs to be applied in the hook that converts to the RGB space.
       transparentColorInHook,
-      id: `${this.props.id}-wrapped`
+      id: `${this.props.id}-wrapped`,
     });
   }
 };
 
-BitmapLayer.layerName = 'BitmapLayer';
+BitmapLayer.layerName = "BitmapLayer";
 // From https://github.com/geotiffjs/geotiff.js/blob/8ef472f41b51d18074aece2300b6a8ad91a21ae1/src/globals.js#L202-L213
 BitmapLayer.PHOTOMETRIC_INTERPRETATIONS = PHOTOMETRIC_INTERPRETATIONS;
 BitmapLayer.defaultProps = {
   ...defaultProps,
   // We don't want this layer to bind the texture so the type should not be `image`.
-  image: { type: 'object', value: {}, compare: true },
-  transparentColor: { type: 'array', value: [0, 0, 0], compare: true },
-  photometricInterpretation: { type: 'number', value: 2, compare: true }
+  image: { type: "object", value: {}, compare: true },
+  transparentColor: { type: "array", value: [0, 0, 0], compare: true },
+  photometricInterpretation: { type: "number", value: 2, compare: true },
 };
 BitmapLayerWrapper.defaultProps = defaultProps;
-BitmapLayerWrapper.layerName = 'BitmapLayerWrapper';
+BitmapLayerWrapper.layerName = "BitmapLayerWrapper";
 export default BitmapLayer;

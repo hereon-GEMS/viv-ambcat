@@ -1,9 +1,9 @@
-import { fromString } from '../omexml';
+import { fromString } from "../omexml";
 
-import type GeoTIFF from 'geotiff';
-import type { DimensionOrder, OmeXml } from '../omexml';
-import type Pool from './lib/Pool';
-import { createOmeImageIndexerFromResolver } from './lib/indexers';
+import type GeoTIFF from "geotiff";
+import type { DimensionOrder, OmeXml } from "../omexml";
+import type Pool from "./lib/Pool";
+import { createOmeImageIndexerFromResolver } from "./lib/indexers";
 import {
   type OmeTiffDims,
   type OmeTiffSelection,
@@ -12,9 +12,9 @@ import {
   extractPhysicalSizesfromPixels,
   getShapeForBinaryDownsampleLevel,
   getTiffTileSize,
-  parsePixelDataType
-} from './lib/utils';
-import TiffPixelSource from './pixel-source';
+  parsePixelDataType,
+} from "./lib/utils";
+import TiffPixelSource from "./pixel-source";
 
 function resolveMetadata(omexml: OmeXml, SubIFDs: number[] | undefined) {
   if (SubIFDs) {
@@ -46,17 +46,17 @@ function getRelativeOmeIfdIndex(
 ) {
   const { size, dimensionOrder } = image;
   switch (image.dimensionOrder) {
-    case 'XYZCT':
+    case "XYZCT":
       return z + size.z * c + size.z * size.c * t;
-    case 'XYZTC':
+    case "XYZTC":
       return z + size.z * t + size.z * size.t * c;
-    case 'XYCTZ':
+    case "XYCTZ":
       return c + size.c * t + size.c * size.t * z;
-    case 'XYCZT':
+    case "XYCZT":
       return c + size.c * z + size.c * size.z * t;
-    case 'XYTCZ':
+    case "XYTCZ":
       return t + size.t * c + size.t * size.c * z;
-    case 'XYTZC':
+    case "XYTZC":
       return t + size.t * z + size.t * size.z * c;
     default:
       throw new Error(`Invalid dimension order: ${dimensionOrder}`);
@@ -80,7 +80,7 @@ function createSingleFileOmeTiffPyramidalIndexer(
     dimensionOrder: DimensionOrder;
   }
 ) {
-  return createOmeImageIndexerFromResolver(sel => {
+  return createOmeImageIndexerFromResolver((sel) => {
     const withinImageIndex = getRelativeOmeIfdIndex(sel, image);
     const ifdIndex = withinImageIndex + image.ifdOffset;
     return { tiff, ifdIndex };
@@ -113,30 +113,30 @@ export async function loadSingleFileOmeTiff(
 
   for (const metadata of rootMeta) {
     const imageSize = {
-      z: metadata['Pixels']['SizeZ'],
-      c: metadata['Pixels']['SizeC'],
-      t: metadata['Pixels']['SizeT']
+      z: metadata["Pixels"]["SizeZ"],
+      c: metadata["Pixels"]["SizeC"],
+      t: metadata["Pixels"]["SizeT"],
     };
-    const axes = extractAxesFromPixels(metadata['Pixels']);
+    const axes = extractAxesFromPixels(metadata["Pixels"]);
     const pyramidIndexer = createSingleFileOmeTiffPyramidalIndexer(tiff, {
       size: imageSize,
       ifdOffset: imageIfdOffset,
-      dimensionOrder: metadata['Pixels']['DimensionOrder']
+      dimensionOrder: metadata["Pixels"]["DimensionOrder"],
     });
-    const dtype = parsePixelDataType(metadata['Pixels']['Type']);
+    const dtype = parsePixelDataType(metadata["Pixels"]["Type"]);
     const tileSize = getTiffTileSize(
       await pyramidIndexer({ c: 0, t: 0, z: 0 }, 0)
     );
     const meta = {
-      physicalSizes: extractPhysicalSizesfromPixels(metadata['Pixels']),
+      physicalSizes: extractPhysicalSizesfromPixels(metadata["Pixels"]),
       photometricInterpretation:
-        firstImage.fileDirectory.PhotometricInterpretation
+        firstImage.fileDirectory.PhotometricInterpretation,
     };
     const data = Array.from(
       { length: levels },
       (_, level) =>
         new TiffPixelSource(
-          sel => pyramidIndexer(sel, level),
+          (sel) => pyramidIndexer(sel, level),
           dtype,
           tileSize,
           getShapeForBinaryDownsampleLevel({ axes, level }),

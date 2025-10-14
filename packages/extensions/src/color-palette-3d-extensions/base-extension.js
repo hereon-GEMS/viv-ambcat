@@ -1,8 +1,8 @@
-import { LayerExtension } from '@deck.gl/core';
-import { getDefaultPalette, padColors } from '../utils';
+import { LayerExtension } from "@deck.gl/core";
+import { getDefaultPalette, padColors } from "../utils";
 
 const defaultProps = {
-  colors: { type: 'array', value: null, compare: true }
+  colors: { type: "array", value: null, compare: true },
 };
 
 /**
@@ -22,16 +22,16 @@ const BaseExtension = class extends LayerExtension {
     const { colors, channelsVisible } = this.props;
     const paddedColors = padColors({
       channelsVisible: channelsVisible || this.selections.map(() => true),
-      colors: colors || getDefaultPalette(this.props.selections.length)
+      colors: colors || getDefaultPalette(this.props.selections.length),
     });
     const uniforms = {
-      colors: paddedColors
+      colors: paddedColors,
     };
     this.state.model?.setUniforms(uniforms);
   }
 };
 
-BaseExtension.extensionName = 'BaseExtension';
+BaseExtension.extensionName = "BaseExtension";
 BaseExtension.defaultProps = defaultProps;
 
 export default BaseExtension;

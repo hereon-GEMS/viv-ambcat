@@ -3,31 +3,32 @@ import {
   LensExtension,
   PictureInPictureViewer,
   SideBySideViewer,
-  VolumeViewer
-} from '@hms-dbmi/viv';
-import debounce from 'lodash/debounce';
-import React from 'react';
-import { useShallow } from 'zustand/shallow';
-import { DEFAULT_OVERVIEW } from '../constants';
+  VolumeViewer,
+  VtkViewer,
+} from "@hms-dbmi/viv";
+import debounce from "lodash/debounce";
+import React from "react";
+import { useShallow } from "zustand/shallow";
+import { DEFAULT_OVERVIEW } from "../constants";
 import {
   useChannelsStore,
   useImageSettingsStore,
   useLoader,
-  useViewerStore
-} from '../state';
-import { get3DExtension, useWindowSize } from '../utils';
+  useViewerStore,
+} from "../state";
+import { get3DExtension, useWindowSize } from "../utils";
 
 const Viewer = () => {
   const [useLinkedView, use3d, viewState] = useViewerStore(
-    useShallow(store => [store.useLinkedView, store.use3d, store.viewState])
+    useShallow((store) => [store.useLinkedView, store.use3d, store.viewState])
   );
   const [colors, contrastLimits, channelsVisible, selections] =
     useChannelsStore(
-      useShallow(store => [
+      useShallow((store) => [
         store.colors,
         store.contrastLimits,
         store.channelsVisible,
-        store.selections
+        store.selections,
       ])
     );
   const loader = useLoader();
@@ -45,9 +46,9 @@ const Viewer = () => {
     panLock,
     isOverviewOn,
     onViewportLoad,
-    useFixedAxis
+    useFixedAxis,
   ] = useImageSettingsStore(
-    useShallow(store => [
+    useShallow((store) => [
       store.lensSelection,
       store.colormap,
       store.renderingMode,
@@ -60,7 +61,7 @@ const Viewer = () => {
       store.panLock,
       store.isOverviewOn,
       store.onViewportLoad,
-      store.useFixedAxis
+      store.useFixedAxis,
     ])
   );
 
@@ -69,7 +70,8 @@ const Viewer = () => {
     useViewerStore.setState({ pyramidResolution: z });
   };
 
-  return use3d ? (
+  return <VtkViewer loader={loader} />;
+  /*  return use3d ? (
     <VolumeViewer
       loader={loader}
       contrastLimits={contrastLimits}
@@ -143,6 +145,6 @@ const Viewer = () => {
       onViewStateChange={onViewStateChange}
       snapScaleBar
     />
-  );
+  );*/
 };
 export default Viewer;

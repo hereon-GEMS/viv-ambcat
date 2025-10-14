@@ -1,16 +1,16 @@
-import { OrthographicView } from '@deck.gl/core';
-import { generateLayerTests, testLayer } from '@deck.gl/test-utils';
-import { expect, test } from 'vitest';
-import XRLayer from '../src/xr-layer/xr-layer';
+import { OrthographicView } from "@deck.gl/core";
+import { generateLayerTests, testLayer } from "@deck.gl/test-utils";
+import { expect, test } from "vitest";
+import XRLayer from "../src/xr-layer/xr-layer";
 
-test('XRLayer', () => {
+test("XRLayer", () => {
   const view = new OrthographicView({
-    id: 'ortho',
+    id: "ortho",
     controller: true,
     height: 4,
     width: 4,
     target: [2, 2, 0],
-    zoom: 0
+    zoom: 0,
   });
   const testCases = generateLayerTests({
     Layer: XRLayer,
@@ -23,23 +23,23 @@ test('XRLayer', () => {
       channelData: {
         data: [new Uint32Array([0, 2, 1, 2])],
         width: 2,
-        height: 2
+        height: 2,
       },
-      dtype: 'Uint32'
+      dtype: "Uint32",
     },
     onBeforeUpdate: ({ testCase }) => {
       // Vitest does not have t.comment, so use console.log
       console.log(testCase.title);
-    }
+    },
   });
   testLayer({
     Layer: XRLayer,
     testCases,
-    onError: err => expect(err).toBeFalsy(),
+    onError: (err) => expect(err).toBeFalsy(),
     viewport: view.makeViewport({
       height: 4,
       width: 4,
-      viewState: { target: [2, 2, 0], zoom: 0, width: 4, height: 4 }
-    })
+      viewState: { target: [2, 2, 0], zoom: 0, width: 4, height: 4 },
+    }),
   });
 });

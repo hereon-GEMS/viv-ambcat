@@ -1,8 +1,8 @@
-import { ColorPalette3DExtensions } from '@vivjs/extensions';
-import { VolumeView, getDefaultInitialViewState } from '@vivjs/views';
-import * as React from 'react';
+import { ColorPalette3DExtensions } from "@vivjs/extensions";
+import { VolumeView, getDefaultInitialViewState } from "@vivjs/views";
+import * as React from "react";
 
-import VivViewer from './VivViewer';
+import VivViewer from "./VivViewer";
 
 /**
  * This component provides a volumetric viewer that provides provides volume-ray-casting.
@@ -29,7 +29,7 @@ import VivViewer from './VivViewer';
  * @param {Array=} extensions [deck.gl extensions](https://deck.gl/docs/developer-guide/custom-layers/layer-extensions) to add to the layers - default is AdditiveBlendExtension from ColorPalette3DExtensions.
  */
 
-const VolumeViewer = props => {
+const VolumeViewer = (props) => {
   const {
     loader,
     contrastLimits,
@@ -49,9 +49,9 @@ const VolumeViewer = props => {
     viewStates: viewStatesProp,
     clippingPlanes = [],
     useFixedAxis = true,
-    extensions = [new ColorPalette3DExtensions.AdditiveBlendExtension()]
+    extensions = [new ColorPalette3DExtensions.AdditiveBlendExtension()],
   } = props;
-  const volumeViewState = viewStatesProp?.find(state => state?.id === '3d');
+  const volumeViewState = viewStatesProp?.find((state) => state?.id === "3d");
   // FIXME: This ignore is carried over from eslint, without description. Why ignore deps?
   // biome-ignore lint/correctness/useExhaustiveDependencies: Carried over from eslint, without description.
   const initialViewState = React.useMemo(() => {
@@ -68,14 +68,14 @@ const VolumeViewer = props => {
     return {
       ...viewState,
       rotationX: 0,
-      rotationOrbit: 0
+      rotationOrbit: 0,
     };
   }, [loader, resolution, modelMatrix]);
-  const viewStates = [volumeViewState || { ...initialViewState, id: '3d' }];
+  const viewStates = [volumeViewState || { ...initialViewState, id: "3d" }];
   const volumeView = new VolumeView({
-    id: '3d',
+    id: "3d",
     target: viewStates[0].target,
-    useFixedAxis
+    useFixedAxis,
   });
   const layerConfig = {
     loader,
@@ -92,7 +92,7 @@ const VolumeViewer = props => {
     modelMatrix,
     // Slightly delay to avoid issues with a render in the middle of a deck.gl layer state update.
     onViewportLoad: () => setTimeout(onViewportLoad, 0),
-    clippingPlanes
+    clippingPlanes,
   };
   const views = [volumeView];
   const layerProps = [layerConfig];

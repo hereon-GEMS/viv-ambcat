@@ -1,14 +1,14 @@
-import type { GeoTIFFImage } from 'geotiff';
+import type { GeoTIFFImage } from "geotiff";
 
-import type Pool from './lib/Pool';
-import { getMultiTiffIndexer } from './lib/indexers';
+import type Pool from "./lib/Pool";
+import { getMultiTiffIndexer } from "./lib/indexers";
 import {
   type OmeTiffSelection,
   getMultiTiffMeta,
   getMultiTiffMetadata,
-  getTiffTileSize
-} from './lib/utils';
-import TiffPixelSource from './pixel-source';
+  getTiffTileSize,
+} from "./lib/utils";
+import TiffPixelSource from "./pixel-source";
 
 export interface MultiTiffImage {
   selection: OmeTiffSelection;
@@ -20,7 +20,7 @@ function assertSameResolution(images: MultiTiffImage[]) {
   const height = images[0].tiff.getHeight();
   for (const image of images) {
     if (image.tiff.getWidth() !== width || image.tiff.getHeight() !== height) {
-      throw new Error('All images must have the same width and height');
+      throw new Error("All images must have the same width and height");
     }
   }
 }
@@ -29,11 +29,15 @@ async function assertCompleteStack(
   images: MultiTiffImage[],
   indexer: (sel: OmeTiffSelection) => Promise<GeoTIFFImage>
 ) {
-  for (let t = 0; t <= Math.max(...images.map(i => i.selection.t)); t += 1) {
-    for (let c = 0; c <= Math.max(...images.map(i => i.selection.c)); c += 1) {
+  for (let t = 0; t <= Math.max(...images.map((i) => i.selection.t)); t += 1) {
+    for (
+      let c = 0;
+      c <= Math.max(...images.map((i) => i.selection.c));
+      c += 1
+    ) {
       for (
         let z = 0;
-        z <= Math.max(...images.map(i => i.selection.z));
+        z <= Math.max(...images.map((i) => i.selection.z));
         z += 1
       ) {
         await indexer({ t, c, z }); // should throw error is missing dimension
@@ -55,7 +59,7 @@ export async function load(
   const { PhotometricInterpretation: photometricInterpretation } =
     firstImage.fileDirectory;
   // Not sure if we need this or if the order matters for this use case.
-  const dimensionOrder = 'XYZCT';
+  const dimensionOrder = "XYZCT";
   const tileSize = getTiffTileSize(firstImage);
   const meta = { photometricInterpretation };
   const indexer = getMultiTiffIndexer(images);
@@ -82,6 +86,6 @@ export async function load(
   );
   return {
     data: [source],
-    metadata
+    metadata,
   };
 }
