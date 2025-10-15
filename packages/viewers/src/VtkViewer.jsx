@@ -11,6 +11,13 @@ import "@kitware/vtk.js/Rendering/Profiles/Geometry";
 
 export default function VtkViewer({ width = 1024, height = 512 }) {
   const viewRef = useRef(null);
+  const containerRef = useRef({
+    renderWindow: null,
+    openGLRenderWindow: null,
+    interactor: null,
+    renderer: null,
+  });
+
   const [containerWidth, setContainerWidth] = useState(width);
   const [containerHeight, setContainerHeight] = useState(height);
 
@@ -18,7 +25,9 @@ export default function VtkViewer({ width = 1024, height = 512 }) {
     const handleResize = () => {
       if (viewRef.current) {
         setContainerWidth(viewRef.current.clientWidth);
-        setContainerHeight(viewRef.current.clientHeight);
+        setContainerHeight(
+          Math.min(window.innerHeight, viewRef.current.clientHeight),
+        );
       }
     };
 
@@ -27,6 +36,9 @@ export default function VtkViewer({ width = 1024, height = 512 }) {
     if (viewRef.current) {
       resizeObserver.observe(viewRef.current);
     }
+
+    // Properly handle shrink
+    window.addEventListener("resize", handleResize);
 
     // Cleanup on component unmount
     return () => {
@@ -41,55 +53,90 @@ export default function VtkViewer({ width = 1024, height = 512 }) {
       return;
     }
     // This function sets up the VTK view with a simple sphere
-    const setupView = (container) => {
-      // Create the render window
-      const renderWindow = vtkRenderWindow.newInstance();
-      const renderer = vtkRenderer.newInstance();
-      renderer.setBackground(0.1, 0.2, 0.4); // Set background color
-      renderWindow.addRenderer(renderer);
+    const setupView = (container, vtkObjects) => {
+      if (!vtkObjects.renderWindow) {
+        // Create the render window
+        const renderWindow = vtkRenderWindow.newInstance();
+        const renderer = vtkRenderer.newInstance();
+        renderer.setBackground(0.1, 0.2, 0.4); // Set background color
+        renderWindow.addRenderer(renderer);
 
-      const openGLRenderWindow = vtkOpenGLRenderWindow.newInstance();
-      openGLRenderWindow.setContainer(container);
-      openGLRenderWindow.setSize(containerWidth, containerHeight);
-      renderWindow.addView(openGLRenderWindow);
+        const openGLRenderWindow = vtkOpenGLRenderWindow.newInstance();
+        openGLRenderWindow.setContainer(container);
+        openGLRenderWindow.setSize(containerWidth, containerHeight);
+        renderWindow.addView(openGLRenderWindow);
 
-      // Create an interactor to handle events (like mouse control)
-      const interactor = vtkRenderWindowInteractor.newInstance();
-      interactor.setView(openGLRenderWindow);
-      interactor.initialize();
-      interactor.bindEvents(container);
+        // Create an interactor to handle events (like mouse control)
+        const interactor = vtkRenderWindowInteractor.newInstance();
+        interactor.setView(openGLRenderWindow);
+        interactor.initialize();
+        interactor.bindEvents(container);
 
-      // Create a simple sphere using vtkSphereSource
-      const sphereSource = vtkSphereSource.newInstance();
-      sphereSource.setRadius(0.5);
-      sphereSource.setPhiResolution(30); // Latitude resolution
-      sphereSource.setThetaResolution(30); // Longitude resolution
+        // Create a simple sphere using vtkSphereSource
+        const sphereSource = vtkSphereSource.newInstance();
+        sphereSource.setRadius(0.5);
+        sphereSource.setPhiResolution(30); // Latitude resolution
+        sphereSource.setThetaResolution(30); // Longitude resolution
+        sphereSource.update(); // Ensure the source is updated
+        // Create a mapper and set its input connection
+        const sphereMapper = vtkMapper.newInstance();
 
-      // Create a mapper and set its input connection
-      const sphereMapper = vtkMapper.newInstance();
+        // Create an actor and set the mapper
+        const sphereActor = vtkActor.newInstance();
+        sphereActor.setMapper(sphereMapper);
+        sphereMapper.setInputConnection(sphereSource.getOutputPort()); // Use getOutputData() instead of getOutputPort()
+        sphereActor.getProperty().setColor(1.0, 0.3882, 0.2784); // Set sphere color
 
-      // Create an actor and set the mapper
-      const sphereActor = vtkActor.newInstance();
-      sphereActor.setMapper(sphereMapper);
-      sphereMapper.setInputConnection(sphereSource.getOutputPort()); // Use getOutputData() instead of getOutputPort()
-      sphereActor.getProperty().setColor(1.0, 0.3882, 0.2784); // Set sphere color
+        // Add the actor to the renderer
+        renderer.addActor(sphereActor);
+        renderer.resetCamera();
 
-      // Add the actor to the renderer
-      renderer.addActor(sphereActor);
-
-      // Render the scene
-      renderWindow.render();
-      console.log("VtkViewer is mounted");
+        // Render the scene
+        renderWindow.render();
+        // Save references for cleanup
+        console.log("VtkViewer is mounted");
+        containerRef.current = {
+          renderWindow,
+          openGLRenderWindow,
+          interactor,
+          renderer,
+        };
+      } else {
+        // Update size if already initialized
+        const { renderWindow, openGLRenderWindow, interactor, renderer } =
+          containerRef.current;
+        vtkObjects.openGLRenderWindow.setSize(containerWidth, containerHeight);
+        vtkObjects.renderer.resetCamera();
+        vtkObjects.renderWindow.render();
+        console.log("VTK Viewer resized");
+      }
     };
 
     // Set up the VTK view
-    setupView(viewRef.current);
+    setupView(viewRef.current, containerRef.current);
 
     // Cleanup when the component is unmounted
     return () => {
-      // If necessary, clean up resources
+      // Clean up WebGL context and VTK objects
+      //      const {
+      //        renderWindow,
+      //        openGLRenderWindow,
+      //        interactor,
+      //      } = containerRef.current;
+      //
+      //      if (interactor) interactor.delete();
+      //      if (openGLRenderWindow) openGLRenderWindow.delete();
+      //      if (renderWindow) renderWindow.delete();
+      //
+      //      console.log("VTK Viewer cleaned up");
     };
   }, [width, height]);
 
-  return <div ref={viewRef} style={{ width: "100%", height: "100%" }} />;
+  return (
+    <div
+      ref={viewRef}
+      className="flex-1 h-full w-full"
+      style={{ border: "5px solid red" }}
+    />
+  );
 }
