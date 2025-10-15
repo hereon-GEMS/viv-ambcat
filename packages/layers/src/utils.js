@@ -50,20 +50,20 @@ export function padContrastLimits({
   const newContrastLimits = contrastLimits.map((slider, i) =>
     channelsVisible[i]
       ? slider
-      : /** @type {[number, number]} */ ([maxSliderValue, maxSliderValue])
+      : /** @type {[number, number]} */ ([maxSliderValue, maxSliderValue]),
   );
   // Need to pad contrastLimits and colors with default values (required by shader)
   const padSize = MAX_CHANNELS - newContrastLimits.length;
   if (padSize < 0) {
     throw Error(
-      `${newContrastLimits.lengths} channels passed in, but only 6 are allowed.`
+      `${newContrastLimits.lengths} channels passed in, but only 6 are allowed.`,
     );
   }
 
   const paddedContrastLimits = padWithDefault(
     newContrastLimits,
     [maxSliderValue, maxSliderValue],
-    padSize
+    padSize,
   ).reduce((acc, val) => acc.concat(val), []);
 
   return paddedContrastLimits;
@@ -78,7 +78,7 @@ export function onPointer(layer) {
   }
   const { mousePosition } = layer.context;
   const layerView = layer.context.deck.viewManager.views.filter(
-    (view) => view.id === viewportId
+    (view) => view.id === viewportId,
   )[0];
   const viewState = layer.context.deck.viewManager.viewState[viewportId];
   const viewport = layerView.makeViewport({
@@ -104,7 +104,7 @@ export function onPointer(layer) {
     ];
     // Unproject from screen to world coordinates.
     const unprojectLensBounds = mousePositionBounds.map(
-      (bounds, i) => viewport.unproject(bounds)[i % 2]
+      (bounds, i) => viewport.unproject(bounds)[i % 2],
     );
     layer.setState({ unprojectLensBounds });
   } else {
@@ -230,7 +230,7 @@ export function snapValue(value) {
   // we would want to use an exponent of 3 (for 10 or 100 km),
   // since there is not an SI unit for exponents 4 nor 5.
   let snappedUnit = SI_PREFIXES.find(
-    (p) => p.exponent % 3 === 0 && p.exponent <= magnitude
+    (p) => p.exponent % 3 === 0 && p.exponent <= magnitude,
   );
 
   // We re-scale the original value so it is in the range of our
@@ -243,7 +243,7 @@ export function snapValue(value) {
   // value of 1 (in the next SI unit) rather than 1000 (in the previous one).
   if (adjustedValue > 500 && adjustedValue <= 1000) {
     snappedUnit = SI_PREFIXES.find(
-      (p) => p.exponent % 3 === 0 && p.exponent <= magnitude + 3
+      (p) => p.exponent % 3 === 0 && p.exponent <= magnitude + 3,
     );
     adjustedValue = value / 10 ** snappedUnit.exponent;
   }

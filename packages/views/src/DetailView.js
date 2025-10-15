@@ -40,7 +40,7 @@ export default class DetailView extends VivView {
           size,
           snap: this.snapScaleBar,
           viewState: { ...layerViewState, height, width },
-        })
+        }),
       );
     }
 

@@ -132,7 +132,7 @@ export default class SideBySideView extends VivView {
           size,
           snap: this.snapScaleBar,
           viewState: { ...layerViewState, height, width },
-        })
+        }),
       );
     }
 

@@ -16,6 +16,6 @@ declare module "quickselect" {
     k: number,
     left?: number,
     right?: number,
-    compare?: (x: T, y: T) => number
+    compare?: (x: T, y: T) => number,
   ): void;
 }

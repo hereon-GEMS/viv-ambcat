@@ -66,7 +66,7 @@ function ChannelController({
       store.channelOptions,
       store.useLinkedView,
       store.use3d,
-    ])
+    ]),
   );
   const rgbColor = toRgb(colormap, color);
   const getMinMax = ({ domain: d, mode, loader: l }) => {

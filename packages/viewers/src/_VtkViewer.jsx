@@ -71,23 +71,22 @@ export default function VtkViewer({
     };
 
     const init = async () => {
-      const raster = await (Array.isArray(loader)
-        ? loader[0]
-        : loader
+      const raster = await (
+        Array.isArray(loader) ? loader[0] : loader
       ).getRaster({ selection });
       const vtkImage = pixelSourceToVtkImageData(raster);
 
       // Set up left renderer
       const { renderer: leftRenderer } = await setupView(
         leftRef.current,
-        vtkImage
+        vtkImage,
       );
 
       // Set up right renderer, sync camera to left
       await setupView(
         rightRef.current,
         vtkImage,
-        leftRenderer.getActiveCamera()
+        leftRenderer.getActiveCamera(),
       );
     };
 

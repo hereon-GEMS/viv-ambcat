@@ -57,7 +57,7 @@ function App() {
       props.selections.map(async (selection) => {
         const raster = await source.getRaster({ selection });
         return getChannelStats(raster.data);
-      })
+      }),
     );
     // These are calculated bounds for the contrastLimits
     // that could be used for display purposes.

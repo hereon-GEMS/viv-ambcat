@@ -258,7 +258,7 @@ const XRLayer = class extends Layer {
           ...uniforms,
           contrastLimits: paddedContrastLimits,
         },
-        { disableWarnings: false }
+        { disableWarnings: false },
       );
       model.setBindings(textures);
       model.draw(this.context.renderPass);
@@ -289,7 +289,7 @@ const XRLayer = class extends Layer {
         textures[`channel${i}`] = this.dataToTexture(
           d,
           channelData.width,
-          channelData.height
+          channelData.height,
         );
       }, this);
       // null textures will throw errors, so we just set unused channels to the first texture for now.

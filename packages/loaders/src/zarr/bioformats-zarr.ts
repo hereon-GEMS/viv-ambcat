@@ -10,7 +10,7 @@ import ZarrPixelSource from "./pixel-source";
 
 export async function load(
   root: ZarrArray["store"],
-  xmlSource: string | File | Response
+  xmlSource: string | File | Response,
 ) {
   let xmlSourceText: string;
   // If 'File' or 'Response', read as text.

@@ -120,10 +120,10 @@ const VolumeLayer = class extends CompositeLayer {
           onUpdate,
           downsampleDepth: 2 ** resolution,
           signal,
-        })
+        }),
       );
       const physicalSizeScalingMatrix = getPhysicalSizeScalingMatrix(
-        loader[resolution]
+        loader[resolution],
       );
 
       Promise.all(volumePromises).then((volumes) => {
@@ -163,7 +163,7 @@ const VolumeLayer = class extends CompositeLayer {
       return getTextLayer(
         `Loading Volume ${String((progress || 0) * 100).slice(0, 5)}%...`,
         viewport,
-        id
+        id,
       );
     }
     return new XR3DLayer(this.props, {

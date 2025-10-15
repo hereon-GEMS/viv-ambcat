@@ -28,7 +28,7 @@ class TiffPixelSource<S extends string[]> implements PixelSource<S> {
     public shape: number[],
     public labels: Labels<S>,
     public meta?: PixelSourceMeta,
-    public pool?: Pool
+    public pool?: Pool,
   ) {
     this._indexer = indexer;
   }

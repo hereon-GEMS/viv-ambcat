@@ -101,8 +101,8 @@ type ExtractLoader<LayerProps, S extends string[]> = LayerProps extends {
 }
   ? { loader: PixelSource<S>[] }
   : LayerProps extends { loader: object }
-  ? { loader: PixelSource<S> }
-  : unknown;
+    ? { loader: PixelSource<S> }
+    : unknown;
 
 // Add optional extention props to layer if 'extensions' is defined on LayerProps.
 type WithExtensionProps<LayerProps> = LayerProps extends { extensions: unknown }

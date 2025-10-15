@@ -29,7 +29,7 @@ const SnackBars = () => {
       store.toggleIsNoImageUrlSnackbarOn,
       store.isVolumeRenderingWarningOn,
       store.toggleIsVolumeRenderingWarningOn,
-    ])
+    ]),
   );
   return (
     <>

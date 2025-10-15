@@ -19,7 +19,7 @@ await fh.write(`\
 // Gather `glsl-colormap` files which follow the `<name>.glsl` pattern
 const dir = path.resolve(__dirname, "node_modules", "glsl-colormap");
 const files = (await fsp.readdir(dir)).filter((fname) =>
-  fname.endsWith(".glsl")
+  fname.endsWith(".glsl"),
 );
 
 console.log(`Writing each ${YELLOW}\`glsl-colormap\`${RESET} to ${outfile}\n`);

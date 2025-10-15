@@ -14,7 +14,7 @@ const mainPackage = "@hms-dbmi/viv";
 function getGreatestBumpType(changeset) {
   const BUMP_TYPES = /** @type {const} */ (["none", "patch", "minor", "major"]);
   const versions = Object.values(changeset.data).map((v) =>
-    BUMP_TYPES.indexOf(v)
+    BUMP_TYPES.indexOf(v),
   );
   const bumpType = BUMP_TYPES[Math.max(...versions)];
   if (!bumpType) {
@@ -73,7 +73,7 @@ function preChangesetsVersion() {
     changeset.data = { [mainPackage]: getGreatestBumpType(changeset) };
     fs.writeFileSync(
       filePath,
-      matter.stringify(changeset.content, changeset.data)
+      matter.stringify(changeset.content, changeset.data),
     );
   }
 }

@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { grey } from "@mui/material/colors";
 import {
   StyledEngineProvider,
@@ -5,12 +6,11 @@ import {
   adaptV4Theme,
   createTheme,
 } from "@mui/material/styles";
-import React from "react";
 import ReactDOM from "react-dom/client";
-
 import Ambivator from "./Ambivator";
 import sources from "./source-info";
 import { getNameFromUrl } from "./utils";
+import { useGUIStore, GUI_LIBRARY } from "./state";
 
 const theme = createTheme({
   palette: {
@@ -48,17 +48,24 @@ function resolveSource(url) {
 }
 
 function App() {
+  const { defaultGUI } = useGUIStore(); // Access Zustand store, change default in state.js
   const query = new URLSearchParams(window.location.search);
   const source = resolveSource(query.get("image_url"));
-  return (
-    <StyledEngineProvider injectFirst>
-      (
-      <ThemeProvider theme={theme}>
-        <Ambivator source={source} isDemoImage={source.isDemoImage} />
-      </ThemeProvider>
-      )
-    </StyledEngineProvider>
-  );
+
+  console.log("Current defaultGUI:", defaultGUI); // Check the current state of defaultGUI
+  if (defaultGUI == GUI_LIBRARY.MUI) {
+    return (
+      <StyledEngineProvider injectFirst>
+        (
+        <ThemeProvider theme={theme}>
+          <Ambivator source={source} isDemoImage={source.isDemoImage} />
+        </ThemeProvider>
+        )
+      </StyledEngineProvider>
+    );
+  } else {
+    return <Ambivator source={source} isDemoImage={source.isDemoImage} />;
+  }
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);

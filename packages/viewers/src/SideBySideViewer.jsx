@@ -71,7 +71,7 @@ const SideBySideViewer = (props) => {
     const defaultViewState = getDefaultInitialViewState(
       loader,
       { height, width: width / 2 },
-      0.5
+      0.5,
     );
     return [
       leftViewState || { ...defaultViewState, id: "left" },

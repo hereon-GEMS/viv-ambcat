@@ -42,7 +42,7 @@ test("MultiscaleImageLayerBase", async () => {
       expect(
         subLayers.length > 0
           ? subLayers.every((layer) => layer.constructor.name === "XRLayer")
-          : true
+          : true,
       ).toBeTruthy();
     },
   });
@@ -93,7 +93,7 @@ test("MultiscaleImageLayerBaseBitmapLayer", async () => {
       expect(
         subLayers.length > 0
           ? subLayers.every((layer) => layer instanceof BitmapLayer)
-          : true
+          : true,
       ).toBeTruthy();
     },
   });

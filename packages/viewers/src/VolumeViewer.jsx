@@ -63,7 +63,7 @@ const VolumeViewer = (props) => {
       { height: screenHeight, width: screenWidth },
       1,
       true,
-      modelMatrix
+      modelMatrix,
     );
     return {
       ...viewState,

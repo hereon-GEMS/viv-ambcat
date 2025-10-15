@@ -34,7 +34,7 @@ test("Get raster data.", async () => {
     expect(pixelData.data.constructor.name).toBe("Int8Array");
   }
   await expect(
-    base.getRaster({ selection: { c: 3, z: 0, t: 0 } })
+    base.getRaster({ selection: { c: 3, z: 0, t: 0 } }),
   ).rejects.toThrow();
 });
 

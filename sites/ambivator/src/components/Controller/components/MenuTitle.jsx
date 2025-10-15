@@ -12,7 +12,7 @@ const hideButtonStyle = {
 };
 function MenuTitle() {
   const toggleIsControllerOn = useViewerStore(
-    (store) => store.toggleIsControllerOn
+    (store) => store.toggleIsControllerOn,
   );
   return (
     <Grid

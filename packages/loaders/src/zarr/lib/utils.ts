@@ -27,7 +27,7 @@ function isOmeZarr(dataShape: number[], Pixels: OmeXml[0]["Pixels"]) {
  */
 export function guessBioformatsLabels(
   { shape }: ZarrArray,
-  { Pixels }: OmeXml[0]
+  { Pixels }: OmeXml[0],
 ) {
   if (isOmeZarr(shape, Pixels)) {
     // It's an OME-Zarr Image,

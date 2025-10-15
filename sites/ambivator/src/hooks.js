@@ -29,10 +29,10 @@ export const useImage = (source) => {
       store.use3d,
       store.toggleUse3d,
       store.toggleIsOffsetsSnackbarOn,
-    ])
+    ]),
   );
   const [lensEnabled, toggleLensEnabled] = useImageSettingsStore(
-    useShallow((store) => [store.lensEnabled, store.toggleLensEnabled])
+    useShallow((store) => [store.lensEnabled, store.toggleLensEnabled]),
   );
   const loader = useLoader();
   const metadata = useMetadata();
@@ -61,7 +61,7 @@ export const useImage = (source) => {
         (message) =>
           useViewerStore.setState({
             loaderErrorSnackbar: { on: true, message },
-          })
+          }),
       );
       let nextMeta;
       let nextLoader;
@@ -80,7 +80,7 @@ export const useImage = (source) => {
       if (nextLoader) {
         console.info(
           "Metadata (in JSON-like form) for current file being viewed: ",
-          nextMeta
+          nextMeta,
         );
         unstable_batchedUpdates(() => {
           useChannelsStore.setState({ loader: nextLoader });
@@ -163,7 +163,7 @@ export const useImage = (source) => {
           newDomains.length === 1
             ? [[255, 255, 255]]
             : newDomains.map(
-                (_, i) => Channels[i]?.Color?.slice(0, -1) ?? COLOR_PALLETE[i]
+                (_, i) => Channels[i]?.Color?.slice(0, -1) ?? COLOR_PALLETE[i],
               );
         useViewerStore.setState({
           useLens: channelOptions.length !== 1,

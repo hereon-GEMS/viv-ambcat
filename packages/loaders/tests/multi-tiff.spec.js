@@ -9,15 +9,15 @@ import * as url from "node:url";
 const __dirname = url.fileURLToPath(path.dirname(import.meta.url));
 const CHANNEL_0_FIXTURE = path.resolve(
   __dirname,
-  "./fixtures/multi-tiff/Channel_0.tif"
+  "./fixtures/multi-tiff/Channel_0.tif",
 );
 const CHANNEL_1_FIXTURE = path.resolve(
   __dirname,
-  "./fixtures/multi-tiff/Channel_1.tif"
+  "./fixtures/multi-tiff/Channel_1.tif",
 );
 const CHANNEL_2_FIXTURE = path.resolve(
   __dirname,
-  "./fixtures/multi-tiff/Channel_2.tif"
+  "./fixtures/multi-tiff/Channel_2.tif",
 );
 const CHANNEL_0_LOCAL_FIXTURE = `file://${CHANNEL_0_FIXTURE}`;
 const CHANNEL_1_LOCAL_FIXTURE = `file://${CHANNEL_1_FIXTURE}`;
@@ -83,7 +83,7 @@ test("Get raster data for MultiTIFF.", async () => {
     expect(pixelData.data.constructor.name).toBe("Uint8Array");
   }
   await expect(
-    base.getRaster({ selection: { c: 3, z: 0, t: 0 } })
+    base.getRaster({ selection: { c: 3, z: 0, t: 0 } }),
   ).rejects.toThrow();
 });
 

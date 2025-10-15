@@ -6,7 +6,7 @@ type ImageFileDirectory = Awaited<ReturnType<GeoTIFF["parseFileDirectoryAt"]>>;
 
 export type OmeTiffIndexer = (
   sel: OmeTiffSelection,
-  resolutionLevel: number
+  resolutionLevel: number,
 ) => Promise<GeoTIFFImage>;
 
 /**
@@ -16,7 +16,7 @@ export type OmeTiffIndexer = (
  * bioformats case we need to return the GeoTIFF object and the IFD index.
  */
 export type OmeTiffResolver = (
-  sel: OmeTiffSelection
+  sel: OmeTiffSelection,
 ) =>
   | { tiff: GeoTIFF; ifdIndex: number }
   | Promise<{ tiff: GeoTIFF; ifdIndex: number }>;
@@ -35,7 +35,7 @@ export function createOmeImageIndexerFromResolver(
   resolveBaseResolutionImageLocation: OmeTiffResolver,
   image: {
     size: { z: number; t: number; c: number };
-  }
+  },
 ) {
   const ifdCache: ImageFileDirectory[] = [];
   return async (sel: OmeTiffSelection, pyramidLevel: number) => {
@@ -71,7 +71,7 @@ export function createOmeImageIndexerFromResolver(
       baseImage.dataView,
       tiff.littleEndian,
       tiff.cache,
-      tiff.source
+      tiff.source,
     );
   };
 }
@@ -81,7 +81,7 @@ export function getMultiTiffIndexer(tiffs: MultiTiffImage[]) {
     return `${c}-${t}-${z}`;
   }
   const lookup = new Map(
-    tiffs.map(({ selection, tiff }) => [selectionToKey(selection), tiff])
+    tiffs.map(({ selection, tiff }) => [selectionToKey(selection), tiff]),
   );
   return async (sel: OmeTiffSelection) => {
     const key = selectionToKey(sel);

@@ -151,9 +151,37 @@ export const useViewerStore = create((set) => ({
     }),
 }));
 
+// GUI Library Enum-like Object
+export const GUI_LIBRARY = {
+  DAISYUI: "DaisyUI", // Library name for DaisyUI
+  MUI: "MaterialUI", // Library name for Material-UI
+};
+
+const DEFAULT_GUI_STATE = {
+  defaultGUI: GUI_LIBRARY.DAISYUI, // Default to DaisyUI
+};
+
+export const useGUIStore = create((set) => ({
+  ...DEFAULT_GUI_STATE,
+  setLibrary: (library) => {
+    // Log the library being set before updating the state
+    console.log("Setting library to:", library);
+
+    // Now set the state with the new library
+    set(() => ({ defaultGUI: library }));
+  },
+  toggleLibrary: () =>
+    set((state) => ({
+      currentLibrary:
+        state.defaultGUI === GUI_LIBRARY.DAISYUI
+          ? GUI_LIBRARY.MUI
+          : GUI_LIBRARY.DAISYUI,
+    })),
+}));
+
 export const useLoader = () => {
   const [fullLoader, image] = useChannelsStore(
-    useShallow((store) => [store.loader, store.image])
+    useShallow((store) => [store.loader, store.image]),
   );
   return Array.isArray(fullLoader[0]) ? fullLoader[image] : fullLoader;
 };

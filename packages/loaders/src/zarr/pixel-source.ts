@@ -23,7 +23,7 @@ const DTYPE_LOOKUP = {
 } as const;
 
 type ZarrIndexer<S extends string[]> = (
-  sel: { [K in S[number]]: number } | number[]
+  sel: { [K in S[number]]: number } | number[],
 ) => number[];
 
 interface ZarrTileSelection {
@@ -60,7 +60,7 @@ class ZarrPixelSource<S extends string[]> implements PixelSource<S> {
   constructor(
     data: ZarrSource,
     public labels: Labels<S>,
-    public tileSize: number
+    public tileSize: number,
   ) {
     this._indexer = getIndexer(labels);
     this._data = data;
@@ -85,7 +85,7 @@ class ZarrPixelSource<S extends string[]> implements PixelSource<S> {
 
   private _chunkIndex<T>(
     selection: PixelSourceSelection<S> | number[],
-    { x, y }: { x: T; y: T }
+    { x, y }: { x: T; y: T },
   ) {
     const sel: (number | T)[] = this._indexer(selection);
     sel[this._xIndex] = x;
@@ -122,7 +122,7 @@ class ZarrPixelSource<S extends string[]> implements PixelSource<S> {
   private async _getRaw(
     selection: (null | Slice | number)[],
     // biome-ignore lint/suspicious/noExplicitAny: any is used to pass through storeOptions
-    getOptions?: { storeOptions?: any }
+    getOptions?: { storeOptions?: any },
   ) {
     const result = await this._data.getRaw(selection, getOptions);
     if (typeof result !== "object") {

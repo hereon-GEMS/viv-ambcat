@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import vtkRenderWindow from "@kitware/vtk.js/Rendering/Core/RenderWindow";
 import vtkRenderer from "@kitware/vtk.js/Rendering/Core/Renderer";
 import vtkMapper from "@kitware/vtk.js/Rendering/Core/Mapper";
@@ -11,6 +11,28 @@ import "@kitware/vtk.js/Rendering/Profiles/Geometry";
 
 export default function VtkViewer({ width = 1024, height = 512 }) {
   const viewRef = useRef(null);
+  const [containerWidth, setContainerWidth] = useState(width);
+  const [containerHeight, setContainerHeight] = useState(height);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (viewRef.current) {
+        setContainerWidth(viewRef.current.clientWidth);
+        setContainerHeight(viewRef.current.clientHeight);
+      }
+    };
+
+    // Resize observer to adjust the size when container size changes
+    const resizeObserver = new ResizeObserver(handleResize);
+    if (viewRef.current) {
+      resizeObserver.observe(viewRef.current);
+    }
+
+    // Cleanup on component unmount
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     // Step 2: Ensure viewRef.current is not null
@@ -28,7 +50,7 @@ export default function VtkViewer({ width = 1024, height = 512 }) {
 
       const openGLRenderWindow = vtkOpenGLRenderWindow.newInstance();
       openGLRenderWindow.setContainer(container);
-      openGLRenderWindow.setSize(width, height);
+      openGLRenderWindow.setSize(containerWidth, containerHeight);
       renderWindow.addView(openGLRenderWindow);
 
       // Create an interactor to handle events (like mouse control)
@@ -69,5 +91,5 @@ export default function VtkViewer({ width = 1024, height = 512 }) {
     };
   }, [width, height]);
 
-  return <div ref={viewRef} style={{ width, height }} />;
+  return <div ref={viewRef} style={{ width: "100%", height: "100%" }} />;
 }

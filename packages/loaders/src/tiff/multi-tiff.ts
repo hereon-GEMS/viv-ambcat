@@ -27,7 +27,7 @@ function assertSameResolution(images: MultiTiffImage[]) {
 
 async function assertCompleteStack(
   images: MultiTiffImage[],
-  indexer: (sel: OmeTiffSelection) => Promise<GeoTIFFImage>
+  indexer: (sel: OmeTiffSelection) => Promise<GeoTIFFImage>,
 ) {
   for (let t = 0; t <= Math.max(...images.map((i) => i.selection.t)); t += 1) {
     for (
@@ -50,7 +50,7 @@ export async function load(
   imageName: string,
   images: MultiTiffImage[],
   channelNames: string[],
-  pool?: Pool
+  pool?: Pool,
 ) {
   // Before doing any work make sure all of the images have the same resolution
   assertSameResolution(images);
@@ -69,7 +69,7 @@ export async function load(
     images,
     channelNames,
     dimensionOrder,
-    dtype
+    dtype,
   );
 
   // Make sure all of the images make a complete stack.
@@ -82,7 +82,7 @@ export async function load(
     shape,
     labels,
     meta,
-    pool
+    pool,
   );
   return {
     data: [source],

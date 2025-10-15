@@ -48,13 +48,13 @@ export function padColors({ colors, channelsVisible }) {
   const newColors = colors.map((color, i) =>
     channelsVisible[i]
       ? color.map((c) => c / MAX_COLOR_INTENSITY)
-      : DEFAULT_COLOR_OFF
+      : DEFAULT_COLOR_OFF,
   );
   const padSize = MAX_CHANNELS - newColors.length;
   const paddedColors = padWithDefault(
     newColors,
     /** @type {Color} */ (DEFAULT_COLOR_OFF),
-    padSize
+    padSize,
   ).reduce((acc, val) => acc.concat(val), []);
   return paddedColors;
 }

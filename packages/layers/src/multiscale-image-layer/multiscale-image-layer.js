@@ -141,7 +141,7 @@ const MultiscaleImageLayer = class extends CompositeLayer {
       // while at a lower "absolute" zoom level.  If you didn't use this prop, an image that is scaled
       // up would always look "low resolution" no matter the level of the image pyramid you are looking at.
       zoomOffset: Math.round(
-        Math.log2(modelMatrix ? modelMatrix.getScale()[0] : 1)
+        Math.log2(modelMatrix ? modelMatrix.getScale()[0] : 1),
       ),
       extent: [0, 0, width, height],
       // See the above note within for why the use of zoomOffset and the rounding necessary.

@@ -42,7 +42,7 @@ function getRelativeOmeIfdIndex(
   image: {
     size: OmeTiffSelection;
     dimensionOrder: DimensionOrder;
-  }
+  },
 ) {
   const { size, dimensionOrder } = image;
   switch (image.dimensionOrder) {
@@ -78,7 +78,7 @@ function createSingleFileOmeTiffPyramidalIndexer(
     size: { t: number; z: number; c: number };
     // The dimension order of the image from the OME-XML.
     dimensionOrder: DimensionOrder;
-  }
+  },
 ) {
   return createOmeImageIndexerFromResolver((sel) => {
     const withinImageIndex = getRelativeOmeIfdIndex(sel, image);
@@ -98,14 +98,14 @@ export async function loadSingleFileOmeTiff(
     pool?: Pool;
     headers?: Headers | Record<string, string>;
     offsets?: number[];
-  } = {}
+  } = {},
 ) {
   const { offsets, headers, pool } = options;
   const tiff = await createGeoTiff(source, { headers, offsets });
   const firstImage = await tiff.getImage();
   const { rootMeta, levels } = resolveMetadata(
     fromString(firstImage.fileDirectory.ImageDescription),
-    firstImage.fileDirectory.SubIFDs
+    firstImage.fileDirectory.SubIFDs,
   );
 
   const images: OmeTiffImage[] = [];
@@ -125,7 +125,7 @@ export async function loadSingleFileOmeTiff(
     });
     const dtype = parsePixelDataType(metadata["Pixels"]["Type"]);
     const tileSize = getTiffTileSize(
-      await pyramidIndexer({ c: 0, t: 0, z: 0 }, 0)
+      await pyramidIndexer({ c: 0, t: 0, z: 0 }, 0),
     );
     const meta = {
       physicalSizes: extractPhysicalSizesfromPixels(metadata["Pixels"]),
@@ -142,8 +142,8 @@ export async function loadSingleFileOmeTiff(
           getShapeForBinaryDownsampleLevel({ axes, level }),
           axes.labels,
           meta,
-          pool
-        )
+          pool,
+        ),
     );
     images.push({ data, metadata });
     imageIfdOffset += imageSize.t * imageSize.z * imageSize.c;

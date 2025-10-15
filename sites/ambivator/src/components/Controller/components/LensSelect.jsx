@@ -20,7 +20,7 @@ function LensSelect() {
       store.lensEnabled,
       store.toggleLensEnabled,
       store.lensSelection,
-    ])
+    ]),
   );
   const channelOptions = useViewerStore((store) => store.channelOptions);
   const currChannelIndices = selections.map((sel) => sel.c);

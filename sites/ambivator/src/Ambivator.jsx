@@ -6,7 +6,8 @@ import Footer from "./components/Footer";
 import SnackBars from "./components/Snackbars";
 import Viewer from "./components/Viewer";
 import { useImage } from "./hooks";
-import { useViewerStore } from "./state";
+import { useViewerStore, useGUIStore, GUI_LIBRARY } from "./state";
+import { Grid } from "@mui/material";
 
 import "./index.css";
 
@@ -22,6 +23,7 @@ export default function Ambivator(props) {
   const isViewerLoading = useViewerStore((store) => store.isViewerLoading);
   const source = useViewerStore((store) => store.source);
   const useLinkedView = useViewerStore((store) => store.useLinkedView);
+  const { defaultGUI } = useGUIStore(); // Access Zustand store, change default in state.js
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Ignore carried over from eslint, without explanation.
   useEffect(() => {
@@ -33,12 +35,48 @@ export default function Ambivator(props) {
     });
   }, []);
   useImage(source);
-  return (
-    <>
-      <DropzoneWrapper>{!isViewerLoading && <Viewer />}</DropzoneWrapper>
-      <Controller />
-      <SnackBars />
-      {!useLinkedView && <Footer />}
-    </>
-  );
+  if (defaultGUI == GUI_LIBRARY.DAISYUI) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Controller (Half-width on sm+ screens) */}
+        <div>{/*    <Controller /> */}</div>
+
+        {/* Dropzone + Viewer (Full-width) */}
+        <div className="col-span-1 sm:col-span-2">
+          <DropzoneWrapper>{!isViewerLoading && <Viewer />}</DropzoneWrapper>
+        </div>
+
+        {/* SnackBars (Half-width on sm+ screens) */}
+        <div>{/*   <SnackBars /> */}</div>
+
+        {/* Conditional Footer (Full-width) */}
+        {!useLinkedView && (
+          <div className="col-span-1 sm:col-span-2">{/*    <Footer /> */}</div>
+        )}
+      </div>
+    );
+  } else if (defaultGUI == GUI_LIBRARY.MUI) {
+    return (
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <Controller />
+        </Grid>
+        <Grid item xs={12}>
+          <DropzoneWrapper>{!isViewerLoading && <Viewer />}</DropzoneWrapper>
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <SnackBars />
+        </Grid>
+
+        {!useLinkedView && (
+          <Grid item xs={12}>
+            <Footer />
+          </Grid>
+        )}
+      </Grid>
+    );
+  } else {
+    return <div>Unknown GUI_LIBRARY setting</div>;
+  }
 }

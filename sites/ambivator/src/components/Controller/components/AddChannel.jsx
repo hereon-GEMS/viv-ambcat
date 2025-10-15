@@ -27,14 +27,14 @@ const AddChannel = () => {
       store.use3d,
       store.setIsChannelLoading,
       store.addIsChannelLoading,
-    ])
+    ]),
   );
   const [selections, addChannel, setPropertiesForChannel] = useChannelsStore(
     useShallow((store) => [
       store.selections,
       store.addChannel,
       store.setPropertiesForChannel,
-    ])
+    ]),
   );
   const loader = useLoader();
   const metadata = useMetadata();

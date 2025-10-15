@@ -16,7 +16,7 @@ import { getMultiSelectionStats, range } from "../../../utils";
 export default function GlobalSelectionSlider(props) {
   const { size, label } = props;
   const [selections, setPropertiesForChannel] = useChannelsStore(
-    useShallow((store) => [store.selections, store.setPropertiesForChannel])
+    useShallow((store) => [store.selections, store.setPropertiesForChannel]),
   );
   const loader = useLoader();
   const globalSelection = useViewerStore((store) => store.globalSelection);
@@ -39,7 +39,7 @@ export default function GlobalSelectionSlider(props) {
             setPropertiesForChannel(channel, {
               domains: domains[j],
               contrastLimits: contrastLimits[j],
-            })
+            }),
           );
         });
         unstable_batchedUpdates(() => {
@@ -56,13 +56,13 @@ export default function GlobalSelectionSlider(props) {
           range(newSelections.length).forEach((channel, j) =>
             setPropertiesForChannel(channel, {
               selections: newSelections[j],
-            })
+            }),
           );
         });
       });
     },
     50,
-    { leading: true }
+    { leading: true },
   );
 
   return (

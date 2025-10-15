@@ -51,7 +51,7 @@ describe("utils", () => {
         ],
         channelsVisible: [true, false],
         dtype: "Uint8",
-      })
+      }),
     ).toEqual(expectedChannelOff);
     expect(
       padContrastLimits({
@@ -61,7 +61,7 @@ describe("utils", () => {
         ],
         channelsVisible: [true, true],
         dtype: "Uint16",
-      })
+      }),
     ).toEqual(expected16Bit);
   });
 
@@ -71,11 +71,11 @@ describe("utils", () => {
         const attrs = getRenderingAttrs(dtype, interpolation);
         if (interpolation === "linear" || dtype === "Float64") {
           expect(attrs.cast(new Uint16Array([1, 2, 3]))).toEqual(
-            new Float32Array([1, 2, 3])
+            new Float32Array([1, 2, 3]),
           );
         } else {
           expect(attrs.cast(new Uint16Array([1, 2, 3]))).toEqual(
-            new Uint16Array([1, 2, 3])
+            new Uint16Array([1, 2, 3]),
           );
         }
         expect(attrs.filter).toBe(interpolation);

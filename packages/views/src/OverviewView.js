@@ -97,7 +97,7 @@ export default class OverviewView extends VivView {
   }) {
     const numLevels = this.loader.length;
     const { width: rasterWidth, height: rasterHeight } = getImageSize(
-      this.loader[0]
+      this.loader[0],
     );
 
     this._imageWidth = rasterWidth;
@@ -107,7 +107,7 @@ export default class OverviewView extends VivView {
       const heightWidthRatio = rasterHeight / rasterWidth;
       this.width = Math.min(
         maximumWidth,
-        Math.max(detailWidth * scale, minimumWidth)
+        Math.max(detailWidth * scale, minimumWidth),
       );
       this.height = this.width * heightWidthRatio;
       this.scale = (2 ** (numLevels - 1) / rasterWidth) * this.width;
@@ -115,7 +115,7 @@ export default class OverviewView extends VivView {
       const widthHeightRatio = rasterWidth / rasterHeight;
       this.height = Math.min(
         maximumHeight,
-        Math.max(detailHeight * scale, minimumHeight)
+        Math.max(detailHeight * scale, minimumHeight),
       );
       this.width = this.height * widthHeightRatio;
       this.scale = (2 ** (numLevels - 1) / rasterHeight) * this.height;
@@ -150,7 +150,7 @@ export default class OverviewView extends VivView {
       }
       default: {
         throw new Error(
-          `overviewLocation prop needs to be one of ['bottom-right', 'top-right', 'top-left', 'bottom-left']`
+          `overviewLocation prop needs to be one of ['bottom-right', 'top-right', 'top-left', 'bottom-left']`,
         );
       }
     }
@@ -190,7 +190,7 @@ export default class OverviewView extends VivView {
     }
     // Scale the bounding box.
     const boundingBox = makeBoundingBox(detail).map((coords) =>
-      coords.map((e) => e * this.scale)
+      coords.map((e) => e * this.scale),
     );
     const overviewLayer = new OverviewLayer(props, {
       id: getVivId(this.id),

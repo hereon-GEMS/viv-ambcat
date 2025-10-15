@@ -27,7 +27,7 @@ function formatResolutionStatus(current, total, shape) {
 export default function Footer() {
   const classes = useStyles();
   const [use3d, pyramidResolution] = useViewerStore(
-    useShallow((store) => [store.use3d, store.pyramidResolution])
+    useShallow((store) => [store.use3d, store.pyramidResolution]),
   );
   const loader = useLoader();
   const volumeResolution = useImageSettingsStore((store) => store.resolution);

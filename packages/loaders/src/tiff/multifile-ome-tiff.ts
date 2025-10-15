@@ -23,7 +23,7 @@ type OmeTiffImage = {
 };
 
 function isCompleteTiffDataItem(
-  item: TIffDataItem
+  item: TIffDataItem,
 ): item is Required<TIffDataItem> {
   return (
     "FirstC" in item &&
@@ -35,7 +35,7 @@ function isCompleteTiffDataItem(
 }
 
 function createMultifileImageDataLookup(
-  tiffData: OmeXml[number]["Pixels"]["TiffData"]
+  tiffData: OmeXml[number]["Pixels"]["TiffData"],
 ) {
   type ImageDataPointer = { ifd: number; filename: string };
   const lookup: Map<string, ImageDataPointer> = new Map();
@@ -100,7 +100,7 @@ async function getPixelSourceOptionsForImage(
   config: {
     baseUrl: URL;
     headers: Headers | Record<string, string>;
-  }
+  },
 ) {
   const resolveOmeSelection = createMultifileOmeTiffResolver({
     tiffData: metadata["Pixels"]["TiffData"],
@@ -117,7 +117,7 @@ async function getPixelSourceOptionsForImage(
         t: metadata["Pixels"]["SizeT"],
         c: metadata["Pixels"]["SizeC"],
       },
-    }
+    },
   );
   return {
     pyramidIndexer,
@@ -140,11 +140,11 @@ export async function loadMultifileOmeTiff(
   options: {
     pool?: Pool;
     headers?: Headers | Record<string, string>;
-  } = {}
+  } = {},
 ) {
   assert(
     !(source instanceof File),
-    "File or Blob not supported for multifile OME-TIFF"
+    "File or Blob not supported for multifile OME-TIFF",
   );
   const url = new URL(source);
   const text = await fetch(url).then((res) => res.text());
@@ -166,8 +166,8 @@ export async function loadMultifileOmeTiff(
           getShapeForBinaryDownsampleLevel({ axes: opts.axes, level }),
           opts.axes.labels,
           opts.meta,
-          options.pool
-        )
+          options.pool,
+        ),
     );
     images.push({ data, metadata });
   }

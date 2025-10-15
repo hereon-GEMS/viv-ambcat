@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
 function Header(props) {
   const image = useChannelsStore((store) => store.image);
   const [source, metadata] = useViewerStore(
-    useShallow((store) => [store.source, store.metadata])
+    useShallow((store) => [store.source, store.metadata]),
   );
   const handleSubmitNewUrl = (event, newUrl) => {
     event.preventDefault();
@@ -160,7 +160,7 @@ function Header(props) {
 function Menu({ children, ...props }) {
   const classes = useStyles(props);
   const [isControllerOn, toggleIsControllerOn] = useViewerStore(
-    useShallow((store) => [store.isControllerOn, store.toggleIsControllerOn])
+    useShallow((store) => [store.isControllerOn, store.toggleIsControllerOn]),
   );
   return isControllerOn ? (
     <Box

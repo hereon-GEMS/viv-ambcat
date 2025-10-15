@@ -20,7 +20,7 @@ interface ZarrOptions {
  */
 export async function loadBioformatsZarr(
   source: string | (File & { path: string })[],
-  options: Partial<ZarrOptions> = {}
+  options: Partial<ZarrOptions> = {},
 ) {
   const METADATA = "METADATA.ome.xml";
   const ZARR_DIR = "data.zarr";
@@ -71,7 +71,7 @@ export async function loadBioformatsZarr(
  */
 export async function loadOmeZarr(
   source: string,
-  options: Partial<ZarrOptions & { type: "multiscales" }> = {}
+  options: Partial<ZarrOptions & { type: "multiscales" }> = {},
 ) {
   const store = new HTTPStore(source, options);
 

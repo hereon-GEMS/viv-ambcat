@@ -27,12 +27,12 @@ const useStyles = makeStyles((theme) =>
         color: "rgb(100, 100, 100, 1.0)",
       },
     },
-  })
+  }),
 );
 
 const Slicer = () => {
   const [xSlice, ySlice, zSlice] = useImageSettingsStore(
-    useShallow((store) => [store.xSlice, store.ySlice, store.zSlice])
+    useShallow((store) => [store.xSlice, store.ySlice, store.zSlice]),
   );
   const loader = useLoader();
   const use3d = useViewerStore((store) => store.use3d);
@@ -94,7 +94,7 @@ const Slicer = () => {
           />
         </Grid>
       </Grid>
-    )
+    ),
   );
   return (
     <>

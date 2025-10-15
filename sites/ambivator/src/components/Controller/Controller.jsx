@@ -68,7 +68,7 @@ const Controller = () => {
       store.setPropertiesForChannel,
       store.toggleIsOn,
       store.removeChannel,
-    ])
+    ]),
   );
   const loader = useLoader();
 
@@ -96,14 +96,14 @@ const Controller = () => {
       store.removeIsChannelLoading,
       store.pixelValues,
       store.isViewerLoading,
-    ])
+    ]),
   );
   const metadata = useMetadata();
   const viewSize = useWindowSize();
   const isRgb = metadata && guessRgb(metadata);
   const { shape, labels } = loader[0];
   const globalControlLabels = labels.filter((label) =>
-    GLOBAL_SLIDER_DIMENSION_FIELDS.includes(label)
+    GLOBAL_SLIDER_DIMENSION_FIELDS.includes(label),
   );
   const channelControllers = ids.map((id, i) => {
     const onSelectionChange = (e) => {

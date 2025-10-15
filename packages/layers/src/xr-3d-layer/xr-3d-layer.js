@@ -90,7 +90,7 @@ function getRenderingFromExtensions(extensions) {
   });
   if (!rendering._RENDER) {
     throw new Error(
-      "XR3DLayer requires at least one extension to define opts.rendering as an object with _RENDER as a property at the minimum."
+      "XR3DLayer requires at least one extension to define opts.rendering as an object with _RENDER as a property at the minimum.",
     );
   }
   return rendering;
@@ -143,7 +143,7 @@ const XR3DLayer = class extends Layer {
         const { inject = {}, modules = [] } = shaders;
         const definesInjection = inject[hookName];
         const moduleDefinesInjection = modules.some(
-          (m) => m?.inject?.[hookName]
+          (m) => m?.inject?.[hookName],
         );
         return definesInjection || moduleDefinesInjection;
       }
@@ -270,10 +270,10 @@ const XR3DLayer = class extends Layer {
           p
             .clone()
             .transform(invertedScaleMatrix)
-            .transform(invertedResolutionMatrix)
+            .transform(invertedResolutionMatrix),
         ),
         new Plane([1, 0, 0]),
-        clippingPlanes.length || NUM_PLANES_DEFAULT
+        clippingPlanes.length || NUM_PLANES_DEFAULT,
       );
       // Need to flatten for shaders.
       const normals = paddedClippingPlanes.flatMap((plane) => plane.normal);
@@ -286,17 +286,17 @@ const XR3DLayer = class extends Layer {
           xSlice: new Float32Array(
             xSlice
               ? xSlice.map((i) => i / scaleMatrix[0] / resolutionMatrix[0])
-              : [0, 1]
+              : [0, 1],
           ),
           ySlice: new Float32Array(
             ySlice
               ? ySlice.map((i) => i / scaleMatrix[5] / resolutionMatrix[5])
-              : [0, 1]
+              : [0, 1],
           ),
           zSlice: new Float32Array(
             zSlice
               ? zSlice.map((i) => i / scaleMatrix[10] / resolutionMatrix[10])
-              : [0, 1]
+              : [0, 1],
           ),
           eye_pos: new Float32Array([
             viewMatrixInverse[12],
@@ -311,7 +311,7 @@ const XR3DLayer = class extends Layer {
           normals,
           distances,
         },
-        { disableWanings: false }
+        { disableWanings: false },
       );
       model.setBindings(textures);
       model.draw(this.context.renderPass);
@@ -354,7 +354,7 @@ const XR3DLayer = class extends Layer {
             width,
             height,
             depth,
-          ])
+          ]),
         ),
       });
     }

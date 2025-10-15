@@ -29,7 +29,7 @@ export function getDefaultInitialViewState(
   zoomBackOff = 0,
   // biome-ignore lint/style/useDefaultParameterLast: Public API requires use3d to be the fourth parameter
   use3d = false,
-  modelMatrix
+  modelMatrix,
 ) {
   const source = Array.isArray(loader) ? loader[0] : loader;
   const { width: pixelWidth, height: pixelHeight } = getImageSize(source);
@@ -41,7 +41,7 @@ export function getDefaultInitialViewState(
   const depth = source.shape[source.labels.indexOf("z")];
   const zoom =
     Math.log2(
-      Math.min(viewSize.width / trueWidth, viewSize.height / trueHeight)
+      Math.min(viewSize.width / trueWidth, viewSize.height / trueHeight),
     ) - zoomBackOff;
   const physicalSizeScalingMatrix = getPhysicalSizeScalingMatrix(source);
   const loaderInitialViewState = {
@@ -50,7 +50,7 @@ export function getDefaultInitialViewState(
         pixelWidth / 2,
         pixelHeight / 2,
         use3d ? depth / 2 : 0,
-      ])
+      ]),
     ),
     zoom,
   };

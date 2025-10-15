@@ -70,7 +70,7 @@ export function getChannelStats(arr: TypedArray) {
   const cutoffArr = arr.filter((i: number) => i > 0);
   const cutoffPercentile = 0.0005;
   const topCutoffLocation = Math.floor(
-    cutoffArr.length * (1 - cutoffPercentile)
+    cutoffArr.length * (1 - cutoffPercentile),
   );
   const bottomCutoffLocation = Math.floor(cutoffArr.length * cutoffPercentile);
   quickselect(cutoffArr, topCutoffLocation);
@@ -161,7 +161,7 @@ type XmlNode = string | { [x: string]: XmlNode } | Array<XmlNode>;
 
 function xmlToJson(
   xmlNode: HTMLElement,
-  options: { attrtibutesKey: string }
+  options: { attrtibutesKey: string },
 ): XmlNode {
   if (isText(xmlNode)) {
     // If the node is a text node
@@ -217,7 +217,7 @@ export function parseXML(xmlString: string) {
   const doc = parser.parseFromString(
     // biome-ignore lint/suspicious/noControlCharactersInRegex: Necessary for parsing XML
     xmlString.replace(/\u0000$/, ""),
-    "application/xml"
+    "application/xml",
   );
   return xmlToJson(doc.documentElement, { attrtibutesKey: "attr" });
 }
@@ -225,7 +225,7 @@ export function parseXML(xmlString: string) {
 /** Asserts the condition. */
 export function assert(
   condition: unknown,
-  message?: string
+  message?: string,
 ): asserts condition {
   if (!condition) {
     throw new Error(`Assert failed${message ? `: ${message}` : ""}`);

@@ -75,7 +75,7 @@ const ScaleBarLayer = class extends CompositeLayer {
     // and/or the text squishing up into the bar.
     const barHeight = Math.max(
       2 ** (-zoom + 1.5),
-      (boundingBox[2][1] - boundingBox[0][1]) * 0.007
+      (boundingBox[2][1] - boundingBox[0][1]) * 0.007,
     );
 
     // Initialize values for the non-snapped case.

@@ -124,13 +124,13 @@ class VivViewerWrapper extends React.PureComponent {
     let anyChanged = false;
     views.forEach((view) => {
       const currViewState = props.viewStates?.find(
-        (viewState) => viewState.id === view.id
+        (viewState) => viewState.id === view.id,
       );
       if (!currViewState) {
         return;
       }
       const prevViewState = prevProps.viewStates?.find(
-        (viewState) => viewState.id === view.id
+        (viewState) => viewState.id === view.id,
       );
       if (areViewStatesEqual(currViewState, prevViewState)) {
         return;
@@ -165,7 +165,7 @@ class VivViewerWrapper extends React.PureComponent {
         (view) =>
           !prevState.viewStates[view.id] ||
           view.height !== prevState.viewStates[view.id].height ||
-          view.width !== prevState.viewStates[view.id].width
+          view.width !== prevState.viewStates[view.id].width,
       )
     ) {
       const viewStates = {};
@@ -268,7 +268,7 @@ class VivViewerWrapper extends React.PureComponent {
           ...layerProps[i],
           onHover,
         },
-      })
+      }),
     );
   }
 

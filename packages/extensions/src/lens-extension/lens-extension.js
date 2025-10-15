@@ -46,7 +46,7 @@ const LensExtension = class extends LayerExtension {
       }
       const { mousePosition } = layer.context;
       const layerView = layer.context.deck.viewManager.views.filter(
-        (view) => view.id === viewportId
+        (view) => view.id === viewportId,
       )[0];
       const viewState = layer.context.deck.viewManager.viewState[viewportId];
       const viewport = layerView.makeViewport({
@@ -72,7 +72,7 @@ const LensExtension = class extends LayerExtension {
         ];
         // Unproject from screen to world coordinates.
         const unprojectLensBounds = mousePositionBounds.map(
-          (bounds, i) => viewport.unproject(bounds)[i % 2]
+          (bounds, i) => viewport.unproject(bounds)[i % 2],
         );
         layer.setState({ unprojectLensBounds });
       } else {

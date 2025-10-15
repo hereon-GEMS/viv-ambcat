@@ -6,7 +6,7 @@ import { useImageSettingsStore, useViewerStore } from "../../../state";
 
 const ZoomLockToggle = () => {
   const [toggleZoomLock, zoomLock] = useImageSettingsStore(
-    useShallow((store) => [store.toggleZoomLock, store.zoomLock])
+    useShallow((store) => [store.toggleZoomLock, store.zoomLock]),
   );
   const isViewerLoading = useViewerStore((store) => store.isViewerLoading);
   return (

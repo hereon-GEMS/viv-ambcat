@@ -13,7 +13,7 @@ const SideBySideToggle = () => {
         store.toggleUseLinkedView,
         store.useLinkedView,
         store.use3d,
-      ])
+      ]),
     );
   return (
     <Button

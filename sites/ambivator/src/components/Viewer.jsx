@@ -20,7 +20,7 @@ import { get3DExtension, useWindowSize } from "../utils";
 
 const Viewer = () => {
   const [useLinkedView, use3d, viewState] = useViewerStore(
-    useShallow((store) => [store.useLinkedView, store.use3d, store.viewState])
+    useShallow((store) => [store.useLinkedView, store.use3d, store.viewState]),
   );
   const [colors, contrastLimits, channelsVisible, selections] =
     useChannelsStore(
@@ -29,7 +29,7 @@ const Viewer = () => {
         store.contrastLimits,
         store.channelsVisible,
         store.selections,
-      ])
+      ]),
     );
   const loader = useLoader();
   const viewSize = useWindowSize();
@@ -62,7 +62,7 @@ const Viewer = () => {
       store.isOverviewOn,
       store.onViewportLoad,
       store.useFixedAxis,
-    ])
+    ]),
   );
 
   const onViewStateChange = ({ viewState: { zoom } }) => {
@@ -70,7 +70,13 @@ const Viewer = () => {
     useViewerStore.setState({ pyramidResolution: z });
   };
 
-  return <VtkViewer loader={loader} />;
+  return (
+    <VtkViewer
+      loader={loader}
+      height={viewSize.height}
+      width={viewSize.width}
+    />
+  );
   /*  return use3d ? (
     <VolumeViewer
       loader={loader}

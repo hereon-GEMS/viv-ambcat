@@ -45,7 +45,7 @@ const getStatsForResolution = (loader, resolution) => {
 const canLoadResolution = (loader, resolution) => {
   const { totalBytes, height, width, depthDownsampled } = getStatsForResolution(
     loader,
-    resolution
+    resolution,
   );
   const maxHeapSize =
     window.performance?.memory &&
@@ -82,7 +82,7 @@ const useStyles = makeStyles(() => ({
 
 function VolumeButton() {
   const [selections, setPropertiesForChannel] = useChannelsStore(
-    useShallow((store) => [store.selections, store.setPropertiesForChannel])
+    useShallow((store) => [store.selections, store.setPropertiesForChannel]),
   );
   const loader = useLoader();
   const [
@@ -96,7 +96,7 @@ function VolumeButton() {
       store.toggleUse3d,
       store.toggleIsVolumeRenderingWarningOn,
       store.isViewerLoading,
-    ])
+    ]),
   );
 
   const [open, toggle] = useReducer((v) => !v, false);
@@ -131,12 +131,12 @@ function VolumeButton() {
                   setPropertiesForChannel(channel, {
                     domains: domains[j],
                     contrastLimits: contrastLimits[j],
-                  })
+                  }),
                 );
                 useViewerStore.setState({
                   isChannelLoading: Array(selections.length).fill(false),
                 });
-              }
+              },
             );
           }
         }}
@@ -162,7 +162,7 @@ function VolumeButton() {
                           onClick={() => {
                             useViewerStore.setState({
                               isChannelLoading: Array(selections.length).fill(
-                                true
+                                true,
                               ),
                             });
                             const [xSlice, ySlice, zSlice] =
@@ -183,7 +183,7 @@ function VolumeButton() {
                                 setPropertiesForChannel(channel, {
                                   domains: domains[j],
                                   contrastLimits: contrastLimits[j],
-                                })
+                                }),
                               );
                               useImageSettingsStore.setState({
                                 onViewportLoad: () => {
@@ -192,7 +192,7 @@ function VolumeButton() {
                                   });
                                   useViewerStore.setState({
                                     isChannelLoading: Array(
-                                      selections.length
+                                      selections.length,
                                     ).fill(false),
                                   });
                                 },
@@ -209,7 +209,7 @@ function VolumeButton() {
                           key={`(${height}, ${width}, ${depthDownsampled})`}
                         >
                           {`${resolution}x Downsampled, ~${formatBytes(
-                            totalBytes
+                            totalBytes,
                           )} per channel, (${height}, ${width}, ${depthDownsampled})`}
                         </MenuItem>
                       );

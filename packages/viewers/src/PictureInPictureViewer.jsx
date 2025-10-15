@@ -112,7 +112,7 @@ const PictureInPictureViewer = (props) => {
   if (overviewOn && loader) {
     // It's unclear why this is needed because OverviewView.filterViewState sets "zoom" and "target".
     const overviewViewState = viewStatesProp?.find(
-      (v) => v.id === OVERVIEW_VIEW_ID
+      (v) => v.id === OVERVIEW_VIEW_ID,
     ) || { ...baseViewState, id: OVERVIEW_VIEW_ID };
     const overviewView = new OverviewView({
       id: OVERVIEW_VIEW_ID,

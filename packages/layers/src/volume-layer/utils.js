@@ -56,7 +56,7 @@ export async function getVolume({
         r += 1;
       }
       onUpdate();
-    })
+    }),
   );
   return {
     data: volumeData,

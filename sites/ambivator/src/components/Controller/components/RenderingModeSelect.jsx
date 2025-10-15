@@ -12,7 +12,7 @@ const renderingOptions = Object.values(RENDERING_MODES);
 function RenderingModeSelect() {
   const renderingMode = useImageSettingsStore((store) => store.renderingMode);
   const [isViewerLoading, use3d] = useViewerStore(
-    useShallow((store) => [store.isViewerLoading, store.use3d])
+    useShallow((store) => [store.isViewerLoading, store.use3d]),
   );
   // Empty option allows for displaying the title of the dropdown fully in the UI.
   const options = !use3d ? [...renderingOptions, ""] : renderingOptions;

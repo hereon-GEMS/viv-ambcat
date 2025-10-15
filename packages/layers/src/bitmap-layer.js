@@ -24,7 +24,7 @@ const defaultProps = {
 
 const getPhotometricInterpretationShader = (
   photometricInterpretation,
-  transparentColorInHook
+  transparentColorInHook,
 ) => {
   const useTransparentColor = transparentColorInHook ? "true" : "false";
   const transparentColorVector = `vec3(${(transparentColorInHook || [0, 0, 0])
@@ -56,7 +56,7 @@ const getPhotometricInterpretationShader = (
         `;
     default:
       console.error(
-        "Unsupported photometric interpretation or none provided.  No transformation will be done to image data"
+        "Unsupported photometric interpretation or none provided.  No transformation will be done to image data",
       );
       return "";
   }
@@ -74,7 +74,7 @@ const getTransparentColor = (photometricInterpretation) => {
       return [16, 128, 128, 0];
     default:
       console.error(
-        "Unsupported photometric interpretation or none provided.  No transformation will be done to image data"
+        "Unsupported photometric interpretation or none provided.  No transformation will be done to image data",
       );
       return [0, 0, 0, 0];
   }
@@ -87,7 +87,7 @@ class BitmapLayerWrapper extends BaseBitmapLayer {
     // Safari was too slow doing this off of the GPU and it is noticably faster on other browsers as well.
     const photometricInterpretationShader = getPhotometricInterpretationShader(
       photometricInterpretation,
-      transparentColorInHook
+      transparentColorInHook,
     );
     return new Model(this.context.device, {
       ...this.getShaders(),

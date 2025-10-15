@@ -46,17 +46,17 @@ function isSupportedCompanionOmeTiffFile(source: string | File) {
 /** @ignore */
 export async function loadOmeTiff(
   source: string | File,
-  opts: TiffOptions & { images: "all" }
+  opts: TiffOptions & { images: "all" },
 ): Promise<OmeTiffImage[]>;
 /** @ignore */
 export async function loadOmeTiff(
   source: string | File,
-  opts: TiffOptions & { images: "first" }
+  opts: TiffOptions & { images: "first" },
 ): Promise<OmeTiffImage>;
 /** @ignore */
 export async function loadOmeTiff(
   source: string | File,
-  opts: TiffOptions
+  opts: TiffOptions,
 ): Promise<OmeTiffImage>;
 /** @ignore */
 export async function loadOmeTiff(source: string | File): Promise<OmeTiffImage>;
@@ -75,7 +75,7 @@ export async function loadOmeTiff(source: string | File): Promise<OmeTiffImage>;
  */
 export async function loadOmeTiff(
   source: string | File,
-  opts: OmeTiffOptions = {}
+  opts: OmeTiffOptions = {},
 ) {
   const load = isSupportedCompanionOmeTiffFile(source)
     ? loadMultifileOmeTiff
@@ -87,7 +87,7 @@ export async function loadOmeTiff(
 function getImageSelectionName(
   imageName: string,
   imageNumber: number,
-  imageSelections: (OmeTiffSelection | undefined)[]
+  imageSelections: (OmeTiffSelection | undefined)[],
 ) {
   return imageSelections.length === 1
     ? imageName
@@ -123,9 +123,9 @@ function getImageSelectionName(
 export async function loadMultiTiff(
   sources: [
     OmeTiffSelection | (OmeTiffSelection | undefined)[],
-    string | (File & { path: string })
+    string | (File & { path: string }),
   ][],
-  opts: MultiTiffOptions = {}
+  opts: MultiTiffOptions = {},
 ) {
   const { pool, headers = {}, name = "MultiTiff" } = opts;
   const tiffImage: MultiTiffImage[] = [];
@@ -153,7 +153,7 @@ export async function loadMultiTiff(
               channelNames[curSelection.c] = getImageSelectionName(
                 tiffImageName,
                 i,
-                imageSelections
+                imageSelections,
               );
             }
           }
@@ -170,14 +170,14 @@ export async function loadMultiTiff(
             const tiff = await curImage.getImage(i);
             if (tiff.fileDirectory.SamplesPerPixel > 1) {
               throw new Error(
-                `Multiple samples per pixel in tiff not supported as part of a multi-tiff, found ${tiff.fileDirectory.SamplesPerPixel} samples per pixel`
+                `Multiple samples per pixel in tiff not supported as part of a multi-tiff, found ${tiff.fileDirectory.SamplesPerPixel} samples per pixel`,
               );
             }
             tiffImage.push({ selection: curSelection, tiff });
             channelNames[curSelection.c] = getImageSelectionName(
               name,
               i,
-              imageSelections
+              imageSelections,
             );
           }
         }

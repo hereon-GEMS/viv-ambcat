@@ -32,7 +32,7 @@ type PhysicalSizes = {
 };
 
 export function extractPhysicalSizesfromPixels(
-  d: OmeXml[number]["Pixels"]
+  d: OmeXml[number]["Pixels"],
 ): undefined | PhysicalSizes {
   if (
     !d["PhysicalSizeX"] ||
@@ -184,7 +184,7 @@ function getMultiTiffShapeMap(tiffs: MultiTiffImage[]): {
 // this function will just use the samples per pixel from a random slice.
 function getChannelSamplesPerPixel(
   tiffs: MultiTiffImage[],
-  numChannels: number
+  numChannels: number,
 ): number[] {
   const channelSamplesPerPixel = Array(numChannels).fill(0);
   for (const tiff of tiffs) {
@@ -204,7 +204,7 @@ function getChannelSamplesPerPixel(
 
 export function getMultiTiffMeta(
   dimensionOrder: DimensionOrder,
-  tiffs: MultiTiffImage[]
+  tiffs: MultiTiffImage[],
 ) {
   const firstTiff = tiffs[0].tiff;
   const shapeMap = getMultiTiffShapeMap(tiffs);
@@ -225,7 +225,7 @@ function getMultiTiffPixelMedatata(
   dType: string,
   tiffs: MultiTiffImage[],
   channelNames: string[],
-  channelSamplesPerPixel: number[]
+  channelSamplesPerPixel: number[],
 ) {
   const channelMetadata = [];
   for (let i = 0; i < shapeMap.c; i += 1) {
@@ -254,7 +254,7 @@ export function getMultiTiffMetadata(
   tiffImages: MultiTiffImage[],
   channelNames: string[],
   dimensionOrder: DimensionOrder,
-  dType: string
+  dType: string,
 ) {
   const imageNumber = 0;
   const id = `Image:${imageNumber}`;
@@ -263,12 +263,12 @@ export function getMultiTiffMetadata(
   const shapeMap = getMultiTiffShapeMap(tiffImages);
   const channelSamplesPerPixel = getChannelSamplesPerPixel(
     tiffImages,
-    shapeMap.c
+    shapeMap.c,
   );
 
   if (channelNames.length !== shapeMap.c)
     throw Error(
-      "Wrong number of channel names for number of channels provided"
+      "Wrong number of channel names for number of channels provided",
     );
 
   const pixels = getMultiTiffPixelMedatata(
@@ -278,7 +278,7 @@ export function getMultiTiffMetadata(
     dType,
     tiffImages,
     channelNames,
-    channelSamplesPerPixel
+    channelSamplesPerPixel,
   );
 
   const format = () => {
@@ -320,7 +320,7 @@ export function parseFilename(path: string) {
  */
 function createGeoTiffObject(
   source: string | URL | File,
-  { headers }: { headers?: Headers | Record<string, string> }
+  { headers }: { headers?: Headers | Record<string, string> },
 ): Promise<GeoTIFF> {
   if (source instanceof Blob) {
     return fromBlob(source);
@@ -351,7 +351,7 @@ export async function createGeoTiff(
   options: {
     headers?: Headers | Record<string, string>;
     offsets?: number[];
-  } = {}
+  } = {},
 ): Promise<GeoTIFF> {
   const tiff = await createGeoTiffObject(source, options);
   /*
