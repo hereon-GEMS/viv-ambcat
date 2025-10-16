@@ -159,6 +159,7 @@ export const GUI_LIBRARY = {
 
 const DEFAULT_GUI_STATE = {
   defaultGUI: GUI_LIBRARY.DAISYUI, // Default to DaisyUI
+  debugGUI: false,
 };
 
 export const useGUIStore = create((set) => ({

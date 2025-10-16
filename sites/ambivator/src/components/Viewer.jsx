@@ -5,6 +5,7 @@ import {
   SideBySideViewer,
   VolumeViewer,
   VtkViewer,
+  VtkViewer2D,
 } from "@hms-dbmi/viv";
 import debounce from "lodash/debounce";
 import React from "react";
@@ -18,7 +19,7 @@ import {
 } from "../state";
 import { get3DExtension, useWindowSize } from "../utils";
 
-const Viewer = () => {
+const Viewer = ({ debug = false }) => {
   const [useLinkedView, use3d, viewState] = useViewerStore(
     useShallow((store) => [store.useLinkedView, store.use3d, store.viewState]),
   );
@@ -71,10 +72,11 @@ const Viewer = () => {
   };
 
   return (
-    <VtkViewer
+    <VtkViewer2D
       loader={loader}
       height={viewSize.height}
       width={viewSize.width}
+      debug={debug}
     />
   );
   /*  return use3d ? (

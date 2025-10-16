@@ -23,7 +23,7 @@ export default function Ambivator(props) {
   const isViewerLoading = useViewerStore((store) => store.isViewerLoading);
   const source = useViewerStore((store) => store.source);
   const useLinkedView = useViewerStore((store) => store.useLinkedView);
-  const { defaultGUI } = useGUIStore(); // Access Zustand store, change default in state.js
+  const { defaultGUI, debugGUI } = useGUIStore(); // Access Zustand store, change default in state.js
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Ignore carried over from eslint, without explanation.
   useEffect(() => {
@@ -37,23 +37,15 @@ export default function Ambivator(props) {
   useImage(source);
   if (defaultGUI == GUI_LIBRARY.DAISYUI) {
     return (
-      <div
-        className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full h-full flex-1 flex-col"
-        style={{
-          backgroundColor: "#1e1e1e",
-          border: "15px solid black",
-          padding: "10px",
-        }}
-      >
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full h-full flex-1 flex-col">
         {/* Controller (Half-width on sm+ screens) */}
         {/*<div>    <Controller /> </div>*/}
 
         {/* Dropzone + Viewer (Full-width) */}
-        <div
-          className="col-span-1 sm:col-span-2 flex-1 flex-col h-full"
-          style={{ border: "10px solid gray" }}
-        >
-          <DropzoneWrapper>{!isViewerLoading && <Viewer />}</DropzoneWrapper>
+        <div className="col-span-1 sm:col-span-2 flex-1 flex-col h-full">
+          <DropzoneWrapper>
+            {!isViewerLoading && <Viewer debug={debugGUI} />}
+          </DropzoneWrapper>
         </div>
 
         {/* SnackBars (Half-width on sm+ screens) */}

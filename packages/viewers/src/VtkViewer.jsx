@@ -9,7 +9,12 @@ import vtkPolyDataMapper from "@kitware/vtk.js/Rendering/OpenGL/PolyDataMapper";
 import vtkActor from "@kitware/vtk.js/Rendering/Core/Actor";
 import "@kitware/vtk.js/Rendering/Profiles/Geometry";
 
-export default function VtkViewer({ width = 1024, height = 512 }) {
+export default function VtkViewer({
+  width = 1024,
+  height = 512,
+  debug = false,
+}) {
+  // Step 1: Create a ref for the container div
   const viewRef = useRef(null);
   const containerRef = useRef({
     renderWindow: null,
@@ -47,7 +52,7 @@ export default function VtkViewer({ width = 1024, height = 512 }) {
   }, []);
 
   useEffect(() => {
-    // Step 2: Ensure viewRef.current is not null
+    // Ensure viewRef.current is not null
     if (!viewRef.current) {
       console.error("viewRef.current is null");
       return;
@@ -136,7 +141,9 @@ export default function VtkViewer({ width = 1024, height = 512 }) {
     <div
       ref={viewRef}
       className="flex-1 h-full w-full"
-      style={{ border: "5px solid red" }}
+      style={{
+        border: debug ? "5px solid red" : "none",
+      }}
     />
   );
 }

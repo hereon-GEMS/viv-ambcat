@@ -17,6 +17,7 @@ export {
   SideBySideViewer,
   VolumeViewer,
   VtkViewer,
+  VtkViewer2D,
 } from "@vivjs/viewers";
 
 export {
