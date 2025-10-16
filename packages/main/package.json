@@ -28,6 +28,8 @@
     "@vivjs/loaders": "workspace:*",
     "@vivjs/types": "workspace:*",
     "@vivjs/viewers": "workspace:*",
-    "@vivjs/views": "workspace:*"
+    "@vivjs/views": "workspace:*",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
   }
 }

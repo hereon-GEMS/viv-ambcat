@@ -21,25 +21,25 @@
     "publish": "pnpm build && pnpm changeset publish"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
-    "@changesets/cli": "^2.27.10",
-    "@deck.gl/extensions": "catalog:",
-    "@deck.gl/mesh-layers": "catalog:",
-    "@deck.gl/test-utils": "catalog:",
+    "@biomejs/biome": "^1.9.4",
+    "@changesets/cli": "^2.29.7",
+    "@deck.gl/extensions": "9.2.1",
+    "@deck.gl/mesh-layers": "9.2.1",
+    "@deck.gl/test-utils": "9.2.1",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
-    "@luma.gl/test-utils": "catalog:",
+    "@luma.gl/test-utils": "9.2.2",
     "@pnpm/types": "^11.1.0",
-    "@probe.gl/test-utils": "^4.1.0-alpha.2",
-    "@svitejs/changesets-changelog-github-compact": "^1.1.0",
-    "esbuild": "^0.25.0",
+    "@probe.gl/test-utils": "^4.1.0",
+    "@svitejs/changesets-changelog-github-compact": "^1.2.0",
+    "esbuild": "^0.25.11",
     "esno": "^4.8.0",
     "gray-matter": "^4.0.3",
     "jsdom": "^26.1.0",
-    "puppeteer": "^24.14.0",
-    "typescript": "^5.6.2",
+    "puppeteer": "^24.25.0",
+    "typescript": "^5.9.3",
     "unbuild": "^2.0.0",
-    "vite": "^6.2.0",
+    "vite": "^6.4.0",
     "vitest": "^3.2.4",
     "vitest-canvas-mock": "^0.3.3"
   },
@@ -53,10 +53,16 @@
         "esbuild": "*",
         "@loaders.gl/core": "4.3.0"
       }
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@biomejs/biome",
+      "@tailwindcss/oxide",
+      "esbuild",
+      "puppeteer"
+    ]
   },
-  "packageManager": "pnpm@9.5.0",
+  "packageManager": "pnpm@10.18.3",
   "dependencies": {
-    "@kitware/vtk.js": "^34.13.1"
+    "@kitware/vtk.js": "^34.13.2"
   }
 }

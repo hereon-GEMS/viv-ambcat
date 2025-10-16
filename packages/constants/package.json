@@ -23,7 +23,9 @@
     "build": "unbuild"
   },
   "dependencies": {
-    "@luma.gl/constants": "catalog:"
+    "@luma.gl/constants": "9.2.2",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
   },
   "unbuild": {
     "entries": [

@@ -18,6 +18,7 @@
 .env.production.local
 .vscode
 *.tgz
+*.swp
 
 .pnpm-debug.log
 

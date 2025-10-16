@@ -26,11 +26,13 @@
   },
   "dependencies": {
     "@vivjs/types": "workspace:*",
-    "geotiff": "^2.0.5",
+    "geotiff": "^2.1.3",
     "lzw-tiff-decoder": "^0.1.1",
     "quickselect": "^2.0.0",
-    "zarr": "^0.6.2",
-    "zod": "^3.22.4"
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "zarr": "^0.6.3",
+    "zod": "^3.25.76"
   },
   "unbuild": {
     "entries": [

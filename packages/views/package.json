@@ -23,14 +23,27 @@
     "test": "vitest --run"
   },
   "peerDependencies": {
-    "@deck.gl/core": "catalog:",
-    "@deck.gl/layers": "catalog:"
+    "@deck.gl/core": "9.2.1",
+    "@deck.gl/layers": "9.2.1"
   },
   "dependencies": {
+    "@deck.gl/extensions": "9.2.1",
+    "@deck.gl/mesh-layers": "9.2.1",
+    "@deck.gl/test-utils": "9.2.1",
+    "@deck.gl/widgets": "9.2.1",
+    "@luma.gl/core": "9.2.2",
+    "@luma.gl/engine": "9.2.2",
+    "@luma.gl/gltf": "9.2.2",
+    "@luma.gl/shadertools": "9.2.2",
+    "@luma.gl/test-utils": "9.2.2",
+    "@luma.gl/webgl": "9.2.2",
+    "@luma.gl/webgpu": "9.2.2",
     "@math.gl/core": "catalog:",
     "@vivjs/layers": "workspace:*",
     "@vivjs/loaders": "workspace:*",
-    "math.gl": "catalog:"
+    "math.gl": "catalog:",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
   },
   "unbuild": {
     "entries": [

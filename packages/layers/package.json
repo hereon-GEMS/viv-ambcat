@@ -23,14 +23,14 @@
     "test": "vitest --run"
   },
   "peerDependencies": {
-    "@deck.gl/core": "catalog:",
-    "@deck.gl/geo-layers": "catalog:",
-    "@deck.gl/layers": "catalog:",
-    "@luma.gl/constants": "catalog:",
-    "@luma.gl/shadertools": "catalog:",
-    "@luma.gl/core": "catalog:",
-    "@luma.gl/engine": "catalog:",
-    "@luma.gl/webgl": "catalog:"
+    "@deck.gl/core": "9.2.1",
+    "@deck.gl/geo-layers": "9.2.1",
+    "@deck.gl/layers": "9.2.1",
+    "@luma.gl/constants": "9.2.2",
+    "@luma.gl/core": "9.2.2",
+    "@luma.gl/engine": "9.2.2",
+    "@luma.gl/shadertools": "9.2.2",
+    "@luma.gl/webgl": "9.2.2"
   },
   "dependencies": {
     "@math.gl/core": "catalog:",
@@ -38,7 +38,9 @@
     "@vivjs/constants": "workspace:*",
     "@vivjs/extensions": "workspace:*",
     "@vivjs/loaders": "workspace:*",
-    "@vivjs/types": "workspace:*"
+    "@vivjs/types": "workspace:*",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
   },
   "unbuild": {
     "entries": [
