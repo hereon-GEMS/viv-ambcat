@@ -3,20 +3,20 @@ packages:
   - packages/**
 
 catalog:
-  '@deck.gl/core': ~9.1.15
-  '@deck.gl/extensions': ~9.1.15
-  '@deck.gl/geo-layers': ~9.1.15
-  '@deck.gl/layers': ~9.1.15
-  '@deck.gl/mesh-layers': ~9.1.15
-  '@deck.gl/react': ~9.1.15
-  '@deck.gl/test-utils': ~9.1.15
-  '@luma.gl/constants': ~9.1.10
-  '@luma.gl/core': ~9.1.10
-  '@luma.gl/engine': ~9.1.10
-  '@luma.gl/shadertools': ~9.1.10
-  '@luma.gl/test-utils': ~9.1.10
-  '@luma.gl/webgl': ~9.1.10
-  '@math.gl/core': ^4.1.0
-  '@math.gl/culling': ^4.1.0
+  "@deck.gl/core": ~9.1.15
+  "@deck.gl/extensions": ~9.1.15
+  "@deck.gl/geo-layers": ~9.1.15
+  "@deck.gl/layers": ~9.1.15
+  "@deck.gl/mesh-layers": ~9.1.15
+  "@deck.gl/react": ~9.1.15
+  "@deck.gl/test-utils": ~9.1.15
+  "@luma.gl/constants": ~9.1.10
+  "@luma.gl/core": ~9.1.10
+  "@luma.gl/engine": ~9.1.10
+  "@luma.gl/shadertools": ~9.1.10
+  "@luma.gl/test-utils": ~9.1.10
+  "@luma.gl/webgl": ~9.1.10
+  "@math.gl/core": ^4.1.0
+  "@math.gl/culling": ^4.1.0
   math.gl: ^4.1.0
-  react: 'catalog:'
+  react: "catalog:"

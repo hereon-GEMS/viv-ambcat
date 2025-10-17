@@ -36,6 +36,7 @@
     "esno": "^4.8.0",
     "gray-matter": "^4.0.3",
     "jsdom": "^26.1.0",
+    "prettier": "^3.6.2",
     "puppeteer": "^24.25.0",
     "typescript": "^5.9.3",
     "unbuild": "^2.0.0",
