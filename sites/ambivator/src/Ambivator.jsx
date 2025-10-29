@@ -1,15 +1,16 @@
 import React, { useEffect } from "react";
 
-import Controller from "./components/Controller";
+//import Controller from "./components/Controller";
 import DropzoneWrapper from "./components/DropzoneWrapper";
-import Footer from "./components/Footer";
-import SnackBars from "./components/Snackbars";
+//import Footer from "./components/Footer";
+//import SnackBars from "./components/Snackbars";
 import Viewer from "./components/Viewer";
 import { useImage } from "./hooks";
 import { useViewerStore, useGUIStore, GUI_LIBRARY } from "./state";
-import { Grid } from "@mui/material";
+//import { Grid } from "@mui/material";
 
-import "./index.css";
+//import "./index.css";
+//import "./tailwind.css"
 
 /**
  * This component serves as batteries-included visualization for OME-compliant tiff or zarr images.

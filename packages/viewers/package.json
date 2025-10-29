@@ -22,16 +22,18 @@
   "scripts": {
     "build": "unbuild"
   },
-  "peerDependencies": {},
   "dependencies": {
+    "@deck.gl/react": "^9.2.1",
     "@kitware/vtk.js": "^34.13.2",
+    "@tailwindcss/vite": "^4.1.16",
     "@vivjs/constants": "workspace:*",
     "@vivjs/extensions": "workspace:*",
     "@vivjs/views": "workspace:*",
+    "daisyui": "^5.3.10",
     "fast-deep-equal": "^3.1.3",
-    "react-dom": "^19.2.0",
     "react": "^19.2.0",
-    "@deck.gl/react": "^9.2.1"
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^4.1.16"
   },
   "unbuild": {
     "entries": [

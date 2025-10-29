@@ -1,13 +1,18 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "target": "esnext",
-    "jsx": "react",
-    "moduleResolution": "node",
+    "target": "ESNext",
+    "module": "ESNext",
+  "jsx": "react-jsx",
+    "declaration": true,
+    "moduleResolution": "Node",
     "strict": true,
     "allowJs": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "verbatimModuleSyntax": true
-  }
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["react", "react-dom"]
+  },
+  "include": ["packages", "sites","src"]
 }

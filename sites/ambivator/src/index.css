@@ -1,5 +1,7 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  root: ":host";
+};
 
 /*To enable centering of the app*/
 html,

@@ -79,6 +79,7 @@ const Viewer = ({ debug = false }) => {
       debug={debug}
     />
   );
+
   /*  return use3d ? (
     <VolumeViewer
       loader={loader}
