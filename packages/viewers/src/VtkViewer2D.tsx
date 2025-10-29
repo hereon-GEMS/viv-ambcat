@@ -296,118 +296,7 @@ export default function VtkViewer2D({
     return () => {};
   }, [viewRef]);
 
-  //  return (
-  //   <div
-  //     className="flex-1 h-full w-full"
-  //     style={{
-  //       border: debug ? "5px solid red" : "none",
-  //     }}
-  //   >
-  //     <div className="flex h-full w-full overflow-hidden relative">
-  //       {/* Left Side Panel */}
-  //       {controlPanelVisibleState && controlPanelSideState === "left" && (
-  //         <div className="w-64 bg-gray-100 p-4 flex-shrink-0 min-h-full border-r border-gray-300">
-  //           LEFT CONTROLS
-  //         </div>
-  //       )}
-
-  //       {/* Main Viewer Area */}
-  //       <div className="flex-1 bg-base-100 flex justify-center items-center h-full">
-  //         <div ref={viewRef} />
-  //       </div>
-
-  //       {/* Right Side Panel */}
-  //       {controlPanelVisibleState && controlPanelSideState === "right" && (
-  //         <div className="w-64 bg-gray-100 p-4 flex-shrink-0 min-h-full border-l border-gray-300">
-  //           RIGHT CONTROLS
-  //         </div>
-  //       )}
-
-  //       {/* Toggle button */}
-  //       <button
-  //         className={`absolute top-2 ${
-  //           controlPanelSideState === "right" ? "right-2" : "left-2"
-  //         } btn btn-sm btn-primary z-50`}
-  //         onClick={() => setControlPanelVisible((prev) => !prev)}
-  //       >
-  //         {controlPanelVisibleState ? "Hide Controls" : "Show Controls"}
-  //       </button>
-
-  //       {/* Demo Content */}
-  //       {/* <div className="p-4 bg-gray-200 absolute bottom-4 left-1/2 transform -translate-x-1/2 rounded shadow">
-  //         <h1 className="text-2xl font-bold text-blue-600">Tailwind works!</h1>
-  //         <button className="px-4 py-2 bg-green-500 text-white rounded mt-2">
-  //           Click Me
-  //         </button>
-  //       </div> */}
-  //     </div>
-  //   </div>
-  // );
-
-  // Arrow for collapsing/expanding
-  /*  const Arrow = () => (
-    <div
-      className="absolute top-1/2 -translate-y-1/2 z-50 w-6 h-12 flex items-center justify-center cursor-pointer select-none bg-gray-400 hover:bg-gray-500 rounded"
-      style={{
-        [controlPanelSideState]: -12,
-      } as React.CSSProperties}
-      onClick={() => setControlPanelVisible(!controlPanelVisibleState)}
-      onMouseDown={startResize}
-    >
-      {controlPanelSideState === "left"
-        ? controlPanelVisibleState
-          ? "◀"
-          : "▶"
-        : controlPanelVisibleState
-        ? "▶"
-        : "◀"}
-    </div>
-  );
-
-  const panelClasses =
-    "bg-gray-200 flex flex-col overflow-hidden transition-all duration-200 relative";
- */
-  // return (
-  //   <div
-  //     className="flex h-screen w-full bg-gray-50"
-  //     onMouseMove={onMouseMove}
-  //     onMouseUp={stopResize}
-  //     onMouseLeave={stopResize}
-  //   >
-  //     {/* Left Panel */}
-  //     {controlPanelVisibleState && controlPanelSideState === "left" && (
-  //       <div ref={controlPanelRef} className={panelClasses} style={{ width: controlPanelWidth }}>
-  //         <div className="flex-1 p-4">LEFT CONTROLS</div>
-  //         <Arrow />
-  //       </div>
-  //     )}
-
-  //     {/* Main Content */}
-  //     <div className="flex-1 flex justify-center items-center">
-  //       <div className="p-4 text-center">
-  //         <h1 className="text-2xl font-bold text-blue-600">Main Viewer</h1>
-  //         <button className="px-4 py-2 mt-4 bg-green-500 text-white rounded">
-  //           Tailwind Button
-  //         </button>
-  //       </div>
-  //     </div>
-
-  //     {/* Right Panel */}
-  //     {controlPanelVisibleState && controlPanelSideState === "right" && (
-  //     <div className="bg-gray-100 flex flex-col" style={{ width: controlPanelWidth }}>
-  //       {/* Resizer */}
-  //       <div
-  //         ref={resizerRef}
-  //         onMouseDown={startResize}
-  //         className="w-2 cursor-ew-resize bg-gray-300 hover:bg-gray-400 self-start"
-  //       />
-  //       <div className="flex-1 p-4">RIGHT CONTROLS</div>
-  //     </div>
-  //     )}
-  //   </div>
-  // );
-
-      return (
+  return (
     <div
       ref={baseDivRef}
       className="flex-1 h-full w-full"
@@ -415,51 +304,111 @@ export default function VtkViewer2D({
         border: debug ? "5px solid red" : "none",
       }}
     >
- 
- <div className={`drawer drawer-open ${controlPanelSideState === "right" ? "drawer-end" : ""}`}>
-  <input id="control-panel-drawer" type="checkbox" className="drawer-toggle" 
-   defaultChecked={controlPanelVisibleState} // checkbox is checked if drawer should be visible
-   onChange={(e) => setControlPanelVisible(e.target.checked)}
-  />
-  <div className="drawer-content">
-    {/* Page content here */}
-    <div ref={viewRef} />
-  </div>
+      <div
+        className={`drawer drawer-open ${controlPanelSideState === "right" ? "drawer-end" : ""}`}
+      >
+        <input
+          id="control-panel-drawer"
+          type="checkbox"
+          className="drawer-toggle"
+          defaultChecked={controlPanelVisibleState} // checkbox is checked if drawer should be visible
+          onChange={(e) => setControlPanelVisible(e.target.checked)}
+        />
+        <div className="drawer-content">
+          {/* Page content here */}
+          <div ref={viewRef} />
+        </div>
 
-  <div className="drawer-side is-drawer-close:overflow-visible">
-    <label htmlFor="control-panel-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-    <div className="is-drawer-close:w-14 is-drawer-open:w-64 bg-gray-100 flex flex-col items-start min-h-full">
-      {/* Sidebar content here */}
-      <ul className="menu w-full grow">
+        <div
+          className="drawer-side is-drawer-close:overflow-visible"
+          ref={controlPanelRef}
+        >
+          <label
+            htmlFor="control-panel-drawer"
+            aria-label="close sidebar"
+            className="drawer-overlay"
+          ></label>
+          <div className="is-drawer-close:w-14 is-drawer-open:w-64 bg-gray-100 flex flex-col items-start min-h-full">
+            {/* Sidebar content here */}
+            <ul className="menu w-full grow">
+              {/* list item */}
+              <li>
+                <button
+                  className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                  data-tip="Homepage"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    strokeWidth="2"
+                    fill="none"
+                    stroke="currentColor"
+                    className="inline-block size-4 my-1.5"
+                  >
+                    <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
+                    <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  </svg>
+                  <span className="is-drawer-close:hidden">Homepage</span>
+                </button>
+              </li>
 
-        {/* list item */}
-        <li>
-          <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Homepage">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="inline-block size-4 my-1.5"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-            <span className="is-drawer-close:hidden">Homepage</span>
-          </button>
-        </li>
+              {/* list item */}
+              <li>
+                <button
+                  className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                  data-tip="Settings"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    strokeWidth="2"
+                    fill="none"
+                    stroke="currentColor"
+                    className="inline-block size-4 my-1.5"
+                  >
+                    <path d="M20 7h-9"></path>
+                    <path d="M14 17H5"></path>
+                    <circle cx="17" cy="17" r="3"></circle>
+                    <circle cx="7" cy="7" r="3"></circle>
+                  </svg>
+                  <span className="is-drawer-close:hidden">Settings</span>
+                </button>
+              </li>
+            </ul>
 
-        {/* list item */}
-        <li>
-          <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Settings">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="inline-block size-4 my-1.5"><path d="M20 7h-9"></path><path d="M14 17H5"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
-            <span className="is-drawer-close:hidden">Settings</span>
-          </button>
-        </li>
-      </ul>
-
-      {/* button to open/close drawer */}
-      <div className="m-2 is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Open">
-        <label htmlFor="control-panel-drawer" className="btn btn-ghost btn-circle drawer-button is-drawer-open:rotate-y-180">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="inline-block size-4 my-1.5"><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
-        </label>
+            {/* button to open/close drawer */}
+            <div
+              className="m-2 is-drawer-close:tooltip is-drawer-close:tooltip-right"
+              data-tip="Open"
+            >
+              <label
+                htmlFor="control-panel-drawer"
+                className="btn btn-ghost btn-circle drawer-button is-drawer-open:rotate-y-180"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                  fill="none"
+                  stroke="currentColor"
+                  className="inline-block size-4 my-1.5"
+                >
+                  <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
+                  <path d="M9 4v16"></path>
+                  <path d="M14 10l2 2l-2 2"></path>
+                </svg>
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
-
     </div>
-  </div>
-</div>
-</div>
   );
 
   //      return (

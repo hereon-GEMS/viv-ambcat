@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-  "jsx": "react-jsx",
+    "jsx": "react-jsx",
     "declaration": true,
     "moduleResolution": "Node",
     "strict": true,
@@ -14,5 +14,5 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["react", "react-dom"]
   },
-  "include": ["packages", "sites","src"]
+  "include": ["packages", "sites", "src"]
 }
