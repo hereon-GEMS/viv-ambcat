@@ -115,6 +115,7 @@ export default function VtkViewer2D({
   const baseDivRef = useRef<HTMLDivElement>(null);
   const viewerDivRef = useRef<HTMLDivElement>(null);
   const controlPanelDivRef = useRef<HTMLDivElement>(null);
+  const gaussianWidgetDivRef = useRef<HTMLDivElement>(null);
   // Control panel setup
   const [controlPanelVisibleState, setControlPanelVisible] =
     useState(controlPanelVisible);
@@ -289,11 +290,11 @@ export default function VtkViewer2D({
           size: [400, 150],
         });
         const widgetContainer = document.createElement("div");
-        widgetContainer.style.position = "absolute";
-        widgetContainer.style.top = "10px";
-        widgetContainer.style.left = "10px";
+        widgetContainer.style.position = "relative";
+        //widgetContainer.style.top = "10px";
+        //widgetContainer.style.left = "10px";
         widgetContainer.style.background = "rgba(255, 255, 255, 0.8)";
-        viewContainerElement.appendChild(widgetContainer);
+        gaussianWidgetDivRef.current?.appendChild(widgetContainer);
         //document.body.appendChild(widgetContainer);
         //widget.applyOpacity(sceneRef.current.image.ctf);
         widget.setContainer(widgetContainer);
@@ -399,7 +400,7 @@ export default function VtkViewer2D({
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <div className="is-drawer-close:w-14 is-drawer-open:w-64 bg-gray-100 flex flex-col items-start min-h-full">
+          <div className="is-drawer-close:w-14 is-drawer-open:w-128 bg-gray-100 flex flex-col items-start min-h-full">
             {/* Sidebar content here */}
             <ul className="menu w-full grow">
               {/* list item */}
@@ -421,10 +422,9 @@ export default function VtkViewer2D({
                     <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
                     <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                   </svg>
-                  <span className="is-drawer-close:hidden">Homepage</span>
+                  <span className="is-drawer-close:hidden">Homepageabc</span>
                 </button>
               </li>
-
               {/* list item */}
               <li>
                 <button
@@ -448,6 +448,12 @@ export default function VtkViewer2D({
                   </svg>
                   <span className="is-drawer-close:hidden">Settings</span>
                 </button>
+              </li>
+              <li>
+                <div
+                  ref={gaussianWidgetDivRef}
+                  className="is-drawer-close:hidden"
+                ></div>
               </li>
             </ul>
 
