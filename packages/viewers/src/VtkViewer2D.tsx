@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import type { RefObject } from "react";
 
 // Logic inspired by https://kitware.github.io/vtk-js/examples/PaintWidget.html
 
@@ -6,12 +7,13 @@ import "@kitware/vtk.js/Rendering/Profiles/All";
 
 import vtkImageData from "@kitware/vtk.js/Common/DataModel/ImageData";
 import vtkDataArray from "@kitware/vtk.js/Common/Core/DataArray";
-import vtkFullScreenRenderWindow from "@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow";
-import vtkWidgetManager from "@kitware/vtk.js/Widgets/Core/WidgetManager";
+import vtkRenderWindow from "@kitware/vtk.js/Rendering/Core/RenderWindow";
+import vtkOpenGLRenderWindow from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow";
+import vtkRenderWindowInteractor from "@kitware/vtk.js/Rendering/Core/RenderWindowInteractor";
+import vtkRenderer from "@kitware/vtk.js/Rendering/Core/Renderer";
 import vtkInteractorStyleImage from "@kitware/vtk.js/Interaction/Style/InteractorStyleImage";
 import vtkImageMapper from "@kitware/vtk.js/Rendering/Core/ImageMapper";
 import vtkImageSlice from "@kitware/vtk.js/Rendering/Core/ImageSlice";
-import vtkPaintFilter from "@kitware/vtk.js/Filters/General/PaintFilter";
 import vtkColorTransferFunction from "@kitware/vtk.js/Rendering/Core/ColorTransferFunction";
 import vtkPiecewiseFunction from "@kitware/vtk.js/Common/DataModel/PiecewiseFunction";
 import vtkCubeSource from "@kitware/vtk.js/Filters/Sources/CubeSource";
@@ -111,8 +113,8 @@ export default function VtkViewer2D({
   controlPanelSide = "left", // default prop
 }: VtkViewer2DProps) {
   const baseDivRef = useRef<HTMLDivElement>(null);
-  const viewRef = useRef<HTMLDivElement>(null);
-  const controlPanelRef = useRef<HTMLDivElement>(null);
+  const viewerDivRef = useRef<HTMLDivElement>(null);
+  const controlPanelDivRef = useRef<HTMLDivElement>(null);
   // Control panel setup
   const [controlPanelVisibleState, setControlPanelVisible] =
     useState(controlPanelVisible);
@@ -121,66 +123,123 @@ export default function VtkViewer2D({
   >(controlPanelSide);
 
   const [controlPanelWidth, setControlPanelWidth] = useState(300); // initial width
-  const [isResizing, setIsResizing] = useState(false);
-  const resizerRef = useRef();
 
-  const startResize = () => setIsResizing(true);
-
-  const stopResize = () => setIsResizing(false);
-
-  const onMouseMove = (e) => {
-    if (!isResizing) return;
-    const newWidth = e.clientX; // For left panel, measure from left
-    if (newWidth > 50 && newWidth < 400) setControlPanelWidth(newWidth);
+  // Define types for clarity
+  type VtkImagePipeline = {
+    mapper: vtkImageMapper | null;
+    actor: vtkImageSlice | null;
+    ctf: vtkColorTransferFunction | null;
+    pf: vtkPiecewiseFunction | null;
+    ctfWidget: any | null; // vtkPiecewiseGaussianWidget later
   };
 
-  const vtkObjectsRef = useRef({
+  type VtkObjectsType = {
+    renderWindow: vtkRenderWindow | null;
+    openGLRenderWindow: vtkOpenGLRenderWindow | null;
+    interactor: vtkRenderWindowInteractor | null;
+    renderer: vtkRenderer | null;
+    camera: any | null;
+    iStyle: vtkInteractorStyleImage | null;
+    image: VtkImagePipeline;
+  };
+
+  // 2️d Top-level ref
+  const vtkObjectsRef = useRef<VtkObjectsType>({
     renderWindow: null,
     openGLRenderWindow: null,
     interactor: null,
     renderer: null,
-    actor: null,
-    mapper: null,
-    painter: null,
-    colorTransferFunction: null,
-    piecewiseFunction: null,
+    camera: null,
     iStyle: null,
+    image: {
+      mapper: null,
+      actor: null,
+      ctf: null,
+      pf: null,
+      ctfWidget: null,
+    },
   });
 
-  // top-level refs that live through re-renders
-  const sceneRef = useRef(null);
-  const ctfRef = useRef(null);
-  const pfRef = useRef(null);
-  const widgetRef = useRef(null);
+  // Type for the ref structure
+  type ImageRefType = {
+    vtk_imageData: vtkImageData | null;
+    scalars: any | null;
+    data: any | null;
+    range: [number, number] | null;
+  };
+
+  const imageRef = useRef<ImageRefType>({
+    vtk_imageData: null,
+    scalars: null,
+    data: null,
+    range: null,
+  });
+
+  function updateImageRef(
+    imageRef: RefObject<ImageRefType>,
+    vtk_imageData: vtkImageData,
+  ): boolean {
+    if (!imageRef.current) {
+      // should never happen if you initialized with object, but TS likes this check
+      return false;
+    }
+
+    if (imageRef.current.vtk_imageData !== vtk_imageData) {
+      const scalars = vtk_imageData.getPointData().getScalars();
+      const data = scalars.getData();
+      const range = scalars.getRange() as [number, number];
+      imageRef.current = {
+        vtk_imageData,
+        scalars,
+        data,
+        range,
+      };
+      console.log("Updated imageRef with new vtk_imageData:", range);
+      return true;
+    }
+    return false;
+  }
 
   useEffect(() => {
     //return;
     // Ensure viewRef.current is not null
-    if (!viewRef.current) {
+    if (!viewerDivRef.current) {
       console.error("viewRef.current is null");
       return;
     }
     const setupView = (
-      viewContainer: HTMLElement,
+      viewContainerElement: HTMLElement,
       vtk_imageData: vtkImageData,
     ) => {
-      //Basic info
-      const imageScalars = vtk_imageData.getPointData().getScalars();
-      const imageData = imageScalars.getData();
-      const imageRange = imageScalars.getRange();
+      // Set basic image properties from updated imageRef
+      updateImageRef(imageRef, vtk_imageData);
+      const { scalars: imageScalars, data: imageData } = imageRef.current!;
+      const imageRange = imageRef.current.range ?? [0, 1]; // fallback to [0,1] if null
 
       // ----------------------------------------------------------------------------
       // Standard rendering code setup
       // ----------------------------------------------------------------------------
-      if (!sceneRef.current) {
-        sceneRef.current = {};
-        const fullScreenRenderer = vtkFullScreenRenderWindow.newInstance({
-          rootContainer: viewContainer,
-          background: [0.1, 0.1, 0.1],
-        });
-        //Set up renderer
-        const renderer = fullScreenRenderer.getRenderer();
-        const renderWindow = fullScreenRenderer.getRenderWindow();
+      if (!vtkObjectsRef.current || !vtkObjectsRef.current.renderWindow) {
+        // Create the render window
+        const renderWindow = vtkRenderWindow.newInstance();
+        const renderer = vtkRenderer.newInstance();
+        renderer.setBackground(0.1, 0.2, 0.4); // Set background color
+        renderWindow.addRenderer(renderer);
+
+        const openGLRenderWindow = vtkOpenGLRenderWindow.newInstance();
+        openGLRenderWindow.setContainer(viewContainerElement);
+        //Dimensions of div
+        const containerWidth = viewContainerElement.clientWidth;
+        const containerHeight = viewContainerElement.clientHeight;
+        openGLRenderWindow.setSize(containerWidth, containerHeight);
+        renderWindow.addView(openGLRenderWindow);
+
+        // Create an interactor to handle events (like mouse control)
+        const interactor = vtkRenderWindowInteractor.newInstance();
+        interactor.setView(openGLRenderWindow);
+        interactor.initialize();
+        interactor.setContainer(viewContainerElement);
+
         const camera = renderer.getActiveCamera();
 
         // setup 2D view
@@ -188,34 +247,40 @@ export default function VtkViewer2D({
         const iStyle = vtkInteractorStyleImage.newInstance();
         iStyle.setInteractionMode("IMAGE_SLICING");
         renderWindow.getInteractor().setInteractorStyle(iStyle);
-        sceneRef.current = {
-          fullScreenRenderer,
-          renderer,
+
+        // Initialize image pipeline
+        const mapper = vtkImageMapper.newInstance();
+        const actor = vtkImageSlice.newInstance();
+        const ctf = vtkColorTransferFunction.newInstance();
+        const pf = vtkPiecewiseFunction.newInstance();
+
+        actor.setMapper(mapper);
+        renderer.addActor(actor);
+
+        vtkObjectsRef.current = {
           renderWindow,
+          openGLRenderWindow,
+          interactor,
+          renderer,
           camera,
           iStyle,
-          // Add an "image" sub-structure for all image-related pipeline elements
           image: {
-            mapper: vtkImageMapper.newInstance(),
-            actor: vtkImageSlice.newInstance(),
-            ctf: vtkColorTransferFunction.newInstance(),
-            pf: vtkPiecewiseFunction.newInstance(),
-            ctfWidget: null, // will hold vtkPiecewiseGaussianWidget later
+            mapper,
+            actor,
+            ctf,
+            pf,
+            ctfWidget: null,
           },
         };
-        //Connect mapper actor and renderer
-        sceneRef.current.image.actor.setMapper(sceneRef.current.image.mapper);
-        sceneRef.current.renderer.addActor(sceneRef.current.image.actor);
-
         //CTF setup
-        sceneRef.current.image.mapper.setInputData(vtk_imageData);
-        sceneRef.current.image.ctf.addRGBPoint(imageRange[0], 0.0, 0.0, 0.0);
-        sceneRef.current.image.ctf.addRGBPoint(imageRange[1], 1.0, 1.0, 1.0);
-        sceneRef.current.image.pf.addPoint(imageRange[0], 1.0);
-        sceneRef.current.image.pf.addPoint(imageRange[1], 1.0);
-        const imageProp = sceneRef.current.image.actor.getProperty();
-        imageProp.setRGBTransferFunction(0, sceneRef.current.image.ctf);
-        imageProp.setScalarOpacity(0, sceneRef.current.image.pf);
+        mapper.setInputData(vtk_imageData);
+        ctf.addRGBPoint(imageRange[0], 0.0, 0.0, 0.0);
+        ctf.addRGBPoint(imageRange[1], 1.0, 1.0, 1.0);
+        pf.addPoint(imageRange[0], 1.0);
+        pf.addPoint(imageRange[1], 1.0);
+        const imageProp = actor.getProperty();
+        imageProp.setRGBTransferFunction(0, ctf);
+        imageProp.setScalarOpacity(0, pf);
         imageProp.setUseLookupTableScalarRange(true);
 
         //CTF widget placement
@@ -228,11 +293,11 @@ export default function VtkViewer2D({
         widgetContainer.style.top = "10px";
         widgetContainer.style.left = "10px";
         widgetContainer.style.background = "rgba(255, 255, 255, 0.8)";
-        viewContainer.appendChild(widgetContainer);
+        viewContainerElement.appendChild(widgetContainer);
         //document.body.appendChild(widgetContainer);
         //widget.applyOpacity(sceneRef.current.image.ctf);
         widget.setContainer(widgetContainer);
-        widget.setColorTransferFunction(sceneRef.current.image.ctf);
+        widget.setColorTransferFunction(vtkObjectsRef.current.image.ctf);
         widget.bindMouseListeners();
         console.log(imageData);
         // widget.setDataArray(imageData, {
@@ -243,40 +308,46 @@ export default function VtkViewer2D({
         widget.onOpacityChange(() => {
           //widget.setColorTransferFunction(sceneRef.current.image.ctf);
           //widget.applyOpacity(sceneRef.current.image.ctf);
-          sceneRef.current.renderWindow.render();
+          renderWindow.render();
         });
-        sceneRef.current.image.ctfWidget = widget;
+        vtkObjectsRef.current.image.ctfWidget = widget;
       }
 
       //Get scene and image objects
-      const scene = sceneRef.current;
+      const scene = vtkObjectsRef.current;
       const image = scene.image;
 
       // default slice orientation/mode and camera view
       const sliceMode = vtkImageMapper.SlicingMode.K;
-      scene.image.mapper.setSlicingMode(sliceMode);
-      scene.image.mapper.setSlice(0);
-      scene.image.mapper.update();
+      if (image.mapper) {
+        // default slice orientation/mode and camera view
+        const sliceMode = vtkImageMapper.SlicingMode.K;
+        image.mapper.setSlicingMode(sliceMode);
+        image.mapper.setSlice(0);
+        image.mapper.update();
+      }
 
       // set 2D camera position
       setCamera(sliceMode, scene.renderer, vtk_imageData);
 
       //Add orientation widget
       const axes = vtkAxesActor.newInstance();
-      const orientationWidget = vtkOrientationMarkerWidget.newInstance({
-        actor: axes,
-        interactor: scene.renderWindow.getInteractor(),
-      });
-      orientationWidget.setEnabled(true);
-      orientationWidget.setViewportCorner(
-        vtkOrientationMarkerWidget.Corners.BOTTOM_LEFT,
-      );
-      orientationWidget.setViewportSize(0.15);
-      orientationWidget.setMinPixelSize(100);
-      orientationWidget.setMaxPixelSize(300);
+      if (scene.renderWindow) {
+        const orientationWidget = vtkOrientationMarkerWidget.newInstance({
+          actor: axes,
+          interactor: scene.renderWindow.getInteractor(),
+        });
+        orientationWidget.setEnabled(true);
+        orientationWidget.setViewportCorner(
+          vtkOrientationMarkerWidget.Corners.BOTTOM_LEFT,
+        );
+        orientationWidget.setViewportSize(0.15);
+        orientationWidget.setMinPixelSize(100);
+        orientationWidget.setMaxPixelSize(300);
 
-      // Render scene
-      scene.renderWindow.render();
+        // Render scene
+        scene.renderWindow.render();
+      }
     };
 
     const init = async () => {
@@ -286,7 +357,7 @@ export default function VtkViewer2D({
         Array.isArray(loader) ? loader[0] : loader
       ).getRaster({ selection: selection || { z: 0 } });
       const vtkImage = pixelSourceToVtkImageData(raster);
-      setupView(viewRef.current, vtkImage);
+      setupView(viewerDivRef.current, vtkImage);
     };
 
     //Initialize and draw image
@@ -294,7 +365,7 @@ export default function VtkViewer2D({
 
     // Cleanup function to avoid setting state after unmount
     return () => {};
-  }, [viewRef]);
+  }, [viewerDivRef]);
 
   return (
     <div
@@ -316,12 +387,12 @@ export default function VtkViewer2D({
         />
         <div className="drawer-content">
           {/* Page content here */}
-          <div ref={viewRef} />
+          <div ref={viewerDivRef} />
         </div>
 
         <div
           className="drawer-side is-drawer-close:overflow-visible"
-          ref={controlPanelRef}
+          ref={controlPanelDivRef}
         >
           <label
             htmlFor="control-panel-drawer"
