@@ -8,6 +8,8 @@
       name="description"
       content="A viewer for high bit depth, high resolution, multi-channel images"
     />
+    <script type="module" src="/@vite/client"></script>
+    <script src="./node_modules/preline/dist/preline.js"></script>
     <title>AMBIVATOR - Amber Fossil Viewer</title>
   </head>
   <body>
@@ -15,6 +17,6 @@
     <div id="root" style="{{ border: '20px solid blue' }}">
       <!-- This div's content will be managed by React. -->
     </div>
-    <script type="module" src="./src/index.jsx"></script>
+    <script type="module" src="./src/index.tsx"></script>
   </body>
 </html>

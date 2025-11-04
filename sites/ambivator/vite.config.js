@@ -7,7 +7,13 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   base: "./",
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss({
+      // Disable Lightning CSS optimization
+      optimize: false,
+    }),
+  ],
   server: {
     https: {
       key: fs.readFileSync(

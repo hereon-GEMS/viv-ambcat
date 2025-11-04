@@ -40,7 +40,8 @@ import {
 
 import { ViewTypes } from "@kitware/vtk.js/Widgets/Core/WidgetManager/Constants";
 
-//import './style.css';
+import noUiSlider from "nouislider";
+import type { VtkViewer } from "@hms-dbmi/viv";
 
 //Helper function https://kitware.github.io/vtk-js/examples/PaintWidget.html
 function setCamera(sliceMode, renderer, data) {
@@ -202,7 +203,6 @@ export default function VtkViewer2D({
   }
 
   useEffect(() => {
-    //return;
     // Ensure viewRef.current is not null
     if (!viewerDivRef.current) {
       console.error("viewRef.current is null");
@@ -216,7 +216,6 @@ export default function VtkViewer2D({
       updateImageRef(imageRef, vtk_imageData);
       const { scalars: imageScalars, data: imageData } = imageRef.current!;
       const imageRange = imageRef.current.range ?? [0, 1]; // fallback to [0,1] if null
-
       // ----------------------------------------------------------------------------
       // Standard rendering code setup
       // ----------------------------------------------------------------------------
@@ -247,7 +246,7 @@ export default function VtkViewer2D({
         camera.setParallelProjection(true);
         const iStyle = vtkInteractorStyleImage.newInstance();
         iStyle.setInteractionMode("IMAGE_SLICING");
-        renderWindow.getInteractor().setInteractorStyle(iStyle);
+        //renderWindow.getInteractor().setInteractorStyle(iStyle);
 
         // Initialize image pipeline
         const mapper = vtkImageMapper.newInstance();
@@ -358,7 +357,9 @@ export default function VtkViewer2D({
         Array.isArray(loader) ? loader[0] : loader
       ).getRaster({ selection: selection || { z: 0 } });
       const vtkImage = pixelSourceToVtkImageData(raster);
-      setupView(viewerDivRef.current, vtkImage);
+      if (viewerDivRef.current) {
+        setupView(viewerDivRef.current, vtkImage);
+      }
     };
 
     //Initialize and draw image
@@ -392,7 +393,7 @@ export default function VtkViewer2D({
         </div>
 
         <div
-          className="drawer-side is-drawer-close:overflow-visible"
+          className="drawer-side is-drawer-close:overflow-visible w-full"
           ref={controlPanelDivRef}
         >
           <label
@@ -400,8 +401,9 @@ export default function VtkViewer2D({
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <div className="is-drawer-close:w-14 is-drawer-open:w-128 bg-gray-100 flex flex-col items-start min-h-full">
+          <div className="is-drawer-close:w-14 is-drawer-open:w-128 bg-gray-100 flex flex-col items-start min-h-full w-full">
             {/* Sidebar content here */}
+
             <ul className="menu w-full grow">
               {/* list item */}
               <li>
@@ -422,7 +424,7 @@ export default function VtkViewer2D({
                     <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
                     <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                   </svg>
-                  <span className="is-drawer-close:hidden">Homepageabc</span>
+                  <span className="is-drawer-close:hidden">Home</span>
                 </button>
               </li>
               {/* list item */}
@@ -455,6 +457,38 @@ export default function VtkViewer2D({
                   className="is-drawer-close:hidden"
                 ></div>
               </li>
+              <li className="w-full"></li>
+              <div
+                style={{
+                  border: "5px solid blue", // Blue border
+                  padding: "20px", // Padding inside the container
+                  width: "100%", // Ensure the container spans full width
+                  height: "auto", // Adjust height based on content
+                  boxSizing: "border-box", // Ensure padding is included in the total width/height
+                }}
+                className="is-drawer-close:hidden dynamicPreline"
+              >
+                <label className="sr-only">Example range</label>
+                <div
+                  data-hs-range-slider='{
+  "start": 50,
+  "connect": "lower",
+  "range": {
+    "min": 0,
+    "max": 100
+  },
+  "cssClasses": {
+    "target": "relative h-2 rounded-full bg-gray-100 dark:bg-neutral-700",
+    "base": "size-full relative z-1",
+    "origin": "absolute top-0 end-0 size-full origin-[0_0] rounded-full",
+    "handle": "absolute top-1/2 end-0 size-4.5 bg-white border-4 border-blue-600 rounded-full cursor-pointer translate-x-2/4 -translate-y-2/4 dark:border-blue-500",
+    "connects": "relative z-0 size-full rounded-full overflow-hidden",
+    "connect": "absolute top-0 end-0 z-1 size-full bg-blue-600 origin-[0_0] dark:bg-blue-500",
+    "touchArea": "absolute -inset-1"
+  }
+}'
+                ></div>
+              </div>
             </ul>
 
             {/* button to open/close drawer */}

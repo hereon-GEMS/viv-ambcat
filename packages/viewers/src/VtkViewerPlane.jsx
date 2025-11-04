@@ -125,7 +125,7 @@ function applyCTFToImage(vtkImageData_instance, ctf, k = 0) {
   return coloredImage;
 }
 
-export default function VtkViewer2D({
+export default function VtkViewerPlane({
   loader,
   selection,
   width = 1024,

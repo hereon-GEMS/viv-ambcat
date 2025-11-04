@@ -5,8 +5,8 @@ import {
   SideBySideViewer,
   VolumeViewer,
   VtkViewer,
-  VtkViewer2D,
 } from "@hms-dbmi/viv";
+import VtkViewer2D from "./VTK/VtkViewer2D.tsx";
 import debounce from "lodash/debounce";
 import React from "react";
 import { useShallow } from "zustand/shallow";
@@ -33,6 +33,7 @@ const Viewer = ({ debug = false }) => {
       ]),
     );
   const loader = useLoader();
+  //const loader = null;
   const viewSize = useWindowSize();
   const [
     lensSelection,
