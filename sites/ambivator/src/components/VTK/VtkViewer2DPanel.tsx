@@ -190,15 +190,24 @@ const VtkViewer2DPanel = forwardRef<
         }
       });
 
+      let debounceMouseWheel: number | null = null;
+      
       rangeElement.addEventListener("wheel", (event) => {
+        if (debounceMouseWheel !== null) return; // already debouncing
         if (!event.shiftKey) return; // only when shift is pressed
         event.preventDefault(); // prevent page scroll
         const step = 1; // adjust how much the slider changes per wheel tick
         let currentValue = parseInt(rangeInstance.formattedValue, 10);
         // Wheel delta: positive = scroll up, negative = scroll down
+        console.log(`Wheel event with deltaY=${event.deltaY}, currentValue=${currentValue}, step=${step}`);
         currentValue += event.deltaY < 0 ? step : -step;
         currentValue = clamp(currentValue);
-        rangeInstance.el.noUiSlider.set(currentValue);
+        // debounce the slider update
+        if (debounceMouseWheel !== null) clearTimeout(debounceMouseWheel);
+        debounceMouseWheel = window.setTimeout(() => {
+          rangeInstance.el.noUiSlider.set(currentValue);
+          debounceMouseWheel = null;
+        }, 50); // 50ms delay (adjust if needed)
       });
 
       // Debounced input event listener for syncing the slider value with input field
@@ -286,8 +295,7 @@ const VtkViewer2DPanel = forwardRef<
               <div className="border border-gray-300 bg-gray-100 rounded-xl shadow-2xs pt-15 p-6 flex w-full flex-col justify-start dynamicPreline">
                 {/* Descriptive Label inside the border */}
                 <div className="absolute top-0 left-0 translate-x-1 -translate-y-3 bg-gray-100 text-sm font-normal text-gray-600 px-2 py-1 rounded-tl-xl rounded-br-xl">
-                  Set frame (dimz = {frameCount}). Shift + Wheel to adjust
-                  slider
+                  Set frame (dimz = {frameCount}).
                 </div>
                 <div className="flex items-center justify-between"></div>
 
@@ -300,7 +308,7 @@ const VtkViewer2DPanel = forwardRef<
                     className="--prevent-on-load-init"
                   ></div>
                 }
-                <div className="mt-10 grid w-full justify-start">
+                <div className="mt-10 grid grid-flow-col w-full justify-start items-center gap-4">
                   <div className="mt-0 max-w-20 border border-gray-300 rounded-xl">
                     <input
                       id="hs-pass-value-to-input-target"
@@ -310,6 +318,7 @@ const VtkViewer2DPanel = forwardRef<
                       defaultValue={frameIndex}
                     />
                   </div>
+                  <div className="w-full">Shift + Wheel for fine slider adjustment.</div>
                 </div>
               </div>
             </li>
