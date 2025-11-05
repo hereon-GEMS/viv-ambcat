@@ -185,7 +185,8 @@ const VtkViewer2DPanel = forwardRef<
         // Update text input value when the slider is updated
         targetInput.value = rangeInstance.formattedValue;
         if (onFrameIndexUpdate) {
-          onFrameIndexUpdate(parseInt(values[0], 10)); // You can call your callback here
+          //onFrameIndexUpdate(parseInt(values[0], 10)); // You can call your callback here
+          onFrameIndexUpdate(parseInt(rangeInstance.formattedValue, 10));
         }
       });
 

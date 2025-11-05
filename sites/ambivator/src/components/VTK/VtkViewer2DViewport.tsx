@@ -48,6 +48,7 @@ import { ViewTypes } from "@kitware/vtk.js/Widgets/Core/WidgetManager/Constants"
 
 import noUiSlider from "nouislider";
 import type { VtkViewer } from "@hms-dbmi/viv";
+import { set } from "@kitware/vtk.js/macros";
 
 //Helper function https://kitware.github.io/vtk-js/examples/PaintWidget.html
 function setCamera(sliceMode, renderer, data) {
@@ -216,6 +217,7 @@ const VtkViewer2DViewport = forwardRef<
 
     // NEW: react to frameIndex changes
     const latestTaskRef = useRef<symbol | null>(null);
+    const latestTaskFrameId = useRef<number | null>(null);
     const pendingFrameRef = useRef<number | null>(null);
     const loadingTasksRef = useRef<Set<symbol>>(new Set());
     const debounceTimerRef = useRef<number | null>(null);
@@ -228,13 +230,29 @@ const VtkViewer2DViewport = forwardRef<
 
       const taskId = Symbol();
       latestTaskRef.current = taskId;
+      latestTaskFrameId.current = frameIndex;
       loadingTasksRef.current.add(taskId);
 
       let cancelled = false;
+      console.log("Starting load for frame index:", frameIndex);
       (async () => {
-        await loadAndDisplayImage(frameIndex);
-        if (!cancelled && vtkObjectsRef.current?.renderWindow) {
-          vtkObjectsRef.current.renderWindow.render();
+        if (loadingTasksRef.current.size == 0) {
+          await loadAndDisplayImage(frameIndex);
+        } else {  
+          // debounce logic
+          pendingFrameRef.current = frameIndex;
+          if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+          }
+          debounceTimerRef.current = setTimeout(() => {
+            if (pendingFrameRef.current !== null && frameIndex === pendingFrameRef.current && !cancelled) {
+              loadAndDisplayImage(pendingFrameRef.current);
+                          if (frameIndex === pendingFrameRef.current) {
+              pendingFrameRef.current = null;
+            }
+            }
+
+          }, 200);
         }
       })();
       return () => {
@@ -242,7 +260,7 @@ const VtkViewer2DViewport = forwardRef<
       };
     }, [frameIndex, frameCount, loader, selection]);
 
-    
+  
 
     const loadAndDisplayImage = async (index: number) => {
       console.log("Loading frame index:", index);
@@ -289,6 +307,7 @@ const VtkViewer2DViewport = forwardRef<
         }
 
         scene.renderWindow.render();
+        setDisplayedFrameId(index);
 
       }
     };
