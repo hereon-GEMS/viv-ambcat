@@ -47,6 +47,7 @@ export default function Ambivator(props) {
           <div className="col-span-1 sm:col-span-2 flex-1 flex-col h-full">
             <DropzoneWrapper>
               {!isViewerLoading && <Viewer debug={debugGUI} />}
+              {/*This caused issues with Preline re-init*/}
               {/* <Viewer debug={debugGUI} /> */}
             </DropzoneWrapper>
           </div>

@@ -6,7 +6,7 @@ import {
   VolumeViewer,
   VtkViewer,
 } from "@hms-dbmi/viv";
-import VtkViewer2D from "./VTK/VtkViewer2D.tsx";
+import VtkViewer2D from "./VTK/VtkViewer2DViewport.js";
 import debounce from "lodash/debounce";
 import React from "react";
 import { useShallow } from "zustand/shallow";
@@ -18,6 +18,7 @@ import {
   useViewerStore,
 } from "../state";
 import { get3DExtension, useWindowSize } from "../utils";
+import VtkViewer2DController from "./VTK/VtkViewer2DController.js";
 
 const Viewer = ({ debug = false }) => {
   const [useLinkedView, use3d, viewState] = useViewerStore(
@@ -33,7 +34,6 @@ const Viewer = ({ debug = false }) => {
       ]),
     );
   const loader = useLoader();
-  //const loader = null;
   const viewSize = useWindowSize();
   const [
     lensSelection,
@@ -73,7 +73,7 @@ const Viewer = ({ debug = false }) => {
   };
 
   return (
-    <VtkViewer2D
+    <VtkViewer2DController
       loader={loader}
       height={viewSize.height}
       width={viewSize.width}
