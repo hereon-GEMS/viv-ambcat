@@ -2,6 +2,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import VtkViewer2DPanel from "./VtkViewer2DPanel";
 import VtkViewer2DViewport from "./VtkViewer2DViewport";
+import { set } from "@kitware/vtk.js/macros";
 
 export interface VtkViewer2DControllerProps {
   loader: any;
@@ -14,6 +15,65 @@ export interface VtkViewer2DControllerProps {
   onPanelVisibilityChange?: (visible: boolean) => void;
   onReady?: () => void;
 }
+
+export interface LoaderContext {
+  loader: any;
+  dims: { dimx: number; dimy: number; dimz: number } | null;
+  frameCount: number;
+  multiRes: boolean;
+  multiResLevelCount: number;
+  midFrameIndex: number;
+}
+
+// helper to extract shape from loader
+function extractShape(obj: any): number[] | undefined {
+  if (!obj) return undefined;
+  let s = obj.shape;
+  if (typeof s === "function") {
+    try {
+      s = s();
+    } catch (e) {
+      console.warn("Error calling shape():", e);
+      s = undefined;
+    }
+  }
+  return s;
+}
+
+// --- helper to build LoaderContext from loader ---
+export function buildLoaderContext(loader: any): LoaderContext {
+    let context: LoaderContext | null = {loader: loader, dims: null, frameCount: 0, multiRes: false, multiResLevelCount: 1, midFrameIndex: 0};
+    if (!loader) {
+      return context;
+    }
+    let shape: any;
+    if (Array.isArray(loader)) {
+      context.multiRes = true;
+      context.multiResLevelCount = loader.length;
+      shape = extractShape(loader[0]);
+    } else {
+        context.multiRes = false;
+        context.multiResLevelCount = 1;
+        shape = extractShape(loader);
+    }
+    if(shape.length === 2) {
+        const [y, x] = shape;
+        context.dims = {dimx: x, dimy: y, dimz: 1};
+        context.midFrameIndex = 0;
+    }else if(shape.length === 3) {
+        const [z, y, x] = shape;
+        context.dims = {dimx: x, dimy: y, dimz: z};
+        context.midFrameIndex = Math.floor((z - 1) / 2);
+    }
+    if(context.dims)
+    {
+        context.frameCount = context.dims.dimz;
+    }else{
+        context.frameCount = 0;
+    }
+    return context;
+}
+
 
 const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
   loader,
@@ -34,16 +94,11 @@ const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
   const [panelSide, setPanelSide] = useState<"left" | "right">(
     controlPanelSide,
   );
+  const context = buildLoaderContext(loader);
+  const [loaderContext, setLoaderContext] = useState<LoaderContext | null>(context);
+ 
 
-  // derived dimensions (lowercase names as requested)
-  const [dims, setDims] = useState<{
-    dimx: number;
-    dimy: number;
-    dimz: number;
-  } | null>(null);
-  const [multiRes, setMultiRes] = useState(false);
-  const [frameIndex, setFrameIndex] = useState<number>(0); // NEW state for current frame index
-  const [initialFrameIndex, setInitialFrameIndex] = useState<number>(0); // Initial frame index derived from loader
+  const [frameIndex, setFrameIndex] = useState<number>(context.midFrameIndex); // NEW state for current frame index
 
   // stable callback so Panel does not re-render when frameIndex changes
   const handleFrameIndexUpdate = useCallback(
@@ -70,71 +125,9 @@ const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
 
   // derive dimx, dimy, dimz from loader only (not props)
   useEffect(() => {
-    if (!loader) {
-      console.warn("No loader provided");
-      setDims(null);
-      setMultiRes(false);
-      return;
-    }
-
-    const extractShape = (obj: any) => {
-      if (!obj) return undefined;
-      let s = obj.shape;
-      if (typeof s === "function") {
-        try {
-          s = s();
-        } catch (e) {
-          console.warn("Error calling shape():", e);
-          s = undefined;
-        }
-      }
-      return s;
-    };
-
-    let shape: any;
-    if (Array.isArray(loader)) {
-      setMultiRes(true);
-      shape = extractShape(loader[0]);
-    } else {
-      setMultiRes(false);
-      shape = extractShape(loader);
-    }
-
-    if (!shape) {
-      console.warn("Shape not available on loader");
-      setDims(null);
-      setFrameIndex(0); // Reset frame index if shape is unavailable
-      return;
-    }
-
-    let midFrameIndex: number = 0;
-
-    if (Array.isArray(shape)) {
-      // Expect [z, y, x]. Handle 2D as [y, x].
-      if (shape.length >= 3) {
-        const [z, y, x] = shape;
-        setDims({ dimx: x, dimy: y, dimz: z });
-        if (z > 2) {
-          midFrameIndex = Math.floor((z - 1) / 2);
-        } else {
-          midFrameIndex = 0;
-        }
-      } else if (shape.length === 2) {
-        const [y, x] = shape;
-        setDims({ dimx: x, dimy: y, dimz: 1 });
-        midFrameIndex = 0;
-      } else {
-        console.warn("Unexpected shape length:", shape);
-        setDims(null);
-        midFrameIndex = 0;
-      }
-    } else {
-      console.warn("Shape is not an array:", shape);
-      setDims(null);
-      midFrameIndex = 0;
-    }
-    setInitialFrameIndex(midFrameIndex);
-    setFrameIndex(midFrameIndex);
+    const context = buildLoaderContext(loader);
+    setLoaderContext(context);
+    setFrameIndex(context.midFrameIndex);
   }, [loader]);
 
   const handlePanelToggle = (checked: boolean) => {
@@ -142,7 +135,9 @@ const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
     onPanelVisibilityChange?.(checked);
   };
 
-  const frameCount = dims?.dimz ?? 0;
+if (!loaderContext || loaderContext.frameCount === 0) {
+  return <div>Loading...</div>;
+}
 
   return (
     <div
@@ -168,8 +163,8 @@ const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
           <VtkViewer2DViewport
             ref={viewportDivRef} // FIX
             loader={loader}
-            frameCount={frameCount}
-            initialFrameIndex={initialFrameIndex}
+            frameCount={loaderContext.frameCount}
+            initialFrameIndex={loaderContext.midFrameIndex}
             selection={selection}
             width={width}
             height={height}
@@ -180,8 +175,8 @@ const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
         <VtkViewer2DPanel
           ref={controlPanelDivRef}
           toggleInputId="control-panel-drawer"
-          frameCount={frameCount} // already present
-          initialFrameIndex={initialFrameIndex} // NEW
+          frameCount={loaderContext.frameCount} // already present
+          initialFrameIndex={loaderContext.midFrameIndex} // NEW
           onFrameIndexUpdate={handleFrameIndexUpdate} // NEW callback
           debug={debug}
         />

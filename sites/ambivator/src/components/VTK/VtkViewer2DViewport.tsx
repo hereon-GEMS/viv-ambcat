@@ -245,20 +245,24 @@ const VtkViewer2DViewport = forwardRef<
     
 
     const loadAndDisplayImage = async (index: number) => {
+      console.log("Loading frame index:", index);
       if (!loader) {
         console.warn("No loader provided");
         return;
       }
+      //if (frameCount <= 0) return;
+      if (index < 0 || index >= frameCount) return;
+      if (index === displayedFrameId) return; // already displayed
 
       const raster = await (
         Array.isArray(loader) ? loader[0] : loader
       ).getRaster({ selection: selection || { z: index } });
       const vtkImage = pixelSourceToVtkImageData(raster);
-
+      updateImageRef(imageRef, vtkImage);
       // Update the image in the existing pipeline
       const scene = vtkObjectsRef.current;
       if (scene.image.mapper && scene.renderWindow) {
-        updateImageRef(imageRef, vtkImage);
+        
         const { range: imageRange } = imageRef.current!;
 
         // Update mapper with new image data
@@ -397,7 +401,7 @@ const VtkViewer2DViewport = forwardRef<
           //   min: imageRange[0],
           //   max: imageRange[1],
           // });
-          widget.setDataArray(imageData);
+          //widget.setDataArray(imageData);
           widget.onOpacityChange(() => {
             //widget.setColorTransferFunction(sceneRef.current.image.ctf);
             //widget.applyOpacity(sceneRef.current.image.ctf);
@@ -456,7 +460,7 @@ const VtkViewer2DViewport = forwardRef<
           console.log("loader.shape():", loader.shape);
         }
         await loadAndDisplayImage(initialFrameIndex);
-        if (viewerDivRef.current) {
+        if (viewerDivRef.current && imageRef.current.vtk_imageData) {
           setupView(viewerDivRef.current, imageRef.current!.vtk_imageData!);
         }
       };
