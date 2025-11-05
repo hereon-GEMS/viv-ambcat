@@ -127,12 +127,14 @@ const VtkViewer2DViewport = forwardRef<
       onReady,
       debug = false,
     },
-    ref
+    ref,
   ) => {
     const gaussianWidgetDivRef = useRef<HTMLDivElement>(null);
     const viewerDivRef = useRef<HTMLDivElement>(null);
 
-    const [frameIndex, setFrameIndex] = useState<number>(initialFrameIndex ?? 0);
+    const [frameIndex, setFrameIndex] = useState<number>(
+      initialFrameIndex ?? 0,
+    );
     useEffect(() => {
       if (initialFrameIndex !== frameIndex) {
         setFrameIndex(initialFrameIndex);
@@ -192,7 +194,7 @@ const VtkViewer2DViewport = forwardRef<
 
     function updateImageRef(
       imageRef: RefObject<ImageRefType>,
-      vtk_imageData: vtkImageData
+      vtk_imageData: vtkImageData,
     ): boolean {
       if (!imageRef.current) {
         // should never happen if you initialized with object, but TS likes this check
@@ -221,37 +223,34 @@ const VtkViewer2DViewport = forwardRef<
     const pendingFrameRef = useRef<number | null>(null);
     const loadingTasksRef = useRef<Set<symbol>>(new Set());
     const debounceTimerRef = useRef<number | null>(null);
-    const [displayedFrameId, setDisplayedFrameId] = useState<number | null>(null);
+    const [displayedFrameId, setDisplayedFrameId] = useState<number | null>(
+      null,
+    );
 
     useEffect(() => {
-      if (!loader) return;
-      if (frameCount <= 0) return;
-      if (frameIndex < 0 || frameIndex >= frameCount) return;
-
-      const taskId = Symbol();
-      latestTaskRef.current = taskId;
-      latestTaskFrameId.current = frameIndex;
-      loadingTasksRef.current.add(taskId);
-
       let cancelled = false;
-      console.log("Starting load for frame index:", frameIndex);
+
       (async () => {
         if (loadingTasksRef.current.size == 0) {
           await loadAndDisplayImage(frameIndex);
-        } else {  
+        } else {
           // debounce logic
           pendingFrameRef.current = frameIndex;
+          console.log("Postponed index:", frameIndex);
           if (debounceTimerRef.current) {
             clearTimeout(debounceTimerRef.current);
           }
           debounceTimerRef.current = setTimeout(() => {
-            if (pendingFrameRef.current !== null && frameIndex === pendingFrameRef.current && !cancelled) {
+            if (
+              pendingFrameRef.current !== null &&
+              frameIndex === pendingFrameRef.current &&
+              !cancelled
+            ) {
               loadAndDisplayImage(pendingFrameRef.current);
-                          if (frameIndex === pendingFrameRef.current) {
-              pendingFrameRef.current = null;
+              if (frameIndex === pendingFrameRef.current) {
+                pendingFrameRef.current = null;
+              }
             }
-            }
-
           }, 200);
         }
       })();
@@ -260,17 +259,19 @@ const VtkViewer2DViewport = forwardRef<
       };
     }, [frameIndex, frameCount, loader, selection]);
 
-  
-
     const loadAndDisplayImage = async (index: number) => {
-      console.log("Loading frame index:", index);
+      if (!loader) return;
       if (!loader) {
         console.warn("No loader provided");
         return;
       }
-      //if (frameCount <= 0) return;
-      if (index < 0 || index >= frameCount) return;
-      if (index === displayedFrameId) return; // already displayed
+      if (frameCount <= 0) return;
+      if (frameIndex < 0 || frameIndex >= frameCount) return;
+
+      const taskId = Symbol();
+      latestTaskRef.current = taskId;
+      latestTaskFrameId.current = frameIndex;
+      loadingTasksRef.current.add(taskId);
 
       const raster = await (
         Array.isArray(loader) ? loader[0] : loader
@@ -280,7 +281,6 @@ const VtkViewer2DViewport = forwardRef<
       // Update the image in the existing pipeline
       const scene = vtkObjectsRef.current;
       if (scene.image.mapper && scene.renderWindow) {
-        
         const { range: imageRange } = imageRef.current!;
 
         // Update mapper with new image data
@@ -308,7 +308,7 @@ const VtkViewer2DViewport = forwardRef<
 
         scene.renderWindow.render();
         setDisplayedFrameId(index);
-
+        console.log("Loaded index:", index);
       }
     };
 
@@ -326,7 +326,7 @@ const VtkViewer2DViewport = forwardRef<
       }
       const setupView = (
         viewContainerElement: HTMLElement,
-        vtk_imageData: vtkImageData
+        vtk_imageData: vtkImageData,
       ) => {
         // Set basic image properties from updated imageRef
         updateImageRef(imageRef, vtk_imageData);
@@ -455,7 +455,7 @@ const VtkViewer2DViewport = forwardRef<
           });
           orientationWidget.setEnabled(true);
           orientationWidget.setViewportCorner(
-            vtkOrientationMarkerWidget.Corners.BOTTOM_LEFT
+            vtkOrientationMarkerWidget.Corners.BOTTOM_LEFT,
           );
           orientationWidget.setViewportSize(0.15);
           orientationWidget.setMinPixelSize(100);
@@ -492,7 +492,7 @@ const VtkViewer2DViewport = forwardRef<
     }, [viewerDivRef]);
 
     return <div ref={viewerDivRef} />;
-  }
+  },
 );
 
 export default memo(
@@ -504,5 +504,5 @@ export default memo(
     prev.width === next.width &&
     prev.height === next.height &&
     prev.debug === next.debug &&
-    prev.selection === next.selection // assumes selection is stable reference
+    prev.selection === next.selection, // assumes selection is stable reference
 );

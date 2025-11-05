@@ -42,38 +42,43 @@ function extractShape(obj: any): number[] | undefined {
 
 // --- helper to build LoaderContext from loader ---
 export function buildLoaderContext(loader: any): LoaderContext {
-    let context: LoaderContext | null = {loader: loader, dims: null, frameCount: 0, multiRes: false, multiResLevelCount: 1, midFrameIndex: 0};
-    if (!loader) {
-      return context;
-    }
-    let shape: any;
-    if (Array.isArray(loader)) {
-      context.multiRes = true;
-      context.multiResLevelCount = loader.length;
-      shape = extractShape(loader[0]);
-    } else {
-        context.multiRes = false;
-        context.multiResLevelCount = 1;
-        shape = extractShape(loader);
-    }
-    if(shape.length === 2) {
-        const [y, x] = shape;
-        context.dims = {dimx: x, dimy: y, dimz: 1};
-        context.midFrameIndex = 0;
-    }else if(shape.length === 3) {
-        const [z, y, x] = shape;
-        context.dims = {dimx: x, dimy: y, dimz: z};
-        context.midFrameIndex = Math.floor((z - 1) / 2);
-    }
-    if(context.dims)
-    {
-        context.frameCount = context.dims.dimz;
-    }else{
-        context.frameCount = 0;
-    }
+  let context: LoaderContext | null = {
+    loader: loader,
+    dims: null,
+    frameCount: 0,
+    multiRes: false,
+    multiResLevelCount: 1,
+    midFrameIndex: 0,
+  };
+  if (!loader) {
     return context;
+  }
+  let shape: any;
+  if (Array.isArray(loader)) {
+    context.multiRes = true;
+    context.multiResLevelCount = loader.length;
+    shape = extractShape(loader[0]);
+  } else {
+    context.multiRes = false;
+    context.multiResLevelCount = 1;
+    shape = extractShape(loader);
+  }
+  if (shape.length === 2) {
+    const [y, x] = shape;
+    context.dims = { dimx: x, dimy: y, dimz: 1 };
+    context.midFrameIndex = 0;
+  } else if (shape.length === 3) {
+    const [z, y, x] = shape;
+    context.dims = { dimx: x, dimy: y, dimz: z };
+    context.midFrameIndex = Math.floor((z - 1) / 2);
+  }
+  if (context.dims) {
+    context.frameCount = context.dims.dimz;
+  } else {
+    context.frameCount = 0;
+  }
+  return context;
 }
-
 
 const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
   loader,
@@ -95,8 +100,9 @@ const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
     controlPanelSide,
   );
   const context = buildLoaderContext(loader);
-  const [loaderContext, setLoaderContext] = useState<LoaderContext | null>(context);
- 
+  const [loaderContext, setLoaderContext] = useState<LoaderContext | null>(
+    context,
+  );
 
   const [frameIndex, setFrameIndex] = useState<number>(context.midFrameIndex); // NEW state for current frame index
 
@@ -135,9 +141,9 @@ const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
     onPanelVisibilityChange?.(checked);
   };
 
-if (!loaderContext || loaderContext.frameCount === 0) {
-  return <div>Loading...</div>;
-}
+  if (!loaderContext || loaderContext.frameCount === 0) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div
@@ -186,8 +192,6 @@ if (!loaderContext || loaderContext.frameCount === 0) {
 };
 
 export default VtkViewer2DController;
-
-
 
 /*
 
