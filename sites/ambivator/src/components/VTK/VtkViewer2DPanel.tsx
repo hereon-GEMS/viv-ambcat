@@ -191,7 +191,7 @@ const VtkViewer2DPanel = forwardRef<
       });
 
       let debounceMouseWheel: number | null = null;
-      
+
       rangeElement.addEventListener("wheel", (event) => {
         if (debounceMouseWheel !== null) return; // already debouncing
         if (!event.shiftKey) return; // only when shift is pressed
@@ -199,7 +199,9 @@ const VtkViewer2DPanel = forwardRef<
         const step = 1; // adjust how much the slider changes per wheel tick
         let currentValue = parseInt(rangeInstance.formattedValue, 10);
         // Wheel delta: positive = scroll up, negative = scroll down
-        console.log(`Wheel event with deltaY=${event.deltaY}, currentValue=${currentValue}, step=${step}`);
+        console.log(
+          `Wheel event with deltaY=${event.deltaY}, currentValue=${currentValue}, step=${step}`,
+        );
         currentValue += event.deltaY < 0 ? step : -step;
         currentValue = clamp(currentValue);
         // debounce the slider update
@@ -318,7 +320,9 @@ const VtkViewer2DPanel = forwardRef<
                       defaultValue={frameIndex}
                     />
                   </div>
-                  <div className="w-full">Shift + Wheel for fine slider adjustment.</div>
+                  <div className="w-full">
+                    Shift + Wheel for fine slider adjustment.
+                  </div>
                 </div>
               </div>
             </li>

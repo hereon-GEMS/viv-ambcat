@@ -18,6 +18,7 @@ import vtkOpenGLRenderWindow from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow
 import vtkRenderWindowInteractor from "@kitware/vtk.js/Rendering/Core/RenderWindowInteractor";
 import vtkRenderer from "@kitware/vtk.js/Rendering/Core/Renderer";
 import vtkInteractorStyleImage from "@kitware/vtk.js/Interaction/Style/InteractorStyleImage";
+import vtkCustomInteractorStyleImage from "./vtkCustomInteractorStyleImage";
 import vtkImageMapper from "@kitware/vtk.js/Rendering/Core/ImageMapper";
 import vtkImageSlice from "@kitware/vtk.js/Rendering/Core/ImageSlice";
 import vtkColorTransferFunction from "@kitware/vtk.js/Rendering/Core/ColorTransferFunction";
@@ -25,6 +26,9 @@ import vtkPiecewiseFunction from "@kitware/vtk.js/Common/DataModel/PiecewiseFunc
 import vtkCubeSource from "@kitware/vtk.js/Filters/Sources/CubeSource";
 import vtkMapper from "@kitware/vtk.js/Rendering/Core/Mapper";
 import vtkActor from "@kitware/vtk.js/Rendering/Core/Actor";
+
+import vtkInteractorStyleManipulator from "@kitware/vtk.js/Interaction/Style/InteractorStyleManipulator";
+import vtkMouseCameraTrackballZoomManipulator from "@kitware/vtk.js/Interaction/Manipulators/MouseCameraTrackballZoomManipulator";
 
 //Orientation widget
 import vtkOrientationMarkerWidget from "@kitware/vtk.js/Interaction/Widgets/OrientationMarkerWidget";
@@ -106,6 +110,7 @@ export interface VtkViewer2DViewportProps {
   height?: number;
   onReady?: () => void;
   debug?: boolean;
+  enableWheelZoom?: boolean;
 }
 
 export interface VtkViewer2DViewportRef {
@@ -126,6 +131,7 @@ const VtkViewer2DViewport = forwardRef<
       height = 512,
       onReady,
       debug = false,
+      enableWheelZoom = true,
     },
     ref,
   ) => {
@@ -360,9 +366,55 @@ const VtkViewer2DViewport = forwardRef<
 
           // setup 2D view
           camera.setParallelProjection(true);
-          const iStyle = vtkInteractorStyleImage.newInstance();
-          iStyle.setInteractionMode("IMAGE_SLICING");
-          //renderWindow.getInteractor().setInteractorStyle(iStyle);
+          const iStyle = vtkCustomInteractorStyleImage.newInstance();
+          console.log("iStyle:", iStyle);
+
+          interactor.setInteractorStyle(iStyle);
+
+          console.log("Handlewheel:", interactor.handleWheel);
+          console.log("Handlewheel istyle:", iStyle.handleMouseWheel);
+          console.log("Handle left down:", iStyle.handleLeftButtonPress);
+
+          // interactor.handleWheel =  (event) => {
+          //     event.stopPropagation();
+          //     event.preventDefault();
+
+          //     let wheelDelta = 0;
+          //     // let mode = '';
+          //     if (event.wheelDeltaX === undefined) {
+          //       // mode = 'detail';
+          //       wheelDelta = -event.detail * 2;
+          //     } else {
+          //       // mode = 'wheelDeltaY';
+          //       wheelDelta = event.wheelDeltaY;
+          //     }
+          //     const callData = {
+          //       wheelDelta: Math.max(0.01, (wheelDelta + 1000.0) / 1000.0),
+          //     };
+
+          //     if (model.wheelTimeoutID === 0) {
+          //       publicAPI.startMouseWheelEvent(callData);
+          //       publicAPI.mouseWheelEvent(callData);          // ADDED CODE
+          //     } else {
+          //       publicAPI.mouseWheelEvent(callData);
+          //       clearTimeout(model.wheelTimeoutID);
+          //     }
+
+          //           iStyle.handleMouseWheel = enableWheelZoom;
+          //           //iStyle.setInteractionMode("IMAGE_SLICING");
+          //           //renderWindow.getInteractor().setInteractorStyle(iStyle);
+          //           const zoomManipulator = vtkMouseCameraTrackballZoomManipulator.newInstance();
+          //           zoomManipulator.setScrollEnabled(true);
+          //          // iStyle.addManipulator(zoomManipulator, 10); // 10 is the priority
+          //           renderWindow.getInteractor().setInteractorStyle(iStyle);
+          //           if(false){
+          //             const manipulatorStyle = vtkInteractorStyleManipulator.newInstance();
+          //             const zoomManipulator = vtkMouseCameraTrackballZoomManipulator.newInstance();
+          //             zoomManipulator.setScrollEnabled(true);
+          //             manipulatorStyle.addManipulator(zoomManipulator, 10); // 10 is the priority
+          //             renderWindow.getInteractor().setInteractorStyle(manipulatorStyle);
+          //            // interactor.setInteractorStyle(manipulatorStyle);
+          //           }
 
           // Initialize image pipeline
           const mapper = vtkImageMapper.newInstance();
@@ -457,7 +509,7 @@ const VtkViewer2DViewport = forwardRef<
           orientationWidget.setViewportCorner(
             vtkOrientationMarkerWidget.Corners.BOTTOM_LEFT,
           );
-          orientationWidget.setViewportSize(0.15);
+          orientationWidget.setViewportSize(0.05);
           orientationWidget.setMinPixelSize(100);
           orientationWidget.setMaxPixelSize(300);
 
