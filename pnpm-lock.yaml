@@ -436,6 +436,9 @@ importers:
       "@tailwindcss/vite":
         specifier: ^4.1.14
         version: 4.1.14(vite@6.4.0(@types/node@24.8.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6))
+      color-mapping-editor:
+        specifier: github:kulvait/ColorMappingEditor
+        version: https://codeload.github.com/kulvait/ColorMappingEditor/tar.gz/e95354bf86af79bb9728b170763ce31ae22890c3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(vtk.js@34.15.1(@babel/preset-env@7.28.3(@babel/core@7.28.4))(autoprefixer@10.4.21(postcss@8.5.6))(webpack@5.102.1(esbuild@0.25.11))(wslink@2.4.0))
       daisyui:
         specifier: ^5.3.10
         version: 5.3.10
@@ -4573,6 +4576,12 @@ packages:
       }
     engines: { node: ">=18" }
 
+  chroma-js@3.1.2:
+    resolution:
+      {
+        integrity: sha512-IJnETTalXbsLx1eKEgx19d5L6SRM7cH4vINw/99p/M11HCuXGRWL+6YmCm7FWFGIo6dtWuQoQi1dc5yQ7ESIHg==,
+      }
+
   chrome-trace-event@1.0.4:
     resolution:
       {
@@ -4621,6 +4630,17 @@ packages:
         integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==,
       }
     engines: { node: ">=7.0.0" }
+
+  color-mapping-editor@https://codeload.github.com/kulvait/ColorMappingEditor/tar.gz/e95354bf86af79bb9728b170763ce31ae22890c3:
+    resolution:
+      {
+        tarball: https://codeload.github.com/kulvait/ColorMappingEditor/tar.gz/e95354bf86af79bb9728b170763ce31ae22890c3,
+      }
+    version: 1.1.0
+    peerDependencies:
+      react: ">=18.0.0"
+      react-dom: ">=18.0.0"
+      vtk.js: ">=30.0.0"
 
   color-name@1.1.4:
     resolution:
@@ -4872,6 +4892,12 @@ packages:
       }
     engines: { node: ">=12" }
 
+  d3-color@1.4.1:
+    resolution:
+      {
+        integrity: sha512-p2sTHSLCJI2QKunbGb7ocOh7DgTAn8IrLx21QRc/BSnodXM4sv6aLQlnfpvehFMLZEfBc6g9pH9SWQccFYfJ9Q==,
+      }
+
   d3-color@3.1.0:
     resolution:
       {
@@ -4885,6 +4911,12 @@ packages:
         integrity: sha512-YyUI6AEuY/Wpt8KWLgZHsIU86atmikuoOmCfommt0LYHiQSPjvX2AcFc38PX0CBpr2RCyZhjex+NS/LPOv6YqA==,
       }
     engines: { node: ">=12" }
+
+  d3-hsv@0.1.0:
+    resolution:
+      {
+        integrity: sha512-HcIU73raRodnYiGDMzFbI8wyWkQtd+aAgX2sypAKnJ7UP93P9bOEhhrxWL4krcyp1ec2LFOUpvC8mFBt38YokQ==,
+      }
 
   d3-interpolate@3.0.1:
     resolution:
@@ -9293,6 +9325,17 @@ packages:
       jsdom:
         optional: true
 
+  vtk.js@34.15.1:
+    resolution:
+      {
+        integrity: sha512-3gK4FNK+in9Q6WAXoQxId5iKjVXS2ck/Xyf9VcCmZYY6DUpro3qs8Iv5qWYmE6HrFvvjbu64lu4Zo2/MZnCnKw==,
+      }
+    hasBin: true
+    peerDependencies:
+      "@babel/preset-env": ^7.17.10
+      autoprefixer: ^10.4.7
+      wslink: ">=1.1.0 || ^2.0.0"
+
   vue-template-compiler@2.7.16:
     resolution:
       {
@@ -12351,6 +12394,8 @@ snapshots:
 
   chownr@3.0.0: {}
 
+  chroma-js@3.1.2: {}
+
   chrome-trace-event@1.0.4: {}
 
   chromium-bidi@9.1.0(devtools-protocol@0.0.1508733):
@@ -12376,6 +12421,17 @@ snapshots:
   color-convert@2.0.1:
     dependencies:
       color-name: 1.1.4
+
+  color-mapping-editor@https://codeload.github.com/kulvait/ColorMappingEditor/tar.gz/e95354bf86af79bb9728b170763ce31ae22890c3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(vtk.js@34.15.1(@babel/preset-env@7.28.3(@babel/core@7.28.4))(autoprefixer@10.4.21(postcss@8.5.6))(webpack@5.102.1(esbuild@0.25.11))(wslink@2.4.0)):
+    dependencies:
+      chroma-js: 3.1.2
+      d3-color: 3.1.0
+      d3-hsv: 0.1.0
+      d3-interpolate: 3.0.1
+      d3-scale: 4.0.2
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
+      vtk.js: 34.15.1(@babel/preset-env@7.28.3(@babel/core@7.28.4))(autoprefixer@10.4.21(postcss@8.5.6))(webpack@5.102.1(esbuild@0.25.11))(wslink@2.4.0)
 
   color-name@1.1.4: {}
 
@@ -12533,9 +12589,15 @@ snapshots:
     dependencies:
       internmap: 2.0.3
 
+  d3-color@1.4.1: {}
+
   d3-color@3.1.0: {}
 
   d3-format@3.1.0: {}
+
+  d3-hsv@0.1.0:
+    dependencies:
+      d3-color: 1.4.1
 
   d3-interpolate@3.0.1:
     dependencies:
@@ -15399,6 +15461,31 @@ snapshots:
       - terser
       - tsx
       - yaml
+
+  vtk.js@34.15.1(@babel/preset-env@7.28.3(@babel/core@7.28.4))(autoprefixer@10.4.21(postcss@8.5.6))(webpack@5.102.1(esbuild@0.25.11))(wslink@2.4.0):
+    dependencies:
+      "@babel/preset-env": 7.28.3(@babel/core@7.28.4)
+      "@babel/runtime": 7.28.4
+      "@types/webxr": 0.5.24
+      autoprefixer: 10.4.21(postcss@8.5.6)
+      commander: 9.2.0
+      d3-scale: 4.0.2
+      fast-deep-equal: 3.1.3
+      fflate: 0.7.3
+      gl-matrix: 3.4.3
+      globalthis: 1.0.3
+      seedrandom: 3.0.5
+      shader-loader: 1.3.1
+      shelljs: 0.8.5
+      spark-md5: 3.0.2
+      stream-browserify: 3.0.0
+      utif: 3.1.0
+      webworker-promise: 0.5.0
+      worker-loader: 3.0.8(webpack@5.102.1(esbuild@0.25.11))
+      wslink: 2.4.0
+      xmlbuilder2: 3.0.2
+    transitivePeerDependencies:
+      - webpack
 
   vue-template-compiler@2.7.16:
     dependencies:

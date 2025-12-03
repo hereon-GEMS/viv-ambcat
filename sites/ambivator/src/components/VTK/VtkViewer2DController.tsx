@@ -1,4 +1,3 @@
-// /home/kulvaitv/BIG/git/viv-ambcat/sites/ambivator/src/components/VTK/VtkViewer2DController.tsx
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import VtkViewer2DPanel from "./VtkViewer2DPanel";
 import VtkViewer2DViewport from "./VtkViewer2DViewport";
@@ -15,6 +14,12 @@ export interface VtkViewer2DControllerProps {
   onPanelVisibilityChange?: (visible: boolean) => void;
   onReady?: () => void;
 }
+
+import {
+  type ColorMap,
+  type ControlPoint,
+  colorMapToColorMapString,
+} from "color-mapping-editor";
 
 export interface LoaderContext {
   loader: any;
@@ -80,6 +85,104 @@ export function buildLoaderContext(loader: any): LoaderContext {
   return context;
 }
 
+/**
+ * Maps a ColorMap's controlPoints into a new [startRange, endRange].
+ * Preserves relative positions; clamps to boundary if outside;
+ * removes duplicate boundary points.
+ */
+export function remapColorMapToRange(
+  cmap: ColorMap,
+  newStart: number,
+  newEnd: number,
+): ColorMap {
+  const oldStart = cmap.startRange;
+  const oldEnd = cmap.endRange;
+
+  const oldSpan = oldEnd - oldStart;
+  const newSpan = newEnd - newStart;
+
+  // avoid division-by-zero
+  if (oldSpan === 0) {
+    console.warn(
+      "ColorMap remap: old span is 0, falling back to midpoint mapping.",
+    );
+    return {
+      ...cmap,
+      startRange: newStart,
+      endRange: newEnd,
+      controlPoints: cmap.controlPoints.map((cp) => ({
+        ...cp,
+        position: newStart + newSpan * 0.5,
+      })),
+    };
+  }
+
+  // 1. Map and clamp control points
+  let newPoints = cmap.controlPoints.map((cp) => {
+    // normalized 0–1 position
+    const t = (cp.position - oldStart) / oldSpan;
+    const mapped = newStart + t * newSpan;
+
+    // clamp
+    const clamped = Math.min(Math.max(mapped, newStart), newEnd);
+
+    return {
+      ...cp,
+      position: clamped,
+    };
+  });
+
+  // 2. Sort by position (important to preserve ordering after mapping)
+  newPoints.sort((a, b) => a.position - b.position);
+
+  // 3. Remove duplicate boundary points ONLY if color matches OR they represent redundant anchors
+  newPoints = removeRedundantBoundaryPoints(newPoints, newStart, newEnd);
+
+  return {
+    ...cmap,
+    startRange: newStart,
+    endRange: newEnd,
+    controlPoints: newPoints,
+  };
+}
+
+function removeRedundantBoundaryPoints(
+  points: ControlPoint[],
+  startRange: number,
+  endRange: number,
+): ControlPoint[] {
+  const isAtStart = (p: ControlPoint) => p.position === startRange;
+  const isAtEnd = (p: ControlPoint) => p.position === endRange;
+
+  let startPoints = points.filter(isAtStart);
+  let endPoints = points.filter(isAtEnd);
+
+  // For boundary points with the same color, keep only one
+  const dedupe = (pts: ControlPoint[]) => {
+    const unique: ControlPoint[] = [];
+    const seenColors = new Set<string>();
+
+    for (const p of pts) {
+      const colorKey = JSON.stringify(p.color); // safe color equality
+      if (!seenColors.has(colorKey)) {
+        seenColors.add(colorKey);
+        unique.push(p);
+      }
+    }
+    return unique;
+  };
+
+  startPoints = dedupe(startPoints);
+  endPoints = dedupe(endPoints);
+
+  // Merge interior points back in
+  const interior = points.filter((p) => !isAtStart(p) && !isAtEnd(p));
+
+  return [...startPoints, ...interior, ...endPoints].sort(
+    (a, b) => a.position - b.position,
+  );
+}
+
 const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
   loader,
   selection,
@@ -105,6 +208,7 @@ const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
   );
 
   const [frameIndex, setFrameIndex] = useState<number>(context.midFrameIndex); // NEW state for current frame index
+  const [colorMap, setColorMap] = useState<ColorMap | null>(null);
 
   // stable callback so Panel does not re-render when frameIndex changes
   const handleFrameIndexUpdate = useCallback(
@@ -119,6 +223,27 @@ const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
     }*/
     },
     [viewportDivRef],
+  );
+
+  const handleColorMapUpdate = useCallback(
+    async (newMap: ColorMap) => {
+      const viewport = viewportDivRef.current as any;
+
+      let range = { min: newMap.startRange, max: newMap.endRange };
+      if (viewport?.getValueRange) {
+        range = await viewport.getValueRange();
+      }
+
+      const updatedMap = remapColorMapToRange(newMap, range.min, range.max);
+      console.log(
+        "Updated ColorMap after remap to set to viewport:",
+        JSON.stringify(colorMapToColorMapString(updatedMap)),
+      );
+      setColorMap(updatedMap);
+
+      viewport?.setColorMap?.(updatedMap);
+    },
+    [viewportDivRef, setColorMap],
   );
 
   useEffect(() => {
@@ -184,6 +309,7 @@ const VtkViewer2DController: React.FC<VtkViewer2DControllerProps> = ({
           frameCount={loaderContext.frameCount} // already present
           initialFrameIndex={loaderContext.midFrameIndex} // NEW
           onFrameIndexUpdate={handleFrameIndexUpdate} // NEW callback
+          onColorMapUpdate={handleColorMapUpdate}
           debug={debug}
         />
       </div>

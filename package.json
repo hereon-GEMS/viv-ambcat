@@ -17,6 +17,7 @@
     "clean": "pnpm -r exec -- rm -rf node_modules",
     "test": "pnpm -r --parallel test",
     "fix": "biome check --write .",
+    "format": "prettier --write .",
     "version": "node ./scripts/version.mjs",
     "publish": "pnpm build && pnpm changeset publish"
   },

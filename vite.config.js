@@ -13,7 +13,7 @@ export default defineConfig({
         path.resolve(os.homedir(), "server_keys/server-key.pem"),
       ),
       cert: fs.readFileSync(
-        path.resolve(os.homedir(), "server_keys/server-cert-AMBCAT.pem"),
+        path.resolve(os.homedir(), "server_keys/all-cert-AMBCAT.pem"),
       ),
     },
   },

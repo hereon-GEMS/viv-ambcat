@@ -54,6 +54,8 @@ import noUiSlider from "nouislider";
 import type { VtkViewer } from "@hms-dbmi/viv";
 import { set } from "@kitware/vtk.js/macros";
 
+import { type ColorMap } from "color-mapping-editor";
+
 //Helper function https://kitware.github.io/vtk-js/examples/PaintWidget.html
 function setCamera(sliceMode, renderer, data) {
   const ijk = [0, 0, 0];
@@ -141,6 +143,7 @@ const VtkViewer2DViewport = forwardRef<
     const [frameIndex, setFrameIndex] = useState<number>(
       initialFrameIndex ?? 0,
     );
+    const [colorMap, setColorMap] = useState<ColorMap | null>(null);
     useEffect(() => {
       if (initialFrameIndex !== frameIndex) {
         setFrameIndex(initialFrameIndex);
@@ -265,6 +268,32 @@ const VtkViewer2DViewport = forwardRef<
       };
     }, [frameIndex, frameCount, loader, selection]);
 
+    useEffect(() => {
+      // Update color map in the existing pipeline
+      const scene = vtkObjectsRef.current;
+      if (scene.image.ctf && scene.image.pf && imageRef.current) {
+        const { range: imageRange } = imageRef.current;
+        console.log("Current range:", imageRange);
+        if (colorMap && imageRange) {
+          // Update color transfer function
+          scene.image.ctf.removeAllPoints();
+
+          colorMap.controlPoints.forEach((cp) => {
+            const value = cp.position;
+
+            const { r, g, b } = cp.color.rgb;
+
+            scene.image.ctf.addRGBPoint(value, r / 255, g / 255, b / 255);
+          });
+
+          // Re-render the scene
+          if (scene.renderWindow) {
+            scene.renderWindow.render();
+          }
+        }
+      }
+    }, [colorMap]);
+
     const loadAndDisplayImage = async (index: number) => {
       if (!loader) return;
       if (!loader) {
@@ -295,8 +324,18 @@ const VtkViewer2DViewport = forwardRef<
         // Update color transfer function range if needed
         if (scene.image.ctf && imageRange) {
           scene.image.ctf.removeAllPoints();
-          scene.image.ctf.addRGBPoint(imageRange[0], 0.0, 0.0, 0.0);
-          scene.image.ctf.addRGBPoint(imageRange[1], 1.0, 1.0, 1.0);
+          if (colorMap) {
+            colorMap.controlPoints.forEach((cp) => {
+              const value = cp.position;
+
+              const { r, g, b } = cp.color.rgb;
+
+              scene.image.ctf.addRGBPoint(value, r / 255, g / 255, b / 255);
+            });
+          } else {
+            scene.image.ctf.addRGBPoint(imageRange[0], 0.0, 0.0, 0.0);
+            scene.image.ctf.addRGBPoint(imageRange[1], 1.0, 1.0, 1.0);
+          }
         }
 
         // Update piecewise function range if needed
@@ -321,6 +360,16 @@ const VtkViewer2DViewport = forwardRef<
     useImperativeHandle(ref, () => ({
       readFrame: async (index: number) => {
         setFrameIndex(index);
+      },
+
+      setColorMap: (map: ColorMap) => {
+        setColorMap(map);
+      },
+
+      getValueRange: () => {
+        const r = imageRef.current?.range;
+        if (!r) return { min: 0, max: 1 };
+        return { min: r[0], max: r[1] };
       },
     }));
 
